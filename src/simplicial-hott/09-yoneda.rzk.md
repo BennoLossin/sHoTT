@@ -1250,6 +1250,94 @@ family defines an inverse equivalence to evaluation at the element.
     , ( has-contra-section-ev-pt A a is-final-a C is-contravariant-C))
 ```
 
+### Useful alternative definition of `is-final`
+
+```rzk
+#def is-final2
+  ( A : U)
+  ( a : A)
+  : U
+  := Σ (f : (x : A) → hom A x a) , f a = id-hom A a
+```
+
+This definition is equivalent to `is-final`.
+
+```rzk
+#def is-final2-is-final
+  ( A : U)
+  ( y : A)
+  ( is-final-y : is-final A y)
+  : is-final2 A y
+  :=
+  ( \ x → center-contraction (hom A x y) (is-final-y x)
+  , homotopy-contraction (hom A y y) (is-final-y y) (id-hom A y))
+```
+
+The inverse is much more complicated and also requires that `A` is Segal:
+
+```rzk
+#def is-final-is-final2
+  ( A : U)
+  ( is-segal-A : is-segal A)
+  ( y : A)
+  ( is-final2-y : is-final2 A y)
+  : is-final A y
+  :=
+  \ (x : A) → (
+    π₁ is-final2-y x
+  , \ (f : hom A x y) →
+      rev
+        ( hom A x y)
+        f
+        ( π₁ is-final2-y x)
+        ( concat
+          ( hom A x y)
+          f
+          ( comp-is-segal A is-segal-A x y y f (id-hom A y))
+          ( π₁ is-final2-y x)
+          ( rev
+            ( hom A x y)
+            ( comp-is-segal A is-segal-A x y y f (id-hom A y))
+            f
+            ( comp-id-is-segal A is-segal-A x y f))
+          ( concat
+            ( hom A x y)
+            ( comp-is-segal A is-segal-A x y y f (id-hom A y))
+            ( comp-is-segal A is-segal-A x y y f (π₁ is-final2-y y))
+            ( π₁ is-final2-y x)
+            ( ap
+              ( hom A y y)
+              ( hom A x y)
+              ( id-hom A y)
+              ( π₁ is-final2-y y)
+              ( \ g → comp-is-segal A is-segal-A x y y f g)
+              ( rev (hom A y y) (π₁ is-final2-y y) (id-hom A y) (π₂ is-final2-y)))
+            ( concat
+              ( hom A x y)
+              ( comp-is-segal A is-segal-A x y y f (π₁ is-final2-y y))
+              ( comp-is-segal A is-segal-A x y y (π₁ is-final2-y x) (id-hom A y))
+              ( π₁ is-final2-y x)
+              ( naturality-nat-trans-is-segal
+                A A
+                is-segal-A
+                ( identity A) (constant A A y)
+                ( nat-trans-nat-trans-components A (\ _ → A) (identity A) (constant A A y) (π₁ is-final2-y))
+                x y
+                f)
+              ( comp-id-is-segal A is-segal-A x y (π₁ is-final2-y x))))))
+```
+
+Finally, we prove the equivalence:
+
+```rzk
+#def iff-is-segal-TOBEBIKESHED
+  ( A : U)
+  ( is-segal-A : is-segal A)
+  ( y : A)
+  : iff (is-final A y) (is-final2 A y)
+  := (is-final2-is-final A y , is-final-is-final2 A is-segal-A y)
+```
+
 ## Final objects in slice categories
 
 Recall that the type `#!rzk slice A a` is the type of arrows in `#!rzk A` with
