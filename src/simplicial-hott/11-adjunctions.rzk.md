@@ -52,6 +52,66 @@ and `#!rzk B` is Segal.
   := Σ (f : A → B) , is-transposing-adj A B f u
 ```
 
+### Equivalences to adjunctions
+
+An equivalence canonically is an adjunction (both left and right).
+
+```rzk
+#def is-transposing-right-adj-is-equiv uses (extext)
+  ( A B : U)
+  ( u : B → A)
+  ( is-equiv-u : is-equiv B A u)
+  : is-transposing-right-adj A B u
+  :=
+  ( π₁ (has-inverse-is-equiv B A u is-equiv-u)
+  , \ a b → equiv-comp
+      ( hom B ((π₁ (has-inverse-is-equiv B A u is-equiv-u)) a) b)
+      ( hom A (u ((π₁ (has-inverse-is-equiv B A u is-equiv-u)) a)) (u b))
+      ( hom A a (u b))
+      ( ap-hom B A u ((π₁ (has-inverse-is-equiv B A u is-equiv-u)) a) b
+      , is-equiv-ap-hom-is-equiv extext B A u is-equiv-u
+        ( ( π₁ (has-inverse-is-equiv B A u is-equiv-u)) a)
+        ( b))
+      ( equiv-transport
+        A
+        ( \ (a' : A) → hom A a' (u b))
+        ( u ((π₁ (has-inverse-is-equiv B A u is-equiv-u)) a))
+        a
+        ( π₂ (π₂ (has-inverse-is-equiv B A u is-equiv-u)) a)))
+```
+
+```rzk
+#def is-transposing-left-adj-is-equiv uses (extext)
+  ( A B : U)
+  ( f : A → B)
+  ( is-equiv-f : is-equiv A B f)
+  : is-transposing-left-adj A B f
+  :=
+  ( π₁ (has-inverse-is-equiv A B f is-equiv-f)
+  , \ a b → equiv-comp
+      ( hom B (f a) b)
+      ( hom A
+        ( π₁ (has-inverse-is-equiv A B f is-equiv-f) (f a))
+        ( π₁ (has-inverse-is-equiv A B f is-equiv-f) b))
+      ( hom A a (π₁ (has-inverse-is-equiv A B f is-equiv-f) b))
+      ( ap-hom B A (π₁ (has-inverse-is-equiv A B f is-equiv-f)) (f a) b
+      , is-equiv-ap-hom-is-equiv extext B A
+        ( π₁ (has-inverse-is-equiv A B f is-equiv-f))
+        ( is-equiv-has-inverse B A
+          ( map-inverse-has-inverse A B f
+            ( has-inverse-is-equiv A B f is-equiv-f))
+          ( has-inverse-map-inverse-has-inverse A B f
+            ( has-inverse-is-equiv A B f is-equiv-f)))
+        ( f a)
+        ( b))
+      ( equiv-transport
+        ( A)
+        ( \ (a' : A) → hom A a' (π₁ (has-inverse-is-equiv A B f is-equiv-f) b))
+        ( ( π₁ (has-inverse-is-equiv A B f is-equiv-f)) (f a))
+        ( a)
+        ( π₁ (π₂ (has-inverse-is-equiv A B f is-equiv-f)) a)))
+```
+
 ## Quasi-diagrammatic adjunctions
 
 Quasi-diagrammatic adjunctions are defined by opposing functors
