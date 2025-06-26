@@ -43,6 +43,45 @@ live over a specified arrow in the base type.
   := (t : Δ¹) → C (f t) [t ≡ 0₂ ↦ u , t ≡ 1₂ ↦ v]
 ```
 
+`dhom` over `id-hom` is just a `hom`:
+
+```rzk
+#section dhom-over-id-hom
+
+#variable A : U
+#variable a : A
+#variable C : A → U
+#variable u : C a
+#variable v : C a
+
+#def hom-dhom
+  ( f : dhom A a a (id-hom A a) C u v)
+  : hom (C a) u v
+  := \ t → f t
+
+#def dhom-hom
+  ( f : hom (C a) u v)
+  : dhom A a a (id-hom A a) C u v
+  := \ t → f t
+
+#def is-equiv-hom-dhom
+  : is-equiv (dhom A a a (id-hom A a) C u v) (hom (C a) u v) hom-dhom
+  :=
+  is-equiv-has-inverse
+  ( dhom A a a (id-hom A a) C u v)
+  ( hom (C a) u v)
+  ( hom-dhom)
+  ( dhom-hom
+  , ( \ x → refl
+    , \ y → refl))
+
+#def equiv-hom-dhom
+  : Equiv (dhom A a a (id-hom A a) C u v) (hom (C a) u v)
+  := (hom-dhom , is-equiv-hom-dhom)
+
+#end dhom-over-id-hom
+```
+
 It will be convenient to collect together dependent hom types with fixed domain
 but varying codomain.
 
