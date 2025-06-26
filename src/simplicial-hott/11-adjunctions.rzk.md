@@ -54,6 +54,8 @@ and `#!rzk B` is Segal.
 
 ### Equivalences to adjunctions
 
+An equivalence canonically is an adjunction (both left and right).
+
 ```rzk
 #def is-transposing-right-adj-is-equiv uses (extext)
   ( A B : U)
@@ -106,29 +108,6 @@ and `#!rzk B` is Segal.
         ( ( π₁ (has-inverse-is-equiv A B f is-equiv-f)) (f a))
         ( a)
         ( π₁ (π₂ (has-inverse-is-equiv A B f is-equiv-f)) a)))
-```
-
-```rzkk
-#def is-transposing-left-adj-is-equiv uses (extext)
-  ( A B : U)
-  ( f : A → B)
-  ( is-equiv-f : is-equiv A B f)
-  : is-transposing-left-adj A B f
-  :=
-  ( π₁ (has-inverse-is-equiv A B f is-equiv-f)
-  , \ a b → {- Equiv (hom B (f a) b) (hom A a (u b)) -}
-    equiv-comp
-      (hom B (f a) b)
-      (hom A ((π₁ (has-inverse-is-equiv B A f is-equiv-f)) (f a)) ((π₁ (has-inverse-is-equiv B A f is-equiv-f)) b))
-      (hom A a ((π₁ (has-inverse-is-equiv B A f is-equiv-f)) b))
-      ( ap-hom B A (π₁ (has-inverse-is-equiv B A f is-equiv-f)) (f a) b
-      , is-equiv-ap-hom-is-equiv extext B A f is-equiv-f ((π₁ (has-inverse-is-equiv B A u is-equiv-u)) a) b)
-      (equiv-transport
-        A
-        (\ (a' : A) → hom A a' (u b))
-        (u ((π₁ (has-inverse-is-equiv B A u is-equiv-u)) a))
-        a
-        (π₂ (π₂ (has-inverse-is-equiv B A u is-equiv-u)) a)))
 ```
 
 ## Quasi-diagrammatic adjunctions

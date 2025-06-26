@@ -71,21 +71,76 @@ simple:
 
 ```
 
-## Final section are LARI families
+## Final section are LARI
+
+```rzk
+#assume TODO : (A : U) → A
+
+#section is-transposing-LARI-has-final-section
+#variable A : U
+#variable B : A → U
+#variable has-final-section-B : has-final-section A B
+
+
+#def X
+  ( a a' : A)
+  ( f : hom A a a')
+  ( b : B a)
+  : is-contr (dhom A a a' f B b (π₁ has-final-section-B a'))
+  := TODO (is-contr (dhom A a a' f B b (π₁ has-final-section-B a')))
+
+#def projection-section-has-final-section
+  : A → total-type A B
+  := \ a → (a, π₁ has-final-section-B a)
+
+#def is-transposing-adj-has-final-section uses (has-final-section-B)
+  : is-transposing-adj (total-type A B) A
+    ( projection-total-type A B)
+    ( projection-section-has-final-section)
+  :=
+  \ (a , b) a' → equiv-comp
+    ( hom A a a')
+    ( Σ ( f : hom A a a') , dhom A a a' f B b (π₁ has-final-section-B a'))
+    ( hom (total-type A B) (a, b) (a', π₁ has-final-section-B a'))
+    ( inv-equiv
+      ( Σ ( f : hom A a a') , dhom A a a' f B b (π₁ has-final-section-B a'))
+      ( hom A a a')
+      ( equiv-total-type-is-contr
+        ( hom A a a')
+        ( \ f → dhom A a a' f B b (π₁ has-final-section-B a'))
+        ( \ f → X a a' f b)))
+    ( equiv-sigma-dhom-hom A B (a , b) (a' , π₁ has-final-section-B a'))
+```
 
 ```rzkk
-#def grothendiek-section-has-terminal-section
-  ( B : U)
-  ( A : B → U)
-  ( has-terminal-section-A : has-terminal-section A)
-  : B → total-type B A
-  := \ (b : B) → (b , π₁ has-terminal-section-A b)
+#def is-transposing-LARI-has-final-section
+  ( is-segal-total : is-segal (total-type A B))
+  : is-transposing-LARI (total-type A B) A is-segal-total
+    ( projection-total-type A B)
+  :=
+  (\ (f : (total-type A B) → A)
+    (u : A → total-type A B)
+  →
+  (\ (adj : is-transposing-adj (total-type A B) A f u)
+  →
+  ( u
+  , ( adj
+    , \ ((a , b) : total-type A B) → TODO
+      ( is-iso-arrow
+        ( total-type A B)
+        ( is-segal-total)
+        ( a , b)
+        ( u (f (a , b)))
+        ( π₁
+          ( adj (a , b) (f (a, b)))
+          ( id-hom A (f (a , b)))))))
+  )
+  ( TODO (is-transposing-adj (total-type A B) A f u)) -- =: adj
+  )
+  ( projection-total-type A B) -- =: f
+  ( \ a → (a, π₁ has-final-section-B a)) -- =: u
 ```
 
 ```rzk
-#def is-LARI-family-has-final-section
-  ( A : U)
-  ( B : A → U)
-  ( has-terminal-section-B : has-terminal-section A B)
-  : is-LARI-family
+#end is-transposing-LARI-has-final-section
 ```

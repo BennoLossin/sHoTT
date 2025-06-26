@@ -9,7 +9,7 @@ This is a literate `rzk` file:
 ## Basic definitions
 
 ```rzk title="BW23, Definition B.1.1"
-#def is-transposing-LARI-adjunction
+#def is-transposing-LARI-adj
   ( A B : U)
   ( is-segal-A : is-segal A)
   ( f : A → B)
@@ -28,7 +28,7 @@ This is a literate `rzk` file:
   :=
   Σ ( u : B → A)
   , ( Σ ( adj : is-transposing-adj A B f u)
-    , is-transposing-LARI-adjunction A B is-segal-A f u adj)
+    , is-transposing-LARI-adj A B is-segal-A f u adj)
 ```
 
 ## Leibniz cotensor

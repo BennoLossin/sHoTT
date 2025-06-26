@@ -127,7 +127,7 @@ The `hom` in a sigma type is equivalent to the sigma type of a hom in the index
 and then a dependent hom in the family.
 
 ```rzk
-#def sigma-dhom-from-hom
+#def sigma-dhom-hom
   ( A : U)
   ( B : A → U)
   ( x y : total-type A B)
@@ -135,7 +135,7 @@ and then a dependent hom in the family.
   : Σ ( g : hom A (π₁ x) (π₁ y)) , dhom A (π₁ x) (π₁ y) g B (π₂ x) (π₂ y)
   := (\ t → π₁ (f t) , \ t → π₂ (f t))
 
-#def hom-from-sigma-dhom
+#def hom-sigma-dhom
   ( A : U)
   ( B : A → U)
   ( x y : total-type A B)
@@ -145,22 +145,57 @@ and then a dependent hom in the family.
 ```
 
 ```rzk
-#def is-equiv-sigma-dhom-from-hom
+#def is-equiv-sigma-dhom-hom
   ( A : U)
   ( B : A → U)
   ( x y : total-type A B)
   : is-equiv
     ( hom (total-type A B) x y)
     ( Σ ( g : hom A (π₁ x) (π₁ y)) , dhom A (π₁ x) (π₁ y) g B (π₂ x) (π₂ y))
-    ( sigma-dhom-from-hom A B x y)
+    ( sigma-dhom-hom A B x y)
   :=
   is-equiv-has-inverse
   ( hom (total-type A B) x y)
   ( Σ ( f : hom A (π₁ x) (π₁ y)) , dhom A (π₁ x) (π₁ y) f B (π₂ x) (π₂ y))
-  ( sigma-dhom-from-hom A B x y)
-  ( hom-from-sigma-dhom A B x y
+  ( sigma-dhom-hom A B x y)
+  ( hom-sigma-dhom A B x y
   , ( \ (f : hom (total-type A B) x y) → refl
     , \ (f : Σ (g : hom A (π₁ x) (π₁ y)) , dhom A (π₁ x) (π₁ y) g B (π₂ x) (π₂ y)) → refl))
+
+#def is-equiv-hom-sigma-dhom
+  ( A : U)
+  ( B : A → U)
+  ( x y : total-type A B)
+  : is-equiv
+    ( Σ ( g : hom A (π₁ x) (π₁ y)) , dhom A (π₁ x) (π₁ y) g B (π₂ x) (π₂ y))
+    ( hom (total-type A B) x y)
+    ( hom-sigma-dhom A B x y)
+  :=
+  is-equiv-has-inverse
+  ( Σ ( f : hom A (π₁ x) (π₁ y)) , dhom A (π₁ x) (π₁ y) f B (π₂ x) (π₂ y))
+  ( hom (total-type A B) x y)
+  ( hom-sigma-dhom A B x y)
+  ( sigma-dhom-hom A B x y
+    , ( \ (f : Σ (g : hom A (π₁ x) (π₁ y)) , dhom A (π₁ x) (π₁ y) g B (π₂ x) (π₂ y)) → refl
+      , \ (f : hom (total-type A B) x y) → refl))
+
+#def equiv-hom-sigma-dhom
+  ( A : U)
+  ( B : A → U)
+  ( x y : total-type A B)
+  : Equiv
+    ( hom (total-type A B) x y)
+    ( Σ ( g : hom A (π₁ x) (π₁ y)) , dhom A (π₁ x) (π₁ y) g B (π₂ x) (π₂ y))
+  := (sigma-dhom-hom A B x y , is-equiv-sigma-dhom-hom A B x y)
+
+#def equiv-sigma-dhom-hom
+  ( A : U)
+  ( B : A → U)
+  ( x y : total-type A B)
+  : Equiv
+    ( Σ ( g : hom A (π₁ x) (π₁ y)) , dhom A (π₁ x) (π₁ y) g B (π₂ x) (π₂ y))
+    ( hom (total-type A B) x y)
+  := (hom-sigma-dhom A B x y , is-equiv-hom-sigma-dhom A B x y)
 ```
 
 ## Covariant families
