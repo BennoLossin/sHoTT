@@ -689,3 +689,33 @@ to the dependent type evaluated at any given term in the base.
         ( a)
         ( homotopy-contraction A is-contr-A a))
 ```
+
+## Total type with contractible fibers
+
+```rzk
+#def equiv-total-type-is-contr
+  ( A : U)
+  ( B : A → U)
+  ( is-contr-B : (a : A) → is-contr (B a))
+  : Equiv (total-type A B) A
+  :=
+  ( projection-total-type A B
+  , is-equiv-has-inverse (total-type A B) A
+    ( projection-total-type A B)
+    ( \ a → (a , center-contraction (B a) (is-contr-B a))
+    , ( \ (a , b) → eq-eq-fiber-Σ A B
+        ( a)
+        ( center-contraction (B a) (is-contr-B a))
+        ( b)
+        ( homotopy-contraction (B a) (is-contr-B a) b)
+      , \ a → refl)))
+```
+
+```rzk
+#def equiv-total-type-is-contr'
+  ( A : U)
+  ( B : A → U)
+  ( is-contr-B : (a : A) → is-contr (B a))
+  : Equiv A (total-type A B)
+  := inv-equiv (total-type A B) A (equiv-total-type-is-contr A B is-contr-B)
+```
