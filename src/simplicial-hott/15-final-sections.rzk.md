@@ -134,6 +134,8 @@ The second one requires a bit more work:
 #end final-sections
 ```
 
+## Final section are LARI
+
 ```rzk
 #def is-transposing-adj-is-dhom-final-section
   ( A : U)
@@ -153,9 +155,6 @@ The second one requires a bit more work:
     ( is-dhom-final-section-s a a' b))
   ( equiv-sigma-dhom-hom A B (a , b) (a' , s a'))
 ```
-
-## Final section are LARI
-
 
 ```rzk
 #section is-transposing-LARI-is-dsegal-is-dhom-final-section
