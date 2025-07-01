@@ -553,3 +553,586 @@ This is the dependent version of the currying equivalence.
   ( Σ ( f : (x : A) → B x) , (x : A) → C x (f x))
   ( equiv-choice A B C)
 ```
+
+## Equivalences and sigma types
+
+```rzkk
+#section is-equiv-total-type-is-equiv
+
+#variables A A' : U
+#variable B : A → U
+#variable B' : A' → U
+#variable f : A → A'
+#variable is-equiv-f : is-equiv A A' f
+#variable ff : (a : A) → B a → B' (f a)
+#variable is-equiv-ff : (a : A) → is-equiv (B a) (B' (f a)) (ff a)
+
+#assume TODO : (A : U) → A
+
+#def u uses (f)
+  : A' → A
+  := π₁ (has-inverse-is-equiv A A' f is-equiv-f)
+
+#def H11
+  : (a : A) → u (f a) = a
+  := π₁ (π₂ (has-inverse-is-equiv A A' f is-equiv-f))
+
+#def H21 uses (A)
+  : (a' : A') → f (u a') = a'
+  := π₂ (π₂ (has-inverse-is-equiv A A' f is-equiv-f))
+
+#def uu uses (A')
+  ( a : A)
+  : B' (f a) → B a
+  := π₁ (has-inverse-is-equiv (B a) (B' (f a)) (ff a) (is-equiv-ff a))
+
+#def H12 uses (A')
+  ( a : A)
+  : (b : B a) → uu a (ff a b) = b
+  := π₁ (π₂ (has-inverse-is-equiv (B a) (B' (f a)) (ff a) (is-equiv-ff a)))
+
+#def H22 uses (A')
+  ( a : A)
+  : (b' : B' (f a)) → ff a (uu a b') = b'
+  := π₂ (π₂ (has-inverse-is-equiv (B a) (B' (f a)) (ff a) (is-equiv-ff a)))
+
+#def m
+  : total-type A B → total-type A' B'
+  := \ (a, b) → (f a, ff a b)
+
+#def M2 uses (is-equiv-ff ff is-equiv-f A)
+  ( a' : A')
+  ( b' : B' a')
+  : B (u a')
+  :=
+  uu (u a') (transport A' B' a' (f (u a')) (rev A' (f (u a')) a' (H21 a')) b')
+
+#def M uses (is-equiv-ff ff is-equiv-f f)
+  : total-type A' B' → total-type A B
+  := \ (a', b') → (u a', M2 a' b')
+
+#variable H-compat : (a : A) → H21 (f a) = ap A A' (u (f a)) a f (H11 a)
+
+#def tmp-0
+  ( a : A)
+  ( b : B a)
+  : transport A' B' (f a) (f (u (f a)))
+    ( rev A' (f (u (f a))) (f a) (H21 (f a))) (ff a b)
+  = ff (u (f a)) (transport A B a (u (f a)) (rev A (u (f a)) a (H11 a)) b)
+  :=
+  concat
+    ( B' (f (u (f a))))
+    ( transport A' B' (f a) (f (u (f a)))
+      ( rev A' (f (u (f a))) (f a) (H21 (f a))) (ff a b))
+    ( transport A' B' (f a) (f (u (f a)))
+      ( rev A' (f (u (f a))) (f a) (ap A A' (u (f a)) a f (H11 a))) (ff a b))
+    ( transport A' B' (f a) (f (u (f a)))
+      ( ap A A' a (u (f a)) f (rev A (u (f a)) a (H11 a))) (ff a b))
+    ( transport A (\ x → B' (f x)) a (u (f a)) (rev A (u (f a)) a (H11 a)) (ff a b))
+    ( ?)
+    ( ff (u (f a)) (transport A B a (u (f a)) (rev A (u (f a)) a (H11 a)) b))
+    ( transport-substitution A A' B' f a (u (f a)) )
+#def MMM
+  ( a : A)
+  ( b : B a)
+  : M2 (f a) (ff a b) = transport A B a (u (f a)) (?) b
+  -- uu (u (f a)) (transport A' B' (f a) (f (u (f a))) (rev A' (f (u (f a))) (f a) (H21 (f a))) (ff a b))
+  -- uu a (ff a b)
+  := H12 (u (f a))
+
+#def is-equiv-total-type-is-equiv uses (is-equiv-ff ff is-equiv-f f)
+  : is-equiv (total-type A B) (total-type A' B') m
+  :=
+  is-equiv-has-inverse (total-type A B) (total-type A' B') m
+  ( M
+  , ( \ (a, b) →
+      -- M (m (a, b)) = (a, b)
+      -- M (f a, ff a b) = (a, b)
+      -- (u (f a), uu (u (f a)) (tr (ff a b))) = (a, b)
+      path-of-pairs-pair-of-paths
+      ( A)
+      ( B)
+      ( u (f a))
+      ( a)
+      ( H11 a)
+      ( M2 (f a) (ff a b))
+      ( b)
+      ( concat
+        ( B a)
+        ( transport A B (u (f a)) a (H11 a) (M2 (f a) (ff a b)))
+        ( transport A B (u (f a)) a (H11 a)
+          ( transport A B a (u (f a)) (ap A' A u ()) b))
+        b
+        ( TODO
+          ( transport A B (u (f a)) a (H11 a) (M2 (f a) (ff a b))
+          = b))
+    , \ (a', b') → TODO (m (M (a', b')) = (a', b'))))
+
+#end is-equiv-total-type-is-equiv
+```
+
+
+```rzkk
+#def is-equiv-total-type-fiber-is-equiv
+  ( A : U)
+  ( B B' : A → U)
+  ( f : (a : A) → B a → B' a)
+  ( is-equiv-f : (a : A) → is-equiv (B a) (B' a) (f a))
+  : is-equiv (total-type A B) (total-type A B') (\ (a, b) → (a, f a b))
+  :=
+  is-equiv-has-inverse
+  ( total-type A B)
+  ( total-type A B')
+  ( \ (a, b) → (a, f a b))
+  ( \ (a, b') →
+    ( a, π₁ (has-inverse-is-equiv (B a) (B' a) (f a) (is-equiv-f a)) b')
+  , ( \ (a, b) →
+      eq-eq-fiber-Σ A B a
+      ( π₁ (has-inverse-is-equiv (B a) (B' a) (f a) (is-equiv-f a)) (f a b))
+      ( b)
+      ( π₁ (π₂ (has-inverse-is-equiv (B a) (B' a) (f a) (is-equiv-f a))) b)
+    , \ (a, b') →
+      eq-eq-fiber-Σ A B' a
+      ( f a ( π₁ (has-inverse-is-equiv (B a) (B' a) (f a) (is-equiv-f a)) b'))
+      ( b')
+      ( π₂ (π₂ (has-inverse-is-equiv (B a) (B' a) (f a) (is-equiv-f a))) b')))
+
+#section is-equiv-total-type-base-is-equiv
+
+#variables A A' : U
+#variable B : A → U
+#variable f : A → A'
+#variable is-equiv-f : is-equiv A A' f
+
+-- inverse of f
+#def temp-rLmx-u uses (f)
+  : A' → A
+  := π₁ (has-inverse-is-equiv A A' f is-equiv-f)
+
+#def temp-rLmx-map
+  ( (a , b) : total-type A B)
+  : total-type A' (\ a' → B (temp-rLmx-u a'))
+  :=
+  ( f a
+  , transport A B a (temp-rLmx-u (f a))
+    ( rev A (temp-rLmx-u (f a)) a
+      ( π₁ (π₂ (has-inverse-is-equiv A A' f is-equiv-f)) a)) b)
+
+#assume TODO : (A : U) → A
+
+#def is-equiv-total-type-base-is-equiv uses (f is-equiv-f)
+  : is-equiv (total-type A B) (total-type A' (\ a' → B (temp-rLmx-u a')))
+  ( temp-rLmx-map)
+  :=
+  is-equiv-has-inverse
+  ( total-type A B)
+  ( total-type A' (\ a' → B (temp-rLmx-u a')))
+  ( temp-rLmx-map)
+  ( \ (a', b) → ( temp-rLmx-u a' , b)
+  , ( \ (a , b) → path-of-pairs-pair-of-paths A B (temp-rLmx-u (f a)) a
+      ( π₁ (π₂ (has-inverse-is-equiv A A' f is-equiv-f)) a)
+      ( transport A B a (temp-rLmx-u (f a))
+        ( rev A (temp-rLmx-u (f a)) a
+          ( π₁ (π₂ (has-inverse-is-equiv A A' f is-equiv-f)) a)) b)
+      ( b)
+      ( transport-rev-transport A B (temp-rLmx-u (f a)) a
+        ( π₁ (π₂ (has-inverse-is-equiv A A' f is-equiv-f)) a)
+        ( b))
+    , \ (a', b) →  path-of-pairs-pair-of-paths A' (\ a' → B (temp-rLmx-u a'))
+      ( f (temp-rLmx-u a')) a'
+      ( π₂ (π₂ (has-inverse-is-equiv A A' f is-equiv-f)) a')
+      ( transport A B (temp-rLmx-u a') (temp-rLmx-u (f (temp-rLmx-u a')))
+        ( rev A (temp-rLmx-u (f (temp-rLmx-u a'))) (temp-rLmx-u a')
+          ( π₁ (π₂ (has-inverse-is-equiv A A' f is-equiv-f)) (temp-rLmx-u a'))) b)
+      ( b)
+      ( triple-concat
+        ( B (temp-rLmx-u a'))
+        ( transport
+          ( A')
+          ( \ (a' : A') → B (temp-rLmx-u a'))
+          ( f (temp-rLmx-u a'))
+          ( a')
+          ( π₂ (π₂ (has-inverse-is-equiv A A' f is-equiv-f)) a')
+          ( transport
+            ( A)
+            ( B)
+            ( temp-rLmx-u a')
+            ( temp-rLmx-u (f (temp-rLmx-u a')))
+            ( rev A (temp-rLmx-u (f (temp-rLmx-u a'))) (temp-rLmx-u a')
+              ( π₁ (π₂ (has-inverse-is-equiv A A' f is-equiv-f))
+                ( temp-rLmx-u a'))) b))
+        ( transport
+          ( A)
+          ( B)
+          ( temp-rLmx-u (f (temp-rLmx-u a')))
+          ( temp-rLmx-u a')
+          ( ap A' A
+            ( f (temp-rLmx-u a'))
+            ( a')
+            ( temp-rLmx-u)
+            ( π₂ (π₂ (has-inverse-is-equiv A A' f is-equiv-f)) a'))
+          ( transport
+            ( A)
+            ( B)
+            ( temp-rLmx-u a')
+            ( temp-rLmx-u (f (temp-rLmx-u a')))
+            ( rev A (temp-rLmx-u (f (temp-rLmx-u a'))) (temp-rLmx-u a')
+              ( π₁ (π₂ (has-inverse-is-equiv A A' f is-equiv-f))
+                ( temp-rLmx-u a'))) b))
+        ( b)
+        ( transport-substitution A' A B temp-rLmx-u
+          ( f (temp-rLmx-u a'))
+          ( a')
+          ( π₂ (π₂ (has-inverse-is-equiv A A' f is-equiv-f)) a')
+          ( transport
+            ( A)
+            ( B)
+            ( temp-rLmx-u a')
+            ( temp-rLmx-u (f (temp-rLmx-u a')))
+            ( rev A (temp-rLmx-u (f (temp-rLmx-u a'))) (temp-rLmx-u a')
+              ( π₁ (π₂ (has-inverse-is-equiv A A' f is-equiv-f))
+                ( temp-rLmx-u a'))) b))
+        ( TODO
+          ( transport
+            ( A)
+            ( B)
+            ( temp-rLmx-u (f (temp-rLmx-u a')))
+            ( temp-rLmx-u a')
+            ( ap A' A
+              ( f (temp-rLmx-u a'))
+              ( a')
+              ( temp-rLmx-u)
+              ( π₂ (π₂ (has-inverse-is-equiv A A' f is-equiv-f)) a'))
+            ( transport
+              ( A)
+              ( B)
+              ( temp-rLmx-u a')
+              ( temp-rLmx-u (f (temp-rLmx-u a')))
+              ( rev A (temp-rLmx-u (f (temp-rLmx-u a'))) (temp-rLmx-u a')
+                ( π₁ (π₂ (has-inverse-is-equiv A A' f is-equiv-f))
+                  ( temp-rLmx-u a'))) b)
+          =_{ B (temp-rLmx-u a') } b)))))
+
+#end is-equiv-total-type-base-is-equiv
+```
+
+```rzkk
+
+#section is-inverse-total-type-is-inverse
+
+#assume TODO : (A : U) → A
+
+#variable A : U
+#variable B : A → U
+#variable A' : U
+#variable B' : A' → U
+#variable f : A → A'
+#variable u : A' → A
+#variable is-inverse-f-u : is-inverse A A' f u
+#variable ff : (a : A) → B a → B' (f a)
+#variable uu : (a : A) → B' (f a) → B a
+#variable is-inverse-ff-uu
+  : (a : A) → is-inverse (B a) (B' (f a)) (ff a) (uu a)
+
+#def map-total-type
+  ((a, b) : total-type A B)
+  : total-type A' B'
+  := (f a, ff a b)
+
+#def rev-map-total-type
+  ((a', b') : total-type A' B')
+  : total-type A B
+  :=
+  ( u a'
+  , uu (u a') (transport A' B' a' (f (u a'))
+    ( rev A' (f (u a')) a' (π₂ is-inverse-f-u a'))
+    ( b')))
+
+
+#def tmp-6
+  ( a : A)
+  : π₂ is-inverse-f-u (f a) = ap A A' (u (f a)) a f (π₁ is-inverse-f-u a)
+  := refl
+
+#def tmp-5
+  ( a : A)
+  : ap A A' a (u (f a)) f (rev A (u (f a)) a (π₁ is-inverse-f-u a))
+  = rev A' (f (u (f a))) (f a) (π₂ is-inverse-f-u (f a))
+  := ap-rev A A' (u (f a)) a f (π₁ is-inverse-f-u a)
+
+#def tmp-0
+  (a : A)
+  (b : B a)
+  : transport
+    ( A) (\ (a : A) → B' (f a))
+    ( a) (u (f a))
+    ( rev A (u (f a)) a (π₁ is-inverse-f-u a))
+    ( ff a b)
+  =
+    transport
+    ( A') B'
+    ( f a) (f (u (f a)))
+    ( rev A' (f (u (f a))) (f a) (π₂ is-inverse-f-u (f a)))
+    ( ff a b)
+  :=
+  concat
+    ( B' (f (u (f a))))
+    ( transport
+      ( A) (\ (a : A) → B' (f a))
+      ( a) (u (f a))
+      ( rev A (u (f a)) a (π₁ is-inverse-f-u a))
+      ( ff a b))
+    ( transport
+      ( A') B'
+      ( f a) (f (u (f a)))
+      ( ap A A' a (u (f a)) f (rev A (u (f a)) a (π₁ is-inverse-f-u a)))
+      ( ff a b))
+    ( transport
+      ( A') B'
+      ( f a) (f (u (f a)))
+      ( rev A' (f (u (f a))) (f a) (π₂ is-inverse-f-u (f a)))
+      ( ff a b))
+    ( transport-substitution
+      ( A) A' B' f a (u (f a))
+      ( rev A (u (f a)) a (π₁ is-inverse-f-u a))
+      ( ff a b))
+    ( transport2
+      ( A') B'
+      ( f a) (f (u (f a)))
+      ( ap A A' a (u (f a)) f (rev A (u (f a)) a (π₁ is-inverse-f-u a)))
+      ( rev A' (f (u (f a))) (f a) (π₂ is-inverse-f-u (f a)))
+      ( TODO (( ap A A' a (u (f a)) f (rev A (u (f a)) a (π₁ is-inverse-f-u a)))
+      =
+      ( rev A' (f (u (f a))) (f a) (π₂ is-inverse-f-u (f a)))))
+      ( ff a b))
+
+#def tmp-1 uses(TODO)
+  (a : A)
+  (b : B a)
+  : transport
+    ( A') B'
+    ( f a) (f (u (f a)))
+    ( rev A' (f (u (f a))) (f a) (π₂ is-inverse-f-u (f a)))
+    ( ff a b)
+  = transport
+    ( A) (\ (a : A) → B' (f a))
+    ( a) (u (f a))
+    ( rev A (u (f a)) a (π₁ is-inverse-f-u a))
+    ( ff a b)
+  :=
+  rev
+  ( B' (f (u (f a))))
+  ( transport
+    ( A) (\ (a : A) → B' (f a))
+    ( a) (u (f a))
+    ( rev A (u (f a)) a (π₁ is-inverse-f-u a))
+    ( ff a b))
+  ( transport
+    ( A') B'
+    ( f a) (f (u (f a)))
+    ( rev A' (f (u (f a))) (f a) (π₂ is-inverse-f-u (f a)))
+    ( ff a b))
+  ( tmp-0 a b)
+
+#def tmp-2 uses(TODO)
+  (a : A)
+  (b : B a)
+  : (uu (u (f a)) (transport A' B' (f a) (f (u (f a)))
+    ( rev A' (f (u (f a))) (f a) (π₂ is-inverse-f-u (f a)))
+    ( ff a b)))
+    = ( uu (u (f a)) (transport
+      ( A) (\ (a : A) → B' (f a))
+      ( a) (u (f a))
+      ( rev A (u (f a)) a (π₁ is-inverse-f-u a))
+      ( ff a b)))
+  :=
+  ap
+  ( B' (f (u (f a))))
+  ( B (u (f a)))
+  ( transport A' B' (f a) (f (u (f a)))
+    ( rev A' (f (u (f a))) (f a) (π₂ is-inverse-f-u (f a)))
+    ( ff a b))
+  ( transport
+      ( A) (\ (a : A) → B' (f a))
+      ( a) (u (f a))
+      ( rev A (u (f a)) a (π₁ is-inverse-f-u a))
+      ( ff a b))
+  ( uu (u (f a)))
+  ( tmp-1 a b)
+
+#def is-inverse-total-type-is-inverse
+  uses (uu ff is-inverse-f-u u f)
+  : is-inverse
+    ( total-type A B)
+    ( total-type A' B')
+    ( map-total-type)
+    ( rev-map-total-type)
+  :=
+  ( \ (a , b) →
+    path-of-pairs-pair-of-paths
+    ( A)
+    ( B)
+    ( u (f a))
+    ( a)
+    ( π₁ is-inverse-f-u a)
+    ( π₂ (rev-map-total-type (map-total-type (a, b))))
+    ( b)
+    ( quadruple-concat
+      ( B a)
+      ( transport
+        ( A) B
+        ( u (f a)) a
+        ( π₁ is-inverse-f-u a)
+        ( π₂ (rev-map-total-type (map-total-type (a, b)))))
+      ( transport
+        ( A) B
+        ( u (f a)) a
+        ( rev A a (u (f a)) (rev A (u (f a)) a (π₁ is-inverse-f-u a)))
+        ( π₂ (rev-map-total-type (map-total-type (a, b)))))
+      ( transport
+        ( A) B
+        ( u (f a)) a
+        ( rev A a (u (f a)) (rev A (u (f a)) a (π₁ is-inverse-f-u a)))
+        ( uu (u (f a)) (transport
+          ( A) (\ (a : A) → B' (f a))
+          ( a) (u (f a))
+          ( rev A (u (f a)) a (π₁ is-inverse-f-u a))
+          ( ff a b))))
+      ( uu a (ff a b))
+      ( b)
+      ( transport2
+        ( A) B
+        ( u (f a)) a
+        ( π₁ is-inverse-f-u a)
+        ( rev A a (u (f a)) (rev A (u (f a)) a (π₁ is-inverse-f-u a)))
+        ( rev-rev' A (u (f a)) a (π₁ is-inverse-f-u a))
+        ( π₂ (rev-map-total-type (map-total-type (a, b)))))
+      ( transport-eq
+        ( A) B
+        ( u (f a)) a
+        ( rev A a (u (f a)) (rev A (u (f a)) a (π₁ is-inverse-f-u a)))
+        ( π₂ (rev-map-total-type (map-total-type (a, b))))
+        ( uu (u (f a)) (transport
+          ( A) (\ (a : A) → B' (f a))
+          ( a) (u (f a))
+          ( rev A (u (f a)) a (π₁ is-inverse-f-u a))
+          ( ff a b)))
+        ( tmp-2 a b))
+      ( apd2 TODO A (\ a → B' (f a)) B a (u (f a)) uu (rev A (u (f a)) a (π₁ is-inverse-f-u a)) (ff a b))
+      (π₁ (is-inverse-ff-uu a) b))
+  , \ (a' , b') → TODO (map-total-type (rev-map-total-type (a', b')) = (a', b')))
+
+#end is-inverse-total-type-is-inverse
+```
+
+
+
+```rzkk
+
+#section is-equiv-total-type-is-equiv
+
+#variable A : U
+#variable B : A → U
+#variable A' : U
+#variable B' : A' → U
+#variable f : A → A'
+#variable is-equiv-f : is-equiv A A' f
+#variable F : (a : A) → B a → B' (f a)
+#variable is-equiv-F : (a : A) → is-equiv (B a) (B' (f a)) (F a)
+
+#def map-total-type
+  ((a, b) : total-type A B)
+  : total-type A' B'
+  := (f a, F a b)
+
+#def rev-map-1-total-type-is-equiv
+  ( a' : A')
+  : A
+  := π₁ (has-inverse-is-equiv A A' f is-equiv-f) a'
+
+#def rev-map-2-total-type-is-equiv
+  ( (a', b') : total-type A' B')
+  : B (rev-map-1-total-type-is-equiv a')
+  :=
+  π₁ (has-inverse-is-equiv
+    ( B (rev-map-1-total-type-is-equiv a'))
+    ( B' (f (rev-map-1-total-type-is-equiv a')))
+    ( F (rev-map-1-total-type-is-equiv a'))
+    ( is-equiv-F (rev-map-1-total-type-is-equiv a')))
+    ( transport A' B' a' (f (rev-map-1-total-type-is-equiv a'))
+      ( rev A'
+        ( f (rev-map-1-total-type-is-equiv a'))
+        ( a')
+        ( π₂ (π₂ (has-inverse-is-equiv A A' f is-equiv-f)) a')) b')
+
+#def rev-map-total-type-is-equiv
+  ((a', b') : total-type A' B')
+  : total-type A B
+  :=
+  ( rev-map-1-total-type-is-equiv a'
+  , rev-map-2-total-type-is-equiv (a' , b'))
+
+#def is-equiv-total-type-is-equiv
+  : is-equiv (total-type A B) (total-type A' B') map-total-type
+  :=
+  is-equiv-has-inverse
+  ( total-type A B)
+  ( total-type A' B')
+  ( map-total-type)
+  ( rev-map-total-type-is-equiv
+  , ( \ (a , b) →
+      {- u (f (a, b)) = (a, b) -}
+      {- (u (f a), U (u (f a)) (F a b)) = (a, b) -}
+      path-of-pairs-pair-of-paths
+      A
+      B
+      ( rev-map-1-total-type-is-equiv (f a))
+      ( a)
+      ( π₁ (π₂ ( has-inverse-is-equiv A A' f is-equiv-f)) a)
+      ( rev-map-2-total-type-is-equiv (f a, F a b))
+      ( b)
+      ( π₁ (π₂
+        ( has-inverse-is-equiv
+          ( B (rev-map-1-total-type-is-equiv (f a)))
+          ( B' (f a))
+          ( comp
+            ( B (rev-map-1-total-type-is-equiv (f a)))
+            ( B a)
+            ( B' (f a))
+            ( F a)
+            ( transport A B
+              ( rev-map-1-total-type-is-equiv (f a))
+              ( a)
+              ( π₁ (π₂ ( has-inverse-is-equiv A A' f is-equiv-f)) a)))
+          ( is-equiv-F (rev-map-1-total-type-is-equiv (f a))))
+        {-is-equiv
+          ( B (rev-map-1-total-type-is-equiv (f (π₁ x₁))))
+          ( B' (f (π₁ x₁)))
+          ( comp
+            ( B (rev-map-1-total-type-is-equiv (f (π₁ x₁))))
+            ( B (π₁ x₁))
+            ( B' (f (π₁ x₁)))
+            ( F (π₁ x₁))
+            ( transport A B
+              ( rev-map-1-total-type-is-equiv (f (π₁ x₁)))
+              ( π₁ x₁)
+              ( π₁ (π₂ (has-inverse-is-equiv A A' f is-equiv-f)) (π₁ x₁))))-}
+        ( F a b)) b)
+    , \ (a', b') → {- f (u (a', b')) = (a', b') -}
+      path-of-pairs-pair-of-paths
+      A'
+      B'
+      ( f (rev-map-1-total-type-is-equiv a'))
+      ( a')
+      ( π₂ (π₂ ( has-inverse-is-equiv A A' f is-equiv-f)) a')
+      ( rev-map-2-total-type-is-equiv (a', b'))
+      ( π₂ (π₂
+        ( has-inverse-is-equiv
+          ( B (rev-map-1-total-type-is-equiv a'))
+          ( B' a')
+          ( F (rev-map-1-total-type-is-equiv a'))
+          ( is-equiv-F (rev-map-1-total-type-is-equiv a')))
+        ( b')) b')))
+
+#end is-equiv-total-type-is-equiv
+```

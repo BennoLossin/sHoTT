@@ -844,6 +844,38 @@ needed in the definition of Segal types.
       ( id-comp-witness A x y f)
 ```
 
+```rzkk
+#def witness-comp-is-segal-id-comp-witness-is-segal
+  ( A : U)
+  ( is-segal-A : is-segal A)
+  ( x y : A)
+  ( f : hom A x y)
+  : ?
+  :=
+  second-path-Σ
+  ( homotopy-contraction (hom2 )
+    ( is-segal-A x x y (id-hom A x) f)
+```
+
+```rzkk
+#def witness-comp-is-segal-id-comp-witness-is-segal
+  ( A : U)
+  ( is-segal-A : is-segal A)
+  ( x y : A)
+  ( f : hom A x y)
+  : witness-comp-is-segal A is-segal-A x x y (id-hom A x) f
+  = transport
+  ( hom A x y)
+  ( \ m → hom2 A x x y (id-hom A x) f m)
+  ( f)
+  ( comp-is-segal A is-segal-A x x y (id-hom A x) f)
+  ( rev (hom A x y) (comp-is-segal A is-segal-A x x y (id-hom A x) f) f
+    ( id-comp-is-segal A is-segal-A x y f))
+  ( id-comp-witness A x y f)
+  :=
+  is-segal-A x x y (id-hom A x) f
+```
+
 ## Associativity
 
 We now prove that composition in a Segal type is associative, by using the fact
