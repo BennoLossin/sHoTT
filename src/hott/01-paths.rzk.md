@@ -776,6 +776,26 @@ Using `rev` we can deduce a path induction principle with fixed end point.
       ( ind-path A a (\ y q → C y (rev A a y q)) d x (rev A x a p))
 ```
 
+## Transporting back and forth along the same path
+
+```rzk
+#def transport-rev-transport
+  ( A : U)
+  ( B : A → U)
+  ( x y : A)
+  ( p : x = y)
+  ( u : B y)
+  : transport A B x y p (transport A B y x (rev A x y p) u) = u
+  :=
+  ind-path-end
+    ( A)
+    ( y)
+    ( \ x' p' → transport A B x' y p' (transport A B y x' (rev A x' y p') u) = u)
+    ( refl)
+    ( x)
+    ( p)
+```
+
 ## Dependent application
 
 ```rzk
