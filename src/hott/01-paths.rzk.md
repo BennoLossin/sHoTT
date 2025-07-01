@@ -98,6 +98,13 @@ situations where it is easier to induct on the first path.
   :=
     ind-path
     ( A) (x) (\ y' p' → (rev A y' x (rev A x y' p')) = p') (refl) (y) (p)
+
+#def rev-rev'
+  ( p : x = y)
+  : p = rev A y x (rev A x y p)
+  :=
+    ind-path
+    ( A) (x) (\ y' p' → p' = (rev A y' x (rev A x y' p'))) (refl) (y) (p)
 ```
 
 ### Left unit law for path concatenation
