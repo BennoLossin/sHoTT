@@ -710,6 +710,25 @@ Application of a function to homotopic paths yields homotopic paths.
   := \ p → (transport a a p b)
 ```
 
+### Transport equal values
+
+```rzk
+#def transport-eq
+  ( x y : A)
+  ( p : x = y)
+  ( b b' : B x)
+  ( q : b = b')
+  : ( transport x y p b) = (transport x y p b')
+  :=
+  ind-path
+    ( B x)
+    ( b)
+    ( \ b'' q' → (transport x y p b) = (transport x y p b''))
+    ( refl)
+    ( b')
+    ( q)
+```
+
 ```rzk
 #end transport
 ```
