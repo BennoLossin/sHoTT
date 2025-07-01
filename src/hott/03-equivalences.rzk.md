@@ -98,6 +98,18 @@ We define equivalences to be bi-invertible maps.
 
 ## Invertible maps
 
+```rzk
+#def is-inverse
+    ( A B : U)
+    ( f : A → B)
+    ( g : B → A)
+  : U
+  :=
+    ( product
+      ( homotopy A A (comp A B A g f) (identity A))
+      ( homotopy B B (comp B A B f g) (identity B)))
+```
+
 The following type of more coherent equivalences is not a proposition.
 
 ```rzk
@@ -107,9 +119,7 @@ The following type of more coherent equivalences is not a proposition.
   : U
   :=
     Σ ( g : B → A)
-    , ( product
-        ( homotopy A A (comp A B A g f) (identity A))
-        ( homotopy B B (comp B A B f g) (identity B)))
+    , is-inverse A B f g
 ```
 
 ## Equivalences are invertible maps
