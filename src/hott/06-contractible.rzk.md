@@ -59,6 +59,29 @@ This is a literate `rzk` file:
 #end contractible-data
 ```
 
+## Contractibility and equivalences
+
+```rzk
+#def is-contr-is-equiv-is-contr
+  ( A B : U)
+  ( equiv-A-B : Equiv A B)
+  ( is-contr-A : is-contr A)
+  : is-contr B
+  :=
+  ( π₁ equiv-A-B (π₁ is-contr-A)
+  , \ y → {- π₁ equiv-A-B (π₁ is-contr-A) = y -}
+    concat
+    ( B)
+    ( π₁ equiv-A-B (π₁ is-contr-A))
+    ( π₁ equiv-A-B (π₁ (π₂ (π₂ equiv-A-B)) y))
+    ( y)
+    ( ap A B
+      ( π₁ is-contr-A) (π₁ (π₂ (π₂ equiv-A-B)) y)
+      ( π₁ equiv-A-B)
+      ( π₂ is-contr-A (π₁ (π₂ (π₂ equiv-A-B)) y)))
+    ( π₂ (π₂ (π₂ equiv-A-B)) y))
+```
+
 ## Unit type
 
 The prototypical contractible type is the unit type, which is built-in to rzk.
