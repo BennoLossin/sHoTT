@@ -32,11 +32,14 @@ nav:
       - 2-Category of Segal Types: simplicial-hott/06-2cat-of-segal-types.rzk.md
       - Discrete Types: simplicial-hott/07-discrete.rzk.md
       - Covariant Families: simplicial-hott/08-covariant.rzk.md
+      - Dependant Segal Types: simplicial-hott/09-dependant-segal-types.rzk.md
       - The Yoneda Lemma: simplicial-hott/09-yoneda.rzk.md
       - Rezk Types: simplicial-hott/10-rezk-types.rzk.md
       - Adjunctions: simplicial-hott/11-adjunctions.rzk.md
       - Cocartesian Families: simplicial-hott/12-cocartesian.rzk.md
       - Limits and Colimits: simplicial-hott/13-limits.rzk.md
+      - Left Adjoint Right Inverse Adjunctions: simplicial-hott/14-left-adjoint-right-inverse-adjunctions.rzk.md
+      - Final Sections: simplicial-hott/15-final-sections.rzk.md
 
 markdown_extensions:
   - admonition
