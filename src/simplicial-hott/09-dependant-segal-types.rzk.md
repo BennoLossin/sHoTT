@@ -344,6 +344,31 @@ segal types also works here, adapted for the dependant context.
     ( G))
 ```
 
+```rzk
+#def eq-homotopy-dhom2-is-dsegal uses(TODO)
+  ( A : U)
+  ( is-segal-A : is-segal A)
+  ( B : A → U)
+  ( is-dsegal-B : is-dsegal A is-segal-A B)
+  ( x y : A)
+  ( f : hom A x y)
+  ( X : B x)
+  ( Y : B y)
+  ( F G : dhom A x y f B X Y)
+  : dhom2
+    ( A) x x y (id-hom A x) f f (id-comp-witness A x y f)
+    ( B) X X Y (id-dhom A x B X) F G
+  → F = G
+  :=
+  π₁
+  ( inv-equiv
+    ( F = G)
+    ( dhom2
+      A x x y (id-hom A x) f f (id-comp-witness A x y f)
+      B X X Y (id-dhom A x B X) F G)
+    ( equiv-homotopy-dhom2-is-dsegal A is-segal-A B is-dsegal-B x y f X Y F G))
+```
+
 ```rzkk
 #def equiv-hom2-eq-comp-is-segal
   ( A : U)
