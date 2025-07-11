@@ -1005,6 +1005,79 @@ family defines an inverse equivalence to evaluation at the element.
     , ( has-cov-section-ev-pt A a is-initial-a C is-covariant-C))
 ```
 
+### Useful alternative definition of `is-initial`
+
+```rzk
+#def is-initial2
+  ( A : U)
+  ( a : A)
+  : U
+  := Σ (f : (y : A) → hom A a y) , f a = id-hom A a
+```
+
+This definition is equivalent to `is-initial`.
+
+```rzk
+#def is-initial2-is-initial
+  ( A : U)
+  ( x : A)
+  ( is-initial-x : is-initial A x)
+  : is-initial2 A x
+  :=
+  ( \ y → center-contraction (hom A x y) (is-initial-x y)
+  , homotopy-contraction (hom A x x) (is-initial-x x) (id-hom A x))
+```
+
+The inverse is much more complicated and also requires that `A` is Segal:
+
+```rzk
+#def is-initial-is-initial2-is-segal
+  ( A : U)
+  ( is-segal-A : is-segal A)
+  ( x : A)
+  ( is-initial2-x : is-initial2 A x)
+  : is-initial A x
+  :=
+  \ (y : A) → (
+    π₁ is-initial2-x y
+  , \ (f : hom A x y) →
+      rev
+        ( hom A x y)
+        f
+        ( π₁ is-initial2-x y)
+        ( quadruple-concat
+          ( hom A x y)
+          f
+          ( comp-is-segal A is-segal-A x x y (id-hom A x) f)
+          ( comp-is-segal A is-segal-A x x y (π₁ is-initial2-x x) f)
+          ( comp-is-segal A is-segal-A x x y (id-hom A x) (π₁ is-initial2-x y))
+          ( π₁ is-initial2-x y)
+          ( rev
+            ( hom A x y)
+            ( comp-is-segal A is-segal-A x x y (id-hom A x) f)
+            f
+            ( id-comp-is-segal A is-segal-A x y f))
+          ( ap
+            ( hom A x x)
+            ( hom A x y)
+            ( id-hom A x)
+            ( π₁ is-initial2-x x)
+            ( \ g → comp-is-segal A is-segal-A x x y g f)
+            ( rev (hom A x x) (π₁ is-initial2-x x) (id-hom A x) (π₂ is-initial2-x)))
+          ( rev
+            ( hom A x y)
+            ( comp-is-segal A is-segal-A x x y (id-hom A x) (π₁ is-initial2-x y))
+            ( comp-is-segal A is-segal-A x x y (π₁ is-initial2-x x) f)
+            ( naturality-nat-trans-is-segal
+              A A
+              is-segal-A
+              ( constant A A x) (identity A)
+              ( nat-trans-nat-trans-components A (\ _ → A) (constant A A x) (identity A) (π₁ is-initial2-x))
+              x y
+              f))
+          ( id-comp-is-segal A is-segal-A x y (π₁ is-initial2-x y))))
+```
+
 ## Initial objects in slice categories
 
 Recall that the type `#!rzk coslice A a` is the type of arrows in `#!rzk A` with
