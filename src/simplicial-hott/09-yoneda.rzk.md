@@ -1363,41 +1363,33 @@ The inverse is much more complicated and also requires that `A` is Segal:
         ( hom A x y)
         f
         ( π₁ is-final2-y x)
-        ( concat
+        ( quadruple-concat
           ( hom A x y)
           f
           ( comp-is-segal A is-segal-A x y y f (id-hom A y))
+          ( comp-is-segal A is-segal-A x y y f (π₁ is-final2-y y))
+          ( comp-is-segal A is-segal-A x y y (π₁ is-final2-y x) (id-hom A y))
           ( π₁ is-final2-y x)
           ( rev
             ( hom A x y)
             ( comp-is-segal A is-segal-A x y y f (id-hom A y))
             f
             ( comp-id-is-segal A is-segal-A x y f))
-          ( concat
+          ( ap
+            ( hom A y y)
             ( hom A x y)
-            ( comp-is-segal A is-segal-A x y y f (id-hom A y))
-            ( comp-is-segal A is-segal-A x y y f (π₁ is-final2-y y))
-            ( π₁ is-final2-y x)
-            ( ap
-              ( hom A y y)
-              ( hom A x y)
-              ( id-hom A y)
-              ( π₁ is-final2-y y)
-              ( \ g → comp-is-segal A is-segal-A x y y f g)
-              ( rev (hom A y y) (π₁ is-final2-y y) (id-hom A y) (π₂ is-final2-y)))
-            ( concat
-              ( hom A x y)
-              ( comp-is-segal A is-segal-A x y y f (π₁ is-final2-y y))
-              ( comp-is-segal A is-segal-A x y y (π₁ is-final2-y x) (id-hom A y))
-              ( π₁ is-final2-y x)
-              ( naturality-nat-trans-is-segal
-                A A
-                is-segal-A
-                ( identity A) (constant A A y)
-                ( nat-trans-nat-trans-components A (\ _ → A) (identity A) (constant A A y) (π₁ is-final2-y))
-                x y
-                f)
-              ( comp-id-is-segal A is-segal-A x y (π₁ is-final2-y x))))))
+            ( id-hom A y)
+            ( π₁ is-final2-y y)
+            ( \ g → comp-is-segal A is-segal-A x y y f g)
+            ( rev (hom A y y) (π₁ is-final2-y y) (id-hom A y) (π₂ is-final2-y)))
+          ( naturality-nat-trans-is-segal
+            A A
+            is-segal-A
+            ( identity A) (constant A A y)
+            ( nat-trans-nat-trans-components A (\ _ → A) (identity A) (constant A A y) (π₁ is-final2-y))
+            x y
+            f)
+          ( comp-id-is-segal A is-segal-A x y (π₁ is-final2-y x))))
 ```
 
 Finally, we prove the equivalence:
