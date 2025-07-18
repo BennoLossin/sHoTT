@@ -1512,3 +1512,27 @@ analog fo weak anodyne shape inclusions.
 
 #end anodyne
 ```
+
+## Right orthogonal Families
+
+```rzkk
+#def is-right-orthogonal-family-to
+  ( I : CUBE)
+  ( ψ : I → TOPE)
+  ( ϕ : ψ → TOPE)
+  ( A : U)
+  ( B : A → U)
+  : U
+  :=
+    (a : ψ → A)
+  → (f : (t : ϕ) → C (a t))
+  → is-contr (((t : ψ) → C (a t)) [ϕ t ↦ f t])
+```
+
+```rzkk
+#def is-inner-family
+  ( A : U)
+  ( B : A → U)
+  : U
+  := is-right-orthogonal-family-to (2 × 2) Δ² Λ²₁ A B
+```

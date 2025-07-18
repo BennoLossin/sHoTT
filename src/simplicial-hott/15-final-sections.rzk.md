@@ -72,7 +72,7 @@ simple:
 
 The second one requires a bit more work:
 
-```rzk
+```rzkk
 #section is-dhom-final-section-is-final-section
 
 #variable is-segal-A : is-segal A

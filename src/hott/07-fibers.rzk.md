@@ -91,6 +91,24 @@ of the form `#!rzk (a, refl : f a = f a) : fib A B f`.
   := refl
 ```
 
+### Fiber over Unit
+
+```rzk
+#def equiv-fib-unit
+  ( A : U)
+  : Equiv A (fib A Unit (\ _ → unit) unit)
+  :=
+  ( \ a → (a, refl)
+  , is-equiv-has-inverse A (fib A Unit (\ _ → unit) unit)
+    ( \ a → (a, refl))
+    ( \ x → π₁ x
+    , ( \ a → refl
+      , \ x → path-of-pairs-pair-of-paths A (\ _ → unit = unit)
+        ( π₁ x) (π₁ x) refl
+        ( refl) (π₂ x)
+        ( all-paths-equal-is-contr Unit is-contr-Unit unit unit refl (π₂ x)))))
+```
+
 ## Contractible maps
 
 A map is contractible just when its fibers are contractible.

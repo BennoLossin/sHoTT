@@ -394,6 +394,17 @@ The predicate `#!rzk is-iso-arrow` is a proposition.
           ( second (second is-isof)))))
 ```
 
+```rzk
+#def is-emb-isos uses (extext)
+  ( A : U)
+  ( is-segal-A : is-segal A)
+  ( x y : A)
+  : is-emb (Iso A is-segal-A x y) (hom A x y) (\ f → π₁ f)
+  :=
+  is-emb-subtype-projection (hom A x y) (is-iso-arrow A is-segal-A x y)
+  ( is-prop-is-iso-arrow A is-segal-A x y)
+```
+
 ## Isomorphism extensionality
 
 ```rzk title="RS17, Proposition 10.3"

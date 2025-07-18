@@ -21,6 +21,7 @@ extension extensionality:
 ```rzk
 #assume funext : FunExt
 #assume extext : ExtExt
+-- #assume TODO : (A : U) → A
 ```
 
 ## Functors
@@ -589,4 +590,35 @@ We can also define a retraction of `#!rzk ap-hom` directly.
     ( \ _ → f)
     ( \ _ → has-retraction-f)
     ( \ t → recOR (t ≡ 0₂ ↦ x , t ≡ 1₂ ↦ y))
+```
+
+### Embeddings are fully faithful
+
+```rzkk
+#def is-emb-ap-hom-is-emb
+  ( A B : U)
+  ( f : A → B)
+  ( is-emb-f : is-emb A B f)
+  ( x y : A)
+  : is-emb (hom A x y) (hom B (f x) (f y)) (ap-hom A B f x y)
+  := is-emb-is-prop-fib (hom A x y) (hom B (f x) (f y)) (ap-hom A B f x y)
+  ( \ g → is-prop-is-contr-is-inhabited
+    ( fib (hom A x y) (hom B (f x) (f y)) (ap-hom A B f x y) g)
+    ( ind-fib (hom A x y) (hom B (f x) (f y)) (ap-hom A B f x y)
+      ( \ (g : hom B (f x) (f y)) _ → is-contr
+        ( fib (hom A x y) (hom B (f x) (f y)) (ap-hom A B f x y) g))
+      ( \ (g : hom A x y) → is-contr-is-inhabited-all-elements-equal
+        ( fib (hom A x y) (hom B (f x) (f y)) (ap-hom A B f x y) (ap-hom A B f x y g))
+        ( ind-fib (hom A x y) (hom B (f x) (f y)) (ap-hom A B f x y)
+          ( \ g h1 →
+            ( (h2 : fib (hom A x y) (hom B (f x) (f y)) (ap-hom A B f x y) g)
+            → h1 = h2))
+          ( \ g1 → ind-fib (hom A x y) (hom B (f x) (f y)) (ap-hom A B f x y)
+            ( \ g2 h2 → (ap-hom A B f x y g1, refl) = h2)
+            ( \ g2 → )
+            )
+          )
+        ( \ (h1, p1) (h2, p2) → TODO (h1 = h2))
+        ( g, refl))
+      g))
 ```

@@ -504,6 +504,26 @@ functions with these stronger hypotheses.
       ( is-equiv-comp B C D g is-equiv-g h is-equiv-h)
 ```
 
+```rzk
+#def is-equiv-quadruple-comp
+  ( A B C D E : U)
+  ( f : A → B)
+  ( is-equiv-f : is-equiv A B f)
+  ( g : B → C)
+  ( is-equiv-g : is-equiv B C g)
+  ( h : C → D)
+  ( is-equiv-h : is-equiv C D h)
+  ( i : D → E)
+  ( is-equiv-i : is-equiv D E i)
+  : is-equiv A E (quadruple-comp A B C D E i h g f)
+  :=
+    is-equiv-comp A B E
+      ( f)
+      ( is-equiv-f)
+      ( triple-comp B C D E i h g)
+      ( is-equiv-triple-comp B C D E g is-equiv-g h is-equiv-h i is-equiv-i)
+```
+
 ## Equivalences and homotopy
 
 If a map is homotopic to an equivalence it is an equivalence.
@@ -923,6 +943,101 @@ dependent function types.
   ( p : f x = f y)
   : ( x = y)
   := first (first (is-emb-f x y)) p
+```
+
+```rzk
+#def is-emb-comp uses (funext)
+  ( A B C : U)
+  ( f : A → B)
+  ( is-emb-f : is-emb A B f)
+  ( g : B → C)
+  ( is-emb-g : is-emb B C g)
+  : is-emb A C (comp A B C g f)
+  :=
+  \ x y → rev-transport ((x = y) → (g (f x) = g (f y)))
+  ( \ E → is-equiv (x = y) (g (f x) = g (f y)) E)
+  ( ap A C x y (comp A B C g f))
+  ( \ p → ap B C (f x) (f y) g (ap A B x y f p))
+  ( eq-htpy (x = y) (\ _ → g (f x) = g (f y))
+    ( ap A C x y (comp A B C g f))
+    ( \ p → ap B C (f x) (f y) g (ap A B x y f p))
+    ( ap-comp A B C x y f g))
+  ( is-equiv-comp (x = y) (f x = f y) (g (f x) = g (f y))
+    ( ap A B x y f)
+    ( is-emb-f x y)
+    ( ap B C (f x) (f y) g)
+    ( is-emb-g (f x) (f y)))
+```
+
+```rzk
+#def is-emb-triple-comp uses (funext)
+  ( A B C D : U)
+  ( f : A → B)
+  ( is-emb-f : is-emb A B f)
+  ( g : B → C)
+  ( is-emb-g : is-emb B C g)
+  ( h : C → D)
+  ( is-emb-h : is-emb C D h)
+  : is-emb A D (triple-comp A B C D h g f)
+  :=
+  \ x y → rev-transport ((x = y) → (h (g (f x)) = h (g (f y))))
+  ( \ E → is-equiv (x = y) (h (g (f x)) = h (g (f y))) E)
+  ( ap A D x y (triple-comp A B C D h g f))
+  ( \ p → ap C D (g (f x)) (g (f y)) h (ap B C (f x) (f y) g (ap A B x y f p)))
+  ( eq-htpy (x = y) (\ _ → h (g (f x)) = h (g (f y)))
+    ( ap A D x y (triple-comp A B C D h g f))
+    ( \ p → ap C D (g (f x)) (g (f y)) h (ap B C (f x) (f y) g (ap A B x y f p)))
+    ( ap-triple-comp A B C D x y f g h))
+  ( is-equiv-triple-comp
+    ( x = y)
+    ( f x = f y)
+    ( g (f x) = g (f y))
+    ( h (g (f x)) = h (g (f y)))
+    ( ap A B x y f)
+    ( is-emb-f x y)
+    ( ap B C (f x) (f y) g)
+    ( is-emb-g (f x) (f y))
+    ( ap C D (g (f x)) (g (f y)) h)
+    ( is-emb-h (g (f x)) (g (f y))))
+```
+
+```rzk
+#def is-emb-quadruple-comp uses (funext)
+  ( A B C D E : U)
+  ( f : A → B)
+  ( is-emb-f : is-emb A B f)
+  ( g : B → C)
+  ( is-emb-g : is-emb B C g)
+  ( h : C → D)
+  ( is-emb-h : is-emb C D h)
+  ( i : D → E)
+  ( is-emb-i : is-emb D E i)
+  : is-emb A E (quadruple-comp A B C D E i h g f)
+  :=
+  \ x y → rev-transport ((x = y) → (i (h (g (f x))) = i (h (g (f y)))))
+  ( \ eq → is-equiv (x = y) (i (h (g (f x))) = i (h (g (f y)))) eq)
+  ( ap A E x y (quadruple-comp A B C D E i h g f))
+  ( \ p → ap D E (h (g (f x))) (h (g (f y))) i
+    ( ap C D (g (f x)) (g (f y)) h (ap B C (f x) (f y) g (ap A B x y f p))))
+  ( eq-htpy (x = y) (\ _ → i (h (g (f x))) = i (h (g (f y))))
+    ( ap A E x y (quadruple-comp A B C D E i h g f))
+    ( \ p → ap D E (h (g (f x))) (h (g (f y))) i
+      ( ap C D (g (f x)) (g (f y)) h (ap B C (f x) (f y) g (ap A B x y f p))))
+    ( ap-quadruple-comp A B C D E x y f g h i))
+  ( is-equiv-quadruple-comp
+    ( x = y)
+    ( f x = f y)
+    ( g (f x) = g (f y))
+    ( h (g (f x)) = h (g (f y)))
+    ( i (h (g (f x))) = i (h (g (f y))))
+    ( ap A B x y f)
+    ( is-emb-f x y)
+    ( ap B C (f x) (f y) g)
+    ( is-emb-g (f x) (f y))
+    ( ap C D (g (f x)) (g (f y)) h)
+    ( is-emb-h (g (f x)) (g (f y)))
+    ( ap D E (h (g (f x))) (h (g (f y))) i)
+    ( is-emb-i (h (g (f x))) (h (g (f y)))))
 ```
 
 ## Reversal is an equivalence

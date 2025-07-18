@@ -1078,6 +1078,22 @@ The inverse is much more complicated and also requires that `A` is Segal:
           ( id-comp-is-segal A is-segal-A x y (π₁ is-initial2-x y))))
 ```
 
+### Initial objects and embeddings
+
+```rzk
+#assume TODO : (A : U) → A
+
+#def is-initial-is-emb
+  ( A B : U)
+  ( f : A → B)
+  ( is-emb-f : is-emb A B f)
+  ( a : A)
+  ( is-initial-fa : is-initial B (f a))
+  : is-initial A a
+  :=
+  is-prop-is-emb-is-prop
+```
+
 ## Initial objects in slice categories
 
 Recall that the type `#!rzk coslice A a` is the type of arrows in `#!rzk A` with

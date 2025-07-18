@@ -603,6 +603,53 @@ Application of a function to homotopic paths yields homotopic paths.
       ( ap-comp A B C x y f g p)
 ```
 
+```rzk
+#def ap-triple-comp
+  ( A B C D : U)
+  ( x y : A)
+  ( f : A → B)
+  ( g : B → C)
+  ( h : C → D)
+  ( p : x = y)
+  : ( ap A D x y (triple-comp A B C D h g f) p)
+  = ( ap C D (g (f x)) (g (f y)) h (ap B C (f x) (f y) g (ap A B x y f p)))
+  :=
+    ind-path
+      ( A)
+      ( x)
+      ( \ y' p' →
+        ( ap A D x y' (\ z → h (g (f z))) p')
+      = ( ap C D (g (f x)) (g (f y')) h (ap B C (f x) (f y') g (ap A B x y' f p'))))
+      ( refl)
+      ( y)
+      ( p)
+```
+
+```rzk
+#def ap-quadruple-comp
+  ( A B C D E : U)
+  ( x y : A)
+  ( f : A → B)
+  ( g : B → C)
+  ( h : C → D)
+  ( i : D → E)
+  ( p : x = y)
+  : ( ap A E x y (quadruple-comp A B C D E i h g f) p)
+  = ap D E (h (g (f x))) (h (g (f y))) i
+    ( ap C D (g (f x)) (g (f y)) h (ap B C (f x) (f y) g (ap A B x y f p)))
+  :=
+    ind-path
+      ( A)
+      ( x)
+      ( \ y' p' →
+        ( ap A E x y' (\ z → i (h (g (f z)))) p')
+        = ap D E (h (g (f x))) (h (g (f y'))) i
+          ( ap C D (g (f x)) (g (f y')) h (ap B C (f x) (f y') g (ap A B x y' f p'))))
+      ( refl)
+      ( y)
+      ( p)
+```
+
 ## Transport
 
 ```rzk
@@ -621,6 +668,15 @@ Application of a function to homotopic paths yields homotopic paths.
   ( u : B x)
   : B y
   := ind-path (A) (x) (\ y' p' → B y') (u) (y) (p)
+```
+
+```rzk
+#def rev-transport
+  ( x y : A)
+  ( p : x = y)
+  ( u : B y)
+  : B x
+  := transport y x (rev A x y p) u
 ```
 
 ### The lift of a base path to a path from a term in the total space to its transport

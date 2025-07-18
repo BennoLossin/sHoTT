@@ -407,6 +407,21 @@ propositions.
   := (is-prop-fib-is-emb A B f , is-emb-is-prop-fib A B f)
 ```
 
+```rzk
+#def is-prop-is-emb-is-prop
+  ( A B : U)
+  ( f : A → B)
+  ( is-emb-f : is-emb A B f)
+  ( is-prop-B : is-prop B)
+  : is-prop A
+  :=
+  \ x y → is-contr-equiv-is-contr'
+  ( x = y)
+  ( f x = f y)
+  ( ap A B x y f , is-emb-f x y)
+  ( is-prop-B (f x) (f y))
+```
+
 ## Subtypes
 
 A family of propositions `#!rzk P : A → U` over a type `#!rzk A` may be thought
