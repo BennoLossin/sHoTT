@@ -1091,7 +1091,9 @@ The inverse is much more complicated and also requires that `A` is Segal:
   ( is-initial-fa : is-initial B (f a))
   : is-initial A a
   :=
-  is-prop-is-emb-is-prop
+  \ y → is-contr-is-inhabited-is-prop (hom A a y)
+  ( is-prop-is-emb-is-prop (hom A a y))
+  ()
 ```
 
 ## Initial objects in slice categories
