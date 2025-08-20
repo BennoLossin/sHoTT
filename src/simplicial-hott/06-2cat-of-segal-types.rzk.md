@@ -188,6 +188,21 @@ The action on morphisms commutes with transport.
   ( p)
 ```
 
+```rzk
+#def ap-hom-quadruple-comp
+  ( A B C D E : U)
+  ( x y : A)
+  ( f : A → B)
+  ( g : B → C)
+  ( h : C → D)
+  ( i : D → E)
+  ( p : hom A x y)
+  : ( ap-hom A E (quadruple-comp A B C D E i h g f) x y p)
+  = ap-hom D E i (h (g (f x))) (h (g (f y)))
+    ( ap-hom C D h (g (f x)) (g (f y)) (ap-hom B C g (f x) (f y) (ap-hom A B f x y p)))
+  := refl
+```
+
 ## Natural transformations
 
 Given two simplicial maps `#!rzk f g : (x : A) → B x` , a **natural

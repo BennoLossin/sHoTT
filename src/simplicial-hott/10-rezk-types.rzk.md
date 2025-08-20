@@ -10,6 +10,7 @@ Some of the definitions in this file rely on function extensionality, extension
 extensionality and weak function extensionality:
 
 ```rzk
+#assume TODO : (A : U) → A
 #assume funext : FunExt
 #assume extext : ExtExt
 #assume weakfunext : WeakFunExt
@@ -402,6 +403,17 @@ The predicate `#!rzk is-iso-arrow` is a proposition.
   : is-emb (Iso A is-segal-A x y) (hom A x y) (\ f → π₁ f)
   :=
   is-emb-subtype-projection (hom A x y) (is-iso-arrow A is-segal-A x y)
+  ( is-prop-is-iso-arrow A is-segal-A x y)
+```
+
+```rzk
+#def is-full-emb-isos uses (extext)
+  ( A : U)
+  ( is-segal-A : is-segal A)
+  ( x y : A)
+  : is-full-emb (Iso A is-segal-A x y) (hom A x y) (\ f → π₁ f)
+  :=
+  is-full-emb-subtype-projection TODO (hom A x y) (is-iso-arrow A is-segal-A x y)
   ( is-prop-is-iso-arrow A is-segal-A x y)
 ```
 

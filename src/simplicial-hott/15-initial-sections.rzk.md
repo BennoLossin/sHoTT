@@ -268,48 +268,50 @@ show that it is a transposing adjunction:
   ( iso-eq A (π₁ is-rezk-A) a (u b))
   ( rev A (u b) a)
 
-#def is-emb-hom-eq-is-transposing-adj-is-rezk uses (adj is-rezk-A)
+#def is-full-emb-hom-eq-is-transposing-adj-is-rezk uses (adj is-rezk-A)
   ( a : A)
   ( b : B)
-  : is-emb (u b = a) (hom B (f a) b) (hom-eq-is-transposing-adj-is-rezk a b)
+  : is-full-emb (u b = a) (hom B (f a) b) (hom-eq-is-transposing-adj-is-rezk a b)
   :=
-  is-emb-quadruple-comp funext
+  is-full-emb-quadruple-comp funext
   ( u b = a)
   ( a = u b)
   ( Iso A (π₁ is-rezk-A) a (u b))
   ( hom A a (u b))
   ( hom B (f a) b)
   ( rev A (u b) a)
-  ( is-emb-rev A (u b) a)
+  ( is-full-emb-rev TODO A (u b) a)
   ( iso-eq A (π₁ is-rezk-A) a (u b))
-  ( is-emb-is-equiv
+  ( is-full-emb-is-equiv TODO
     ( a = u b)
     ( Iso A (π₁ is-rezk-A) a (u b))
     ( iso-eq A (π₁ is-rezk-A) a (u b))
     ( π₂ is-rezk-A a (u b)))
   ( \ f → π₁ f)
-  ( is-emb-isos extext A (π₁ is-rezk-A) a (u b))
+  ( is-full-emb-isos TODO extext A (π₁ is-rezk-A) a (u b))
   ( π₁ (inv-equiv (hom B (f a) b) (hom A a (u b)) (adj a b)))
-  ( is-emb-is-equiv
+  ( is-full-emb-is-equiv TODO
     ( hom A a (u b))
     ( hom B (f a) b)
     ( π₁ (inv-equiv (hom B (f a) b) (hom A a (u b)) (adj a b)))
     ( π₂ (inv-equiv (hom B (f a) b) (hom A a (u b)) (adj a b))))
+
+
 
 #def sigma-hom-fib-is-transposing-adj-is-rezk uses (adj is-rezk-A)
   ( a : A)
   : fib B A u a → (Σ (b : B) , hom B (f a) b)
   := \ (b , p) → (b , hom-eq-is-transposing-adj-is-rezk a b p)
 
-#def is-emb-sigma-hom-fib-is-transposing-adj-is-rezk
+#def is-full-emb-sigma-hom-fib-is-transposing-adj-is-rezk
   uses (adj is-rezk-A funext extext)
   ( a : A)
-  : is-emb (fib B A u a) (Σ (b : B) , hom B (f a) b)
+  : is-full-emb (fib B A u a) (Σ (b : B) , hom B (f a) b)
   ( sigma-hom-fib-is-transposing-adj-is-rezk a)
   :=
-  is-emb-total-type-is-emb-fiber B (\ b → u b = a) (\ b → hom B (f a ) b)
+  is-full-emb-total-type-is-full-emb-fiber TODO B (\ b → u b = a) (\ b → hom B (f a) b)
   ( hom-eq-is-transposing-adj-is-rezk a)
-  ( is-emb-hom-eq-is-transposing-adj-is-rezk a)
+  ( is-full-emb-hom-eq-is-transposing-adj-is-rezk a)
 
 ```
 
@@ -332,12 +334,12 @@ show that it is a transposing adjunction:
   =_{coslice B (f a)} (sigma-hom-fib-is-transposing-adj-is-rezk a (section-is-transposing-LARI-adj a)))
 
 #def is-initial-section-is-transposing-LARI-adj
-  uses (is-LARI-f-u adj is-rezk-A f funext extext)
+  uses (is-LARI-f-u adj is-rezk-A f funext extext TODO)
   : is-initial-section A (fib B A u) section-is-transposing-LARI-adj
   :=
-  \ a → is-initial-is-emb TODO (fib B A u a) (Σ (b : B) , hom B (f a) b)
+  \ a → is-initial-is-full-emb-is-initial (fib B A u a) (Σ (b : B) , hom B (f a) b)
   ( sigma-hom-fib-is-transposing-adj-is-rezk a)
-  ( is-emb-sigma-hom-fib-is-transposing-adj-is-rezk a)
+  ( is-full-emb-sigma-hom-fib-is-transposing-adj-is-rezk a)
   ( section-is-transposing-LARI-adj a)
   ( transport (coslice B (f a)) (\ x → is-initial (coslice B (f a)) x)
     ( f a, id-hom B (f a))

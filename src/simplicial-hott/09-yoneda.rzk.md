@@ -1081,19 +1081,17 @@ The inverse is much more complicated and also requires that `A` is Segal:
 ### Initial objects and embeddings
 
 ```rzk
-#assume TODO : (A : U) → A
-
-#def is-initial-is-emb
+#def is-initial-is-full-emb-is-initial
   ( A B : U)
   ( f : A → B)
-  ( is-emb-f : is-emb A B f)
+  ( is-full-emb-f : is-full-emb A B f)
   ( a : A)
   ( is-initial-fa : is-initial B (f a))
   : is-initial A a
   :=
-  \ y → is-contr-is-inhabited-is-prop (hom A a y)
-  ( is-prop-is-emb-is-prop (hom A a y))
-  ()
+  \ y → is-contr-equiv-is-contr' (hom A a y) (hom B (f a) (f y))
+  ( ap-hom A B f a y, is-full-emb-f a y)
+  ( is-initial-fa (f y))
 ```
 
 ## Initial objects in slice categories
