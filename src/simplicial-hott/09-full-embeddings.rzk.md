@@ -9,7 +9,7 @@ This is a literate `rzk` file:
 ```rzk
 #assume TODO : (A : U) → A
 #assume funext : FunExt
--- #assume extext : ExtExt
+#assume extext : ExtExt
 ```
 
 ```rzk
@@ -24,15 +24,6 @@ This is a literate `rzk` file:
     (x : A)
   → (y : A)
   → is-equiv (hom A x y) (hom B (f x) (f y)) (ap-hom A B f x y)
-
-#def is-full-emb-is-emb-has-arrow-lifts
-  ( is-emb-f : is-emb A B f)
-  ( has-arrow-lifts : (g : Δ¹ → B) → (fib A B f (g 0₂)) → (fib A B f (g 1₂)) → ((t : Δ¹) → fib A B f (g t)))
-  : is-full-emb
-  := TODO is-full-emb
-
-
-
 ```
 
 ### Full Embeddings are Embeddings
@@ -67,30 +58,21 @@ This is a literate `rzk` file:
 ```
 
 ```rzk
-#def is-full-emb-rev
-  ( A : U)
-  ( x y : A)
-  : is-full-emb (x = y) (y = x) (rev A x y)
-  := TODO (is-full-emb (x = y) (y = x) (rev A x y))
-```
-
-```rzk
 #def is-full-emb-is-equiv
   ( A : U)
   ( B : U)
   ( f : A → B)
   ( is-equiv-f : is-equiv A B f)
   : is-full-emb A B f
-  := TODO (is-full-emb A B f)
+  := is-equiv-ap-hom-is-equiv extext A B f is-equiv-f
 ```
 
 ```rzk
-#def is-full-emb-subtype-projection
+#def is-full-emb-rev uses (extext)
   ( A : U)
-  ( P : A → U)
-  ( is-predicate-P : is-predicate A P)
-  : is-full-emb (total-type A P) A (projection-total-type A P)
-  := TODO (is-full-emb (total-type A P) A (projection-total-type A P))
+  ( x y : A)
+  : is-full-emb (x = y) (y = x) (rev A x y)
+  := is-full-emb-is-equiv (x = y) (y = x) (rev A x y) (is-equiv-rev A x y)
 ```
 
 ```rzk
