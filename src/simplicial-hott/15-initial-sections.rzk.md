@@ -280,9 +280,9 @@ show that it is a transposing adjunction:
   ( hom A a (u b))
   ( hom B (f a) b)
   ( rev A (u b) a)
-  ( is-full-emb-rev TODO A (u b) a)
+  ( is-full-emb-rev extext A (u b) a)
   ( iso-eq A (π₁ is-rezk-A) a (u b))
-  ( is-full-emb-is-equiv TODO
+  ( is-full-emb-is-equiv extext
     ( a = u b)
     ( Iso A (π₁ is-rezk-A) a (u b))
     ( iso-eq A (π₁ is-rezk-A) a (u b))
@@ -290,7 +290,7 @@ show that it is a transposing adjunction:
   ( \ f → π₁ f)
   ( is-full-emb-isos TODO extext A (π₁ is-rezk-A) a (u b))
   ( π₁ (inv-equiv (hom B (f a) b) (hom A a (u b)) (adj a b)))
-  ( is-full-emb-is-equiv TODO
+  ( is-full-emb-is-equiv extext
     ( hom A a (u b))
     ( hom B (f a) b)
     ( π₁ (inv-equiv (hom B (f a) b) (hom A a (u b)) (adj a b)))

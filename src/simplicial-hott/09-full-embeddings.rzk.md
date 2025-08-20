@@ -28,15 +28,13 @@ This is a literate `rzk` file:
 
 ### Full Embeddings are Embeddings
 
-```rzkk
-#def
-```
+```rzk
+#def is-full-emb-is-emb-is-discrete
+  ( is-emb-f : is-emb A B f)
+  ( is-discrete-B : is-discrete B)
+  : is-full-emb
+  := TODO (is-full-emb)
 
-```rzkk
-#def is-emb-is-full-emb
-  ( is-full-emb-f : is-full-emb)
-  : is-emb A B f
-  := π₁ is-full-emb-f
 ```
 
 ```rzk
