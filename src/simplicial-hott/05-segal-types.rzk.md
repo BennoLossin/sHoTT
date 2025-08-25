@@ -216,6 +216,19 @@ Extension types are also used to define the type of commutative triangles:
         t₂ ≡ t₁ ↦ h t₂]   -- the diagonal is exactly `h`
 ```
 
+A contractible type has contractible
+
+```rzk
+#def is-contr-hom-is-contr
+  ( A : U)
+  ( is-contr-A : is-contr A)
+  ( x y : A)
+  : is-contr (hom A x y)
+  :=
+  has-unique-extensions-is-contr extext 2 Δ¹ ∂Δ¹ A is-contr-A
+  ( \ t → recOR(t ≡ 0₂ ↦ x, t ≡ 1₂ ↦ y))
+```
+
 ## Arrow types
 
 We define the arrow type:

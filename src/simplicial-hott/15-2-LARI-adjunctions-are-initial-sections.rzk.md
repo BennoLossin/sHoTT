@@ -6,11 +6,26 @@ This is a literate `rzk` file:
 #lang rzk-1
 ```
 
+
+
 ```rzk
 #assume funext : FunExt
 #assume extext : ExtExt
 #assume TODO : (A : U) → A
 #assume is-iso-arrow-nat-trans-is-iso-arrow-boundary : is-iso-arrow-nat-trans-is-iso-arrow-boundary-type
+```
+
+
+```rzk
+
+#def ctie
+  ( A : Δ¹ → U)
+  ( is-contr-A : (t : Δ¹) → is-contr (A t))
+  ( x : A 0₂)
+  ( y : A 1₂)
+  ( f g : (t : Δ¹) → A t [t ≡ 0₂ ↦ x, t ≡ 1₂ ↦ y])
+  : (t : Δ¹) → (f t = g t) [t ≡ 0₂ ↦ refl, t ≡ 1₂ ↦ refl]
+  := TODO ((t : Δ¹) → (f t = g t) [t ≡ 0₂ ↦ refl, t ≡ 1₂ ↦ refl])
 ```
 
 ```rzk
@@ -39,34 +54,6 @@ This is a literate `rzk` file:
   ( \ f → π₁ f)
   ( iso-eq A (π₁ is-rezk-A) a (u b))
   ( rev A (u b) a)
-
-#def is-full-emb-hom-eq-is-transposing-adj-is-rezk uses (adj is-rezk-A)
-  ( a : A)
-  ( b : B)
-  : is-full-emb (u b = a) (hom B (f a) b) (hom-eq-is-transposing-adj-is-rezk a b)
-  :=
-  is-full-emb-quadruple-comp funext
-  ( u b = a)
-  ( a = u b)
-  ( Iso A (π₁ is-rezk-A) a (u b))
-  ( hom A a (u b))
-  ( hom B (f a) b)
-  ( rev A (u b) a)
-  ( is-full-emb-rev extext A (u b) a)
-  ( iso-eq A (π₁ is-rezk-A) a (u b))
-  ( is-full-emb-is-equiv extext
-    ( a = u b)
-    ( Iso A (π₁ is-rezk-A) a (u b))
-    ( iso-eq A (π₁ is-rezk-A) a (u b))
-    ( π₂ is-rezk-A a (u b)))
-  ( \ f → π₁ f)
-  ( is-full-emb-isos TODO extext A (π₁ is-rezk-A) a (u b))
-  ( π₁ (inv-equiv (hom B (f a) b) (hom A a (u b)) (adj a b)))
-  ( is-full-emb-is-equiv extext
-    ( hom A a (u b))
-    ( hom B (f a) b)
-    ( π₁ (inv-equiv (hom B (f a) b) (hom A a (u b)) (adj a b)))
-    ( π₂ (inv-equiv (hom B (f a) b) (hom A a (u b)) (adj a b))))
 
 #def total-hom-iso
   ( a : A)
@@ -97,39 +84,50 @@ This is a literate `rzk` file:
   ( a : A)
   ( (x₁, x₂) (y₁, y₂) : (Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b)))
   ( g : hom B x₁ y₁)
-  ( γ : dhom B x₁ y₁ g (\ b → Iso A (π₁ is-rezk-A) a (u b)) x₂ y₂)
+  ( γ : dhom B x₁ y₁ g (\ b → hom A a (u b)) (π₁ x₂) (π₁ y₂))
   : dhom B x₁ y₁ g (\ b → Iso A (π₁ is-rezk-A) a (u b)) x₂ y₂
   :=
-  ( \ t → (π₁ (γ t)
+  ( \ t → (γ t
     , is-iso-arrow-nat-trans-is-iso-arrow-boundary
       ( A)
       ( is-rezk-A)
       ( a) a
       ( u x₁) (u y₁)
-      ( id-hom A a) ( \ s → u (g s))
-      ( \ s → π₁ (γ s))
+      ( id-hom A a)
+      ( \ s → u (g s))
+      ( γ)
       ( π₂ x₂)
       ( π₂ y₂)
       ( t)))
 
-#def dhom-dhom-htpy
+#def dhom-dhom-htpy uses (TODO is-iso-arrow-nat-trans-is-iso-arrow-boundary)
   ( a : A)
   ( (x₁, x₂) (y₁, y₂) : (Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b)))
   ( g : hom B x₁ y₁)
   ( γ : dhom B x₁ y₁ g (\ b → Iso A (π₁ is-rezk-A) a (u b)) x₂ y₂)
-  : dhom-dhom-htpy-elem a (x₁, x₂) (y₁, y₂) g γ = γ
+  : dhom-dhom-htpy-elem a (x₁, x₂) (y₁, y₂) g (\ t → π₁ (γ t)) = γ
   :=
   eq-dhom-extext extext B x₁ y₁ g
   ( \ b → Iso A (π₁ is-rezk-A) a (u b)) x₂ y₂
-  ( dhom-dhom-htpy-elem a (x₁, x₂) (y₁, y₂) g γ)
+  ( dhom-dhom-htpy-elem a (x₁, x₂) (y₁, y₂) g (\ t → π₁ (γ t)))
   ( γ)
-  ( \ t →
-    ( eq-iso-eq-base-is-segal extext A (π₁ is-rezk-A) a (u (g t))
-      ( dhom-dhom-htpy-elem a (x₁, x₂) (y₁, y₂) g γ t)
-      ( γ t)
-      ( refl_{ (π₁ (γ t)) : hom A a (u (g t))})))
+  ( \ t → path-of-pairs-pair-of-paths (hom A a (u (g t)))
+    ( is-iso-arrow A (π₁ is-rezk-A) a (u (g t)))
+    ( π₁ (γ t)) (π₁ (γ t)) refl
+    ( π₂ (dhom-dhom-htpy-elem a (x₁, x₂) (y₁, y₂) g (\ s → π₁ (γ s)) t)) (π₂ (γ t))
+    ( ctie
+      ( \ s → is-iso-arrow A (π₁ is-rezk-A) a (u (g s)) (π₁ (γ s)))
+      ( \ s → is-contr-is-inhabited-is-prop
+        ( is-iso-arrow A (π₁ is-rezk-A) a (u (g s)) (π₁ (γ s)))
+        ( is-prop-is-iso-arrow extext A (π₁ is-rezk-A) a (u (g s)) (π₁ (γ s)))
+        ( π₂ (γ s)))
+      ( π₂ x₂)
+      ( π₂ y₂)
+      ( \ s → π₂ (dhom-dhom-htpy-elem a (x₁, x₂) (y₁, y₂) g (\ s' → π₁ (γ s')) s))
+      ( \ s → π₂ (γ s))
+      ( t)))
 
-#def is-equiv-dhom-iso-dhom-hom
+#def is-equiv-dhom-iso-dhom-hom uses (is-iso-arrow-nat-trans-is-iso-arrow-boundary TODO extext)
   ( a : A)
   ( (x₁, x₂) (y₁, y₂) : (Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b)))
   ( g : hom B x₁ y₁)
@@ -142,50 +140,11 @@ This is a literate `rzk` file:
   ( dhom B x₁ y₁ g (\ b → Iso A (π₁ is-rezk-A) a (u b)) x₂ y₂)
   ( dhom B x₁ y₁ g (\ b → hom A a (u b)) (π₁ x₂) (π₁ y₂))
   ( \ γ t → π₁ (γ t))
-  ( \ γ t → (γ t
-    , is-iso-arrow-nat-trans-is-iso-arrow-boundary
-      ( A)
-      ( is-rezk-A)
-      ( a) a
-      ( u x₁) (u y₁)
-      ( id-hom A a) ( \ s → u (g s))
-      ( γ)
-      ( π₂ x₂)
-      ( π₂ y₂)
-      ( t))
-  , ( \ γ → eq-dhom-extext extext B x₁ y₁ g
-          ( \ b → Iso A (π₁ is-rezk-A) a (u b)) x₂ y₂
-          ( \ t →
-            ( π₁ (γ t)
-            , is-iso-arrow-nat-trans-is-iso-arrow-boundary
-              ( A)
-              ( is-rezk-A)
-              ( a) a
-              ( u x₁) (u y₁)
-              ( id-hom A a) ( \ s → u (g s))
-              ( \ s → π₁ (γ s))
-              ( π₂ x₂)
-              ( π₂ y₂)
-              ( t)))
-          ( \ t → γ t)
-          ( \ t →
-            ( eq-iso-eq-base-is-segal extext A (π₁ is-rezk-A) a (u (g t))
-              ( π₁ (γ t)
-                , is-iso-arrow-nat-trans-is-iso-arrow-boundary
-                  ( A)
-                  ( is-rezk-A)
-                  ( a) a
-                  ( u x₁) (u y₁)
-                  ( id-hom A a) (\ s → u (g s))
-                  ( \ s → π₁ (γ s))
-                  ( π₂ x₂)
-                  ( π₂ y₂)
-                  ( t))
-              ( γ t)
-              ( refl_{ (π₁ (γ t)) : hom A a (u (g t))})))
+  ( \ γ → dhom-dhom-htpy-elem a (x₁, x₂) (y₁, y₂) g γ
+  , ( \ γ → dhom-dhom-htpy a (x₁, x₂) (y₁, y₂) g γ
     , \ _ → refl))
 
-#def is-full-emb-total-hom-iso
+#def is-full-emb-total-hom-iso uses (is-iso-arrow-nat-trans-is-iso-arrow-boundary TODO extext)
   ( a : A)
   : is-full-emb (Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b)) (Σ (b : B) , hom A a (u b)) (total-hom-iso a)
   :=
@@ -195,33 +154,13 @@ This is a literate `rzk` file:
   ( ap-hom (Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b)) (Σ (b : B) , hom A a (u b)) (total-hom-iso a) x y)
   ( \ g t →
     ( π₁ (g t)
-    , (π₂ (g t)
-      , is-iso-arrow-nat-trans-is-iso-arrow-boundary
-        ( A)
-        ( is-rezk-A)
-        ( a) a
-        ( u (π₁ x)) (u (π₁ y))
-        ( id-hom A a) ( \ s → u (π₁ (g s)))
-        ( \ s → π₂ (g s))
-        ( π₂ (π₂ x))
-        ( π₂ (π₂ y))
-        ( t)))
+    , dhom-dhom-htpy-elem a x y (\ s → π₁ (g s)) (\ s → π₂ (g s)) t)
   , ( \ g → ap
       ( Σ (h : hom B (π₁ x) (π₁ y))
         , dhom B (π₁ x) (π₁ y) h (\ b → Iso A (π₁ is-rezk-A) a (u b)) (π₂ x) (π₂ y))
       ( hom (Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b)) x y)
-      ( \ t → π₁ (g t), \ t →
-        ( π₁ (π₂ (g t))
-        , is-iso-arrow-nat-trans-is-iso-arrow-boundary
-          ( A)
-          ( is-rezk-A)
-          ( a) a
-          ( u (π₁ x)) (u (π₁ y))
-          ( id-hom A a) ( \ s → u (π₁ (g s)))
-          ( \ s → π₁ (π₂ (g s)))
-          ( π₂ (π₂ x))
-          ( π₂ (π₂ y))
-          ( t)))
+      ( \ t → π₁ (g t)
+      , dhom-dhom-htpy-elem a x y (\ s → π₁ (g s)) (\ s → π₁ (π₂ (g s))))
       ( \ t → π₁ (g t), \ t → π₂ (g t))
       ( hom-sigma-dhom B (\ b → Iso A (π₁ is-rezk-A) a (u b)) x y)
       ( path-of-pairs-pair-of-paths
@@ -230,52 +169,10 @@ This is a literate `rzk` file:
         ( \ t → π₁ (g t))
         ( \ t → π₁ (g t))
         ( refl)
-        ( \ t →
-          ( π₁ (π₂ (g t))
-          , is-iso-arrow-nat-trans-is-iso-arrow-boundary
-            ( A)
-            ( is-rezk-A)
-            ( a) a
-            ( u (π₁ x)) (u (π₁ y))
-            ( id-hom A a) ( \ s → u (π₁ (g s)))
-            ( \ s → π₁ (π₂ (g s)))
-            ( π₂ (π₂ x))
-            ( π₂ (π₂ y))
-            ( t)))
+        ( dhom-dhom-htpy-elem a x y (\ s → π₁ (g s)) (\ s → π₁ (π₂ (g s))))
         ( \ t → π₂ (g t))
-        ( eq-dhom-extext TODO B (π₁ x) (π₁ y) (\ t → π₁ (g t))
-          ( \ b → Iso A (π₁ is-rezk-A) a (u b))
-          ( π₂ x) (π₂ y)
-          ( \ t →
-            ( π₁ (π₂ (g t))
-            , is-iso-arrow-nat-trans-is-iso-arrow-boundary
-              ( A)
-              ( is-rezk-A)
-              ( a) a
-              ( u (π₁ x)) (u (π₁ y))
-              ( id-hom A a) ( \ s → u (π₁ (g s)))
-              ( \ s → π₁ (π₂ (g s)))
-              ( π₂ (π₂ x))
-              ( π₂ (π₂ y))
-              ( t)))
-          ( \ t → π₂ (g t))
-          ( \ t →
-            ( eq-iso-eq-base-is-segal extext A (π₁ is-rezk-A) a (u (π₁ (g t)))
-              ( π₁ (π₂ (g t))
-                , is-iso-arrow-nat-trans-is-iso-arrow-boundary
-                  ( A)
-                  ( is-rezk-A)
-                  ( a) a
-                  ( u (π₁ x)) (u (π₁ y))
-                  ( id-hom A a) ( \ s → u (π₁ (g s)))
-                  ( \ s → π₁ (π₂ (g s)))
-                  ( π₂ (π₂ x))
-                  ( π₂ (π₂ y))
-                  ( t))
-              ( π₂ (g t))
-              ( refl)))))
-    , \ g2 → {-F (G g) = g-} refl
-    ))
+        ( dhom-dhom-htpy a x y (\ s → π₁ (g s)) (\ s → π₂ (g s))))
+    , \ g2 → refl))
 
 #def sigma-hom-fib-is-transposing-adj-is-rezk uses (adj is-rezk-A)
   ( a : A)
@@ -283,7 +180,7 @@ This is a literate `rzk` file:
   := \ (b , p) → (b , hom-eq-is-transposing-adj-is-rezk a b p)
 
 #def is-full-emb-sigma-hom-fib-is-transposing-adj-is-rezk
-  uses (adj is-rezk-A funext extext)
+  uses (adj is-rezk-A funext extext is-iso-arrow-nat-trans-is-iso-arrow-boundary TODO)
   ( a : A)
   : is-full-emb (fib B A u a) (Σ (b : B) , hom B (f a) b)
   ( sigma-hom-fib-is-transposing-adj-is-rezk a)
@@ -295,33 +192,41 @@ This is a literate `rzk` file:
   ( Σ (b : B) , hom A a (u b))
   ( Σ (b : B) , hom B (f a) b)
   ( \ (b, p) → (b, rev A (u b) a p))
-  ( is-full-emb-rev extext A (u b) a)
+  ( is-full-emb-is-equiv extext
+    ( fib B A u a)
+    ( rev-fib B A u a)
+    ( \ (b, p) → (b, rev A (u b) a p))
+    ( is-equiv-total-is-equiv-fiberwise
+      ( B)
+      ( \ b → u b = a)
+      ( \ b → a = u b)
+      ( \ b → rev A (u b) a)
+      ( \ b → is-equiv-rev A (u b) a)))
   ( \ (b, p) → (b, iso-eq A (π₁ is-rezk-A) a (u b) p))
   ( is-full-emb-is-equiv extext
     ( rev-fib B A u a)
     ( Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b))
     ( \ (b, p) → (b, iso-eq A (π₁ is-rezk-A) a (u b) p))
-    ( π₂ is-rezk-A a (u b)))
+    ( is-equiv-total-is-equiv-fiberwise
+      ( B)
+      ( \ b → a = u b)
+      ( \ b → Iso A (π₁ is-rezk-A) a (u b))
+      ( \ b → iso-eq A (π₁ is-rezk-A) a (u b))
+      ( \ b → π₂ is-rezk-A a (u b))))
   ( total-hom-iso a)
   ( is-full-emb-total-hom-iso a)
   ( \ (b, g) → (b, π₁ (inv-equiv (hom B (f a) b) (hom A a (u b)) (adj a b)) g))
   ( is-full-emb-is-equiv extext
-    ( hom A a (u b))
-    ( hom B (f a) b)
-    ( π₁ (inv-equiv (hom B (f a) b) (hom A a (u b)) (adj a b)))
-    ( π₂ (inv-equiv (hom B (f a) b) (hom A a (u b)) (adj a b))))
+    ( Σ (b : B) , hom A a (u b))
+    ( Σ (b : B) , hom B (f a) b)
+    ( \ (b, g) → (b, π₁ (inv-equiv (hom B (f a) b) (hom A a (u b)) (adj a b)) g))
+    ( is-equiv-total-is-equiv-fiberwise
+      ( B)
+      ( \ b → hom A a (u b))
+      ( \ b → hom B (f a) b)
+      ( \ b → π₁ (inv-equiv (hom B (f a) b) (hom A a (u b)) (adj a b)))
+      ( \ b → π₂ (inv-equiv (hom B (f a) b) (hom A a (u b)) (adj a b)))))
 
-{-
-#def is-full-emb-sigma-hom-fib-is-transposing-adj-is-rezk
-  uses (adj is-rezk-A funext extext)
-  ( a : A)
-  : is-full-emb (fib B A u a) (Σ (b : B) , hom B (f a) b)
-  ( sigma-hom-fib-is-transposing-adj-is-rezk a)
-  :=
-  is-full-emb-total-type-is-full-emb-fiber TODO B (\ b → u b = a) (\ b → hom B (f a) b)
-  ( hom-eq-is-transposing-adj-is-rezk a)
-  ( is-full-emb-hom-eq-is-transposing-adj-is-rezk a)
-  -}
 
 ```
 
@@ -474,7 +379,7 @@ This is a literate `rzk` file:
   ( tmpp-eq a)
 
 #def is-initial-section-is-transposing-LARI-adj
-  uses (is-LARI-f-u adj is-rezk-A f funext extext TODO)
+  uses (is-LARI-f-u adj is-rezk-A f funext extext TODO is-iso-arrow-nat-trans-is-iso-arrow-boundary)
   : is-initial-section A (fib B A u) section-is-transposing-LARI-adj
   :=
   \ a → is-initial-is-full-emb-is-initial (fib B A u a) (Σ (b : B) , hom B (f a) b)

@@ -395,45 +395,6 @@ The predicate `#!rzk is-iso-arrow` is a proposition.
           ( second (second is-isof)))))
 ```
 
-Therefore we can give a simplification of the equality type of `#!rzk Iso`:
-
-```rzk
-#def eq-iso-eq-base-is-segal uses (extext)
-  ( A : U)
-  ( is-segal-A : is-segal A)
-  ( x y : A)
-  ( (f, is-iso-f) : Iso A is-segal-A x y)
-  ( (g, is-iso-g) : Iso A is-segal-A x y)
-  ( p : f = g)
-  : (f, is-iso-f) =_{Iso A is-segal-A x y} (g, is-iso-g)
-  :=
-  path-of-pairs-pair-of-paths (hom A x y) (is-iso-arrow A is-segal-A x y)
-  ( f) g p
-  ( is-iso-f) is-iso-g
-  ( all-elements-equal-is-prop (is-iso-arrow A is-segal-A x y g)
-    ( is-prop-is-iso-arrow A is-segal-A x y g)
-    ( transport (hom A x y) (is-iso-arrow A is-segal-A x y) f g p is-iso-f)
-    ( is-iso-g))
-```
-
-```rzk
-#def eq-iso-eq-base-is-segal' uses (extext)
-  ( A : U)
-  ( is-segal-A : is-segal A)
-  ( x y : A)
-  ( f : hom A x y)
-  ( is-iso-f is-iso-f' : is-iso-arrow A is-segal-A x y f)
-  : (f, is-iso-f) =_{Iso A is-segal-A x y} (f, is-iso-f')
-  :=
-  path-of-pairs-pair-of-paths (hom A x y) (is-iso-arrow A is-segal-A x y)
-  ( f) f refl
-  ( is-iso-f) is-iso-f'
-  ( all-elements-equal-is-prop (is-iso-arrow A is-segal-A x y f)
-    ( is-prop-is-iso-arrow A is-segal-A x y f)
-    ( is-iso-f)
-    ( is-iso-f'))
-```
-
 ```rzk
 #def is-emb-isos uses (extext)
   ( A : U)
