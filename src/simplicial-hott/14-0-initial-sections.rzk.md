@@ -6,8 +6,8 @@ This is a literate `rzk` file:
 #lang rzk-1
 ```
 
-```rzkk
-#assume funext : FunExt
+```rzk
+-- #assume funext : FunExt
 #assume extext : ExtExt
 ```
 
@@ -18,6 +18,20 @@ Not all proofs are done in this file:
 ```
 
 ## find a place
+
+```rzk
+#def dhom-ext-is-locally-contr-extext
+  ( A : Δ¹ → U)
+  ( is-contr-A : (t : Δ¹) → is-contr (A t))
+  ( x : A 0₂)
+  ( y : A 1₂)
+  : (t : Δ¹) → A t [t ≡ 0₂ ↦ x, t ≡ 1₂ ↦ y]
+  :=
+  center-contraction
+  ( (t : Δ¹) → A t [t ≡ 0₂ ↦ x, t ≡ 1₂ ↦ y])
+  ( weakextext-extext extext 2 Δ¹ ∂Δ¹ A is-contr-A
+    ( \ t → recOR(t ≡ 0₂ ↦ x, t ≡ 1₂ ↦ y)))
+```
 
 ```rzk
 #def is-iso-arrow-nat-trans-is-iso-arrow-boundary-type
@@ -33,6 +47,31 @@ Not all proofs are done in this file:
   → ( is-iso-α-1 : is-iso-arrow A (π₁ is-rezk-A) y₁ y₂ (α 1₂))
   → ( ( t : Δ¹) → is-iso-arrow A (π₁ is-rezk-A) (f t) (g t) (α t)
     [t ≡ 0₂ ↦ is-iso-α-0, t ≡ 1₂ ↦ is-iso-α-1])
+
+{-
+#def is-iso-arrow-nat-trans-is-iso-arrow-boundary
+  ( A : U)
+  ( is-segal-A : is-segal A)
+  ( x₁ y₁ : A)
+  ( x₂ y₂ : A)
+  ( f : hom A x₁ y₁)
+  ( g : hom A x₂ y₂)
+  ( α : (t : Δ¹) → hom A (f t) (g t))
+  ( has-iso-arrows-α : (t : Δ¹) → is-iso-arrow A is-segal-A (f t) (g t) (α t))
+  ( is-iso-α-0 : is-iso-arrow A is-segal-A x₁ x₂ (α 0₂))
+  ( is-iso-α-1 : is-iso-arrow A is-segal-A y₁ y₂ (α 1₂))
+  : ( t : Δ¹) → is-iso-arrow A is-segal-A (f t) (g t) (α t)
+    [t ≡ 0₂ ↦ is-iso-α-0, t ≡ 1₂ ↦ is-iso-α-1]
+  :=
+  dhom-ext-is-locally-contr-extext
+  ( \ t → is-iso-arrow A is-segal-A (f t) (g t) (α t))
+  ( \ t → is-contr-is-inhabited-is-prop
+    ( is-iso-arrow A is-segal-A (f t) (g t) (α t))
+    ( is-prop-is-iso-arrow extext A is-segal-A (f t) (g t) (α t))
+    ( has-iso-arrows-α t))
+  ( is-iso-α-0)
+  ( is-iso-α-1)
+-}
 
 -- #assume is-iso-arrow-nat-trans-is-iso-arrow-boundary : is-iso-arrow-nat-trans-is-iso-arrow-boundary-type
 ```
