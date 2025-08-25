@@ -6,145 +6,258 @@ This is a literate `rzk` file:
 #lang rzk-1
 ```
 
-```rzk
-#assume funext : FunExt
-#assume extext : ExtExt
-```
-
-Not all proofs are done in this file:
-
-```rzk
-#assume TODO : (A : U) → A
-```
-
 ## Proof
 
 The second one requires a bit more work:
 
-```rzkk
-#section is-dhom-final-section-is-final-section
+```rzk
+#section is-dhom-initial-section-is-initial-section
 
-#variable is-segal-A : is-segal A
-#variable is-dsegal-B : is-dsegal A is-segal-A B
+#variable A : U
+#variable B : A → U
+#variable is-inner-fib-type-fam-B : is-inner-fib-type-fam A B
 #variable s : (a : A) → B a
-#variable is-final-section-s : is-final-section s
+#variable is-initial-section-s : is-initial-section A B s
 
-#def center-dhom-temp
-  ( a a' : A)
-  ( f : hom A a a')
-  ( b : B a)
-  : dhom A a a' f B b (s a')
+#def ctr
+  (a : A)
+  (b : B a)
+  : hom (B a) (s a) b
+  := center-contraction (hom (B a) (s a) b) (is-initial-section-s a b)
+
+#def fff uses (is-initial-section-s)
+  ( x y : A)
+  ( Y : B y)
+  ( f : hom A x y)
+  : ((t₁, t₂) : Λ²₁) → B (f t₁)
+  := \ (t₁, t₂) → recOR(t₂ ≡ 0₂ ↦ s (f t₁), t₁ ≡ 1₂ ↦ ctr y Y t₂)
+
+#def C uses (is-initial-section-s s)
+  ( x y : A)
+  ( Y : B y)
+  ( f : hom A x y)
+  : (t : Δ²) → B (f (π₁ t)) [Λ²₁ t ↦ fff x y Y f t]
   :=
-  transport
-  ( hom A a a')
-  ( \ f' → dhom A a a' f' B b (s a'))
-  ( comp-is-segal A is-segal-A a a a' (id-hom A a) f)
-  ( f)
-  ( id-comp-is-segal A is-segal-A a a' f)
-  ( dcomp-is-dsegal A is-segal-A B is-dsegal-B a a a'
-    ( id-hom A a)
-    ( f)
-    ( b)
-    ( s a)
-    ( s a')
-    ( dhom-hom A a B b (s a)
-      ( center-contraction (hom (B a) b (s a)) (is-final-section-s a b)))
-    ( \ t → s (f t)))
+  lift-is-inner-fib-type-fam A B is-inner-fib-type-fam-B
+  ( \ (t : Δ²) → f (π₁ t))
+  ( fff x y Y f)
 
-#def diag-dhom-temp
-  ( a a' : A)
-  ( f : hom A a a')
-  ( b : B a)
-  ( g : dhom A a a' f B b (s a'))
-  : dhom A a a' f B b (s a')
+#def c uses (is-initial-section-s s is-inner-fib-type-fam-B)
+  ( x y : A)
+  ( Y : B y)
+  ( f : hom A x y)
+  : dhom A x y f B (s x) Y
+  := \ t → C x y Y f (t, t)
+
+#def F-square
+  ( x y : A)
+  ( Y : B y)
+  ( f : hom A x y)
+  ( F : dhom A x y f B (s x) Y)
+  : ((t₁, t₂) : 2 × 2) → B (f t₁) [t₂ ≡ 0₂ ↦ s (f t₁), t₂ ≡ 1₂ ↦ F (t₁)]
   :=
-  ( \ t → center-contraction
-    ( hom (B (f t)) (g t) (s (f t)))
-    ( is-final-section-s (f t) (g t))
-    ( t))
-
-{-
-
-  b  -- g -- s a'
-  |           |
- ctr        id-hom
-  |           |
- s a -- _ -- s a'
-        ^ s.lift f
-
--}
-
-#def dhom2-center-diag-temp
-  ( a a' : A)
-  ( f : hom A a a')
-  ( b : B a)
-  ( g : dhom A a a' f B b (s a'))
-  : dhom2
-    ( A) a a' a' f (id-hom A a') f (comp-id-witness A a a' f)
-    ( B) b (s a') (s a')
-    ( g)
-    ( id-dhom A a' B (s a'))
-    ( diag-dhom-temp a a' f b g)
-  :=
-  \ (t₁ , t₂) → center-contraction
-  ( hom (B (f t₁)) (g t₁) (s (f t₁)))
-  ( is-final-section-s (f t₁) (g t₁))
+  \ (t₁, t₂) → center-contraction
+  ( hom (B (f t₁)) (s (f t₁)) (F t₁))
+  ( is-initial-section-s (f t₁) (F t₁))
   ( t₂)
 
-#def dhom2-g-diag-temp
-  ( a a' : A)
-  ( f : hom A a a')
-  ( b : B a)
-  ( g : dhom A a a' f B b (s a'))
-  : dhom2
-    ( A) a a a' (id-hom A a) f f (id-comp-witness A a a' f)
-    ( B) b b (s a')
-    ( id-dhom A a B b)
-    ( g)
-    ( diag-dhom-temp a a' f b g)
-  :=
-  \ (t₁ , t₂) → center-contraction
-  ( hom (B (f t₂)) (g t₂) (s (f t₂)))
-  ( is-final-section-s (f t₂) (g t₂))
-  ( t₁)
+#def diag-F-square uses (is-initial-section-s)
+  ( x y : A)
+  ( Y : B y)
+  ( f : hom A x y)
+  ( F : dhom A x y f B (s x) Y)
+  : dhom A x y f B (s x) Y
+  := \ t → F-square x y Y f F (t, t)
 
-#def is-contr-dhom-temp
-  ( a a' : A)
-  ( f : hom A a a')
-  ( b : B a)
-  : is-contr (dhom A a a' f B b (s a'))
-  :=
-  ( center-dhom-temp a a' f b
-  , \ g → concat
-    ( dhom A a a' f B b (s a'))
-    ( center-dhom-temp a a' f b)
-    ( diag-dhom-temp a a' f b g)
-    ( g)
-    ( eq-homotopy-dhom2-is-dsegal TODO A is-segal-A B is-dsegal-B a a' f
-      ( b) (s a')
-      ( center-dhom-temp a a' f b)
-      ( diag-dhom-temp a a' f b g)
-      ( dhom2-center-diag-temp a a' f b g))
-    ( rev
-      ( dhom A a a' f B b (s a'))
-      ( g)
-      ( \ t → center-contraction
-        ( hom (B (f t)) (g t) (s (f t)))
-        ( is-final-section-s (f t) (g t))
-        ( t))
-      ( eq-homotopy-dhom2-is-dsegal TODO A is-segal-A B is-dsegal-B a a' f
-        ( b) (s a')
-        ( g)
-        ( diag-dhom-temp a a' f b g)
-        ( dhom2-g-diag-temp a a' f b g))))
+#def FFF uses (is-initial-section-s)
+  ( x y : A)
+  ( Y : B y)
+  ( f : hom A x y)
+  ( F : dhom A x y f B (s x) Y)
+  : ((t₁, t₂) : Λ²₁) → B (f t₂)
+  := \ (t₁, t₂) → recOR(t₂ ≡ 0₂ ↦ ctr x (s x) t₁, t₁ ≡ 1₂ ↦ F t₂)
 
-#def is-dhom-final-section-is-final-section
-  uses (B A TODO is-dsegal-B is-segal-A is-final-section-s)
-  : dhom-final-section
-  :=
-  ( s
-  , \ (a : A) (a' : A) (b : B a) (f : hom A a a') →
-    is-contr-dhom-temp a a' f b)
+#def lower-triag-F uses (is-initial-section-s)
+  ( x y : A)
+  ( Y : B y)
+  ( f : hom A x y)
+  ( F : dhom A x y f B (s x) Y)
+  : (t : Δ²) → B (f (π₂ t)) [Λ²₁ t ↦ FFF x y Y f F t]
+  := \ (t₁, t₂) → F-square x y Y f F (t₂, t₁)
 
-#end is-dhom-final-section-is-final-section
+#def C' uses (is-initial-section-s s)
+  ( x y : A)
+  ( Y : B y)
+  ( f : hom A x y)
+  ( F : dhom A x y f B (s x) Y)
+  : (t : Δ²) → B (f (π₂ t)) [Λ²₁ t ↦ FFF x y Y f F t]
+  :=
+  lift-is-inner-fib-type-fam A B is-inner-fib-type-fam-B
+  ( \ (t : Δ²) → f (π₂ t))
+  ( FFF x y Y f F)
+
+#def xgcstie
+  ( x y : A)
+  ( Y : B y)
+  ( f : hom A x y)
+  ( F : dhom A x y f B (s x) Y)
+  : (t : Δ²) → B (f (π₂ t)) [Λ²₁ t ↦ FFF x y Y f F t]
+  :=
+  transport
+  ( hom (B x) (s x) (s x))
+  ( \ g → ((t : Δ²) → B (f (π₂ t)) [Λ²₁ t ↦ recOR(π₂ t ≡ 0₂ ↦ g (π₁ t), π₁ t ≡ 1₂ ↦ F (π₂ t))]))
+  ( id-hom (B x) (s x))
+  ( ctr x (s x))
+  ( rev (hom (B x) (s x) (s x))
+    ( ctr x (s x))
+    ( id-hom (B x) (s x))
+    ( homotopy-contraction (hom (B x) (s x) (s x))
+      ( is-initial-section-s x (s x))
+      ( id-hom (B x) (s x))))
+  ( \ (t₁, t₂) → F t₂)
+
+#def F-eq-diag-xgcstie uses (is-initial-section-s)
+  ( x y : A)
+  ( Y : B y)
+  ( f : hom A x y)
+  ( F : dhom A x y f B (s x) Y)
+  : F =_{dhom A x y f B (s x) Y} (\ (t : Δ¹) → xgcstie x y Y f F (t, t))
+  :=
+  ap
+  ( Σ (g : hom (B x) (s x) (s x))
+    , ( (t : Δ²) → B (f (π₂ t))
+        [ Λ²₁ t ↦ recOR(π₂ t ≡ 0₂ ↦ g (π₁ t), π₁ t ≡ 1₂ ↦ F (π₂ t))]))
+  ( dhom A x y f B (s x) Y)
+  ( id-hom (B x) (s x), \ (t₁, t₂) → F t₂)
+  ( ctr x (s x), xgcstie x y Y f F)
+  ( \ (g, D) t → D (t, t))
+  ( transport-lift
+    ( hom (B x) (s x) (s x))
+    ( \ g → ((t : Δ²) → B (f (π₂ t)) [Λ²₁ t ↦ recOR(π₂ t ≡ 0₂ ↦ g (π₁ t), π₁ t ≡ 1₂ ↦ F (π₂ t))]))
+    ( id-hom (B x) (s x))
+    ( ctr x (s x))
+    ( rev (hom (B x) (s x) (s x))
+      ( ctr x (s x))
+      ( id-hom (B x) (s x))
+      ( homotopy-contraction (hom (B x) (s x) (s x))
+        ( is-initial-section-s x (s x))
+        ( id-hom (B x) (s x))))
+    ( \ (t₁, t₂) → F t₂))
+
+#def mtpie'' uses (is-initial-section-s)
+  ( x y : A)
+  ( Y : B y)
+  ( f : hom A x y)
+  ( F : dhom A x y f B (s x) Y)
+  : C' x y Y f F = xgcstie x y Y f F
+  :=
+  is-unique-lift-is-inner-fib-type-fam A B is-inner-fib-type-fam-B
+  ( \ (t : Δ²) → f (π₂ t))
+  ( FFF x y Y f F)
+  ( xgcstie x y Y f F)
+
+#def mtpie' uses (is-initial-section-s)
+  ( x y : A)
+  ( Y : B y)
+  ( f : hom A x y)
+  ( F : dhom A x y f B (s x) Y)
+  : C' x y Y f F = lower-triag-F x y Y f F
+  :=
+  is-unique-lift-is-inner-fib-type-fam A B is-inner-fib-type-fam-B
+  ( \ (t : Δ²) → f (π₂ t))
+  ( FFF x y Y f F)
+  ( lower-triag-F x y Y f F)
+
+#def diag-F-square-eq-F
+  uses (is-initial-section-s s is-inner-fib-type-fam-B)
+  ( x y : A)
+  ( Y : B y)
+  ( f : hom A x y)
+  ( F : dhom A x y f B (s x) Y)
+  : diag-F-square x y Y f F = F
+  :=
+  concat
+  ( dhom A x y f B (s x) Y)
+  ( diag-F-square x y Y f F)
+  ( \ t → xgcstie x y Y f F (t, t))
+  ( F)
+  ( ap
+    ( (t : Δ²) → B (f (π₂ t)) [Λ²₁ t ↦ FFF x y Y f F t])
+    ( dhom A x y f B (s x) Y)
+    ( lower-triag-F x y Y f F)
+    ( xgcstie x y Y f F)
+    ( \ D t → D (t, t))
+    ( concat
+      ( (t : Δ²) → B (f (π₂ t)) [Λ²₁ t ↦ FFF x y Y f F t])
+      ( lower-triag-F x y Y f F)
+      ( C' x y Y f F)
+      ( xgcstie x y Y f F)
+      ( rev
+        ( (t : Δ²) → B (f (π₂ t)) [Λ²₁ t ↦ FFF x y Y f F t])
+        ( C' x y Y f F)
+        ( lower-triag-F x y Y f F)
+        (mtpie' x y Y f F))
+      ( mtpie'' x y Y f F)))
+  ( rev
+    ( dhom A x y f B (s x) Y)
+    ( F)
+    ( \ t → xgcstie x y Y f F (t, t))
+    ( F-eq-diag-xgcstie x y Y f F))
+
+#def upper-triag-F uses (is-initial-section-s)
+  ( x y : A)
+  ( Y : B y)
+  ( f : hom A x y)
+  ( F : dhom A x y f B (s x) Y)
+  : (t : Δ²) → B (f (π₁ t)) [Λ²₁ t ↦ fff x y Y f t]
+  := \ t → F-square x y Y f F t
+
+#def mtpie uses (is-initial-section-s)
+  ( x y : A)
+  ( Y : B y)
+  ( f : hom A x y)
+  ( F : dhom A x y f B (s x) Y)
+  : C x y Y f = upper-triag-F x y Y f F
+  :=
+  is-unique-lift-is-inner-fib-type-fam A B is-inner-fib-type-fam-B
+  ( \ (t : Δ²) → f (π₁ t))
+  ( fff x y Y f)
+  ( upper-triag-F x y Y f F)
+
+#def c-eq-diag-F-square uses (is-initial-section-s is-inner-fib-type-fam-B)
+  ( x y : A)
+  ( Y : B y)
+  ( f : hom A x y)
+  ( F : dhom A x y f B (s x) Y)
+  : c x y Y f = diag-F-square x y Y f F
+  :=
+  ap
+  ( (t : Δ²) → B (f (π₁ t)) [Λ²₁ t ↦ fff x y Y f t])
+  ( dhom A x y f B (s x) Y)
+  ( C x y Y f)
+  ( upper-triag-F x y Y f F)
+  ( \ D t → D (t, t))
+  ( mtpie x y Y f F)
+
+#def tmp uses (is-initial-section-s s is-inner-fib-type-fam-B)
+  ( x y : A)
+  ( Y : B y)
+  ( f : hom A x y)
+  : is-contr (dhom A x y f B (s x) Y)
+  :=
+  ( c x y Y f
+  , \ F → concat
+    ( dhom A x y f B (s x) Y)
+    ( c x y Y f)
+    ( diag-F-square x y Y f F)
+    ( F)
+    ( c-eq-diag-F-square x y Y f F)
+    ( diag-F-square-eq-F x y Y f F))
+
+#def is-dhom-initial-section-is-initial-section
+  uses (is-initial-section-s s is-inner-fib-type-fam-B)
+  : is-dhom-initial-section A B s
+  := tmp
+
+#end is-dhom-initial-section-is-initial-section
 ```

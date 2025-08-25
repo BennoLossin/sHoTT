@@ -6,6 +6,12 @@ This is a literate `rzk` file:
 #lang rzk-1
 ```
 
+```rzk
+#assume funext : FunExt
+#assume extext : ExtExt
+#assume TODO : (A : U) → A
+#assume is-iso-arrow-nat-trans-is-iso-arrow-boundary : is-iso-arrow-nat-trans-is-iso-arrow-boundary-type
+```
 
 ```rzk
 #section is-initial-section-is-transposing-LARI-adj-is-rezk
@@ -78,7 +84,7 @@ This is a literate `rzk` file:
   , ( π₂ (g t)
     , is-iso-arrow-nat-trans-is-iso-arrow-boundary
       ( A)
-      ( π₁ is-rezk-A)
+      ( is-rezk-A)
       ( a) a
       ( u (π₁ x)) (u (π₁ y))
       ( id-hom A a) ( \ s → u (π₁ (g s)))
@@ -97,7 +103,7 @@ This is a literate `rzk` file:
   ( \ t → (π₁ (γ t)
     , is-iso-arrow-nat-trans-is-iso-arrow-boundary
       ( A)
-      ( π₁ is-rezk-A)
+      ( is-rezk-A)
       ( a) a
       ( u x₁) (u y₁)
       ( id-hom A a) ( \ s → u (g s))
@@ -139,7 +145,7 @@ This is a literate `rzk` file:
   ( \ γ t → (γ t
     , is-iso-arrow-nat-trans-is-iso-arrow-boundary
       ( A)
-      ( π₁ is-rezk-A)
+      ( is-rezk-A)
       ( a) a
       ( u x₁) (u y₁)
       ( id-hom A a) ( \ s → u (g s))
@@ -153,7 +159,7 @@ This is a literate `rzk` file:
             ( π₁ (γ t)
             , is-iso-arrow-nat-trans-is-iso-arrow-boundary
               ( A)
-              ( π₁ is-rezk-A)
+              ( is-rezk-A)
               ( a) a
               ( u x₁) (u y₁)
               ( id-hom A a) ( \ s → u (g s))
@@ -167,7 +173,7 @@ This is a literate `rzk` file:
               ( π₁ (γ t)
                 , is-iso-arrow-nat-trans-is-iso-arrow-boundary
                   ( A)
-                  ( π₁ is-rezk-A)
+                  ( is-rezk-A)
                   ( a) a
                   ( u x₁) (u y₁)
                   ( id-hom A a) (\ s → u (g s))
@@ -192,7 +198,7 @@ This is a literate `rzk` file:
     , (π₂ (g t)
       , is-iso-arrow-nat-trans-is-iso-arrow-boundary
         ( A)
-        ( π₁ is-rezk-A)
+        ( is-rezk-A)
         ( a) a
         ( u (π₁ x)) (u (π₁ y))
         ( id-hom A a) ( \ s → u (π₁ (g s)))
@@ -208,7 +214,7 @@ This is a literate `rzk` file:
         ( π₁ (π₂ (g t))
         , is-iso-arrow-nat-trans-is-iso-arrow-boundary
           ( A)
-          ( π₁ is-rezk-A)
+          ( is-rezk-A)
           ( a) a
           ( u (π₁ x)) (u (π₁ y))
           ( id-hom A a) ( \ s → u (π₁ (g s)))
@@ -228,7 +234,7 @@ This is a literate `rzk` file:
           ( π₁ (π₂ (g t))
           , is-iso-arrow-nat-trans-is-iso-arrow-boundary
             ( A)
-            ( π₁ is-rezk-A)
+            ( is-rezk-A)
             ( a) a
             ( u (π₁ x)) (u (π₁ y))
             ( id-hom A a) ( \ s → u (π₁ (g s)))
@@ -244,7 +250,7 @@ This is a literate `rzk` file:
             ( π₁ (π₂ (g t))
             , is-iso-arrow-nat-trans-is-iso-arrow-boundary
               ( A)
-              ( π₁ is-rezk-A)
+              ( is-rezk-A)
               ( a) a
               ( u (π₁ x)) (u (π₁ y))
               ( id-hom A a) ( \ s → u (π₁ (g s)))
@@ -258,7 +264,7 @@ This is a literate `rzk` file:
               ( π₁ (π₂ (g t))
                 , is-iso-arrow-nat-trans-is-iso-arrow-boundary
                   ( A)
-                  ( π₁ is-rezk-A)
+                  ( is-rezk-A)
                   ( a) a
                   ( u (π₁ x)) (u (π₁ y))
                   ( id-hom A a) ( \ s → u (π₁ (g s)))
