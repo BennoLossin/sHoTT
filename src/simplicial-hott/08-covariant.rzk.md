@@ -123,6 +123,26 @@ triangle.
       ]
 ```
 
+Given extext, two dhoms are equal if they are equal for every `t`:
+
+```rzk
+#def eq-dhom-extext uses (extext)
+  ( A : U)
+  ( x y : A)
+  ( F : hom A x y)
+  ( C : A → U)
+  ( u : C x)
+  ( v : C y)
+  ( f g : dhom A x y F C u v)
+  ( p : (t : Δ¹) → (f t = g t) [t ≡ 0₂ ↦ refl, t ≡ 1₂ ↦ refl])
+  : f = g
+  :=
+  naiveextext-extext extext 2 Δ¹ ∂Δ¹ (\ t → C (F t))
+  ( \ t → recOR(t ≡ 0₂ ↦ u, t ≡ 1₂ ↦ v))
+  ( f) g
+  ( p)
+```
+
 ## Hom in sigma types
 
 The `hom` in a sigma type is equivalent to the sigma type of a hom in the index

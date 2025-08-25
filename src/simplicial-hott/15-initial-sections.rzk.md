@@ -17,6 +17,26 @@ Not all proofs are done in this file:
 #assume TODO : (A : U) → A
 ```
 
+## find a place
+
+```rzk
+#def is-iso-arrow-nat-trans-is-iso-arrow-boundary-type
+  : U
+  :=
+    ( A : U)
+  → ( is-segal-A : is-segal A)
+  → ( x₁ : A) → (y₁ : A)
+  → ( x₂ : A) → (y₂ : A)
+  → ( f : hom A x₁ y₁) → ( g : hom A x₂ y₂)
+  → ( α : (t : Δ¹) → hom A (f t) (g t))
+  → ( is-iso-α-0 : is-iso-arrow A is-segal-A x₁ x₂ (α 0₂))
+  → ( is-iso-α-1 : is-iso-arrow A is-segal-A y₁ y₂ (α 1₂))
+  → ( ( t : Δ¹) → is-iso-arrow A is-segal-A (f t) (g t) (α t)
+    [t ≡ 0₂ ↦ is-iso-α-0, t ≡ 1₂ ↦ is-iso-α-1])
+
+#assume is-iso-arrow-nat-trans-is-iso-arrow-boundary : is-iso-arrow-nat-trans-is-iso-arrow-boundary-type
+```
+
 ## Definition
 
 ```rzk
@@ -296,7 +316,214 @@ show that it is a transposing adjunction:
     ( π₁ (inv-equiv (hom B (f a) b) (hom A a (u b)) (adj a b)))
     ( π₂ (inv-equiv (hom B (f a) b) (hom A a (u b)) (adj a b))))
 
+#def total-hom-iso
+  ( a : A)
+  ( (b, g) : Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b))
+  : Σ (b : B) , hom A a (u b)
+  := (b, π₁ g)
 
+#def total-hom-iso-ap-hom-inv
+  ( a : A)
+  ( x y : (Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b)))
+  ( g : hom (Σ (b : B) , hom A a (u b)) (total-hom-iso a x) (total-hom-iso a y))
+  : hom (Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b)) x y
+  :=
+  \ t → ( π₁ (g t)
+  , ( π₂ (g t)
+    , is-iso-arrow-nat-trans-is-iso-arrow-boundary
+      ( A)
+      ( π₁ is-rezk-A)
+      ( a) a
+      ( u (π₁ x)) (u (π₁ y))
+      ( id-hom A a) ( \ s → u (π₁ (g s)))
+      ( \ s → π₂ (g s))
+      ( π₂ (π₂ x))
+      ( π₂ (π₂ y))
+      ( t)))
+
+#def dhom-dhom-htpy-elem
+  ( a : A)
+  ( (x₁, x₂) (y₁, y₂) : (Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b)))
+  ( g : hom B x₁ y₁)
+  ( γ : dhom B x₁ y₁ g (\ b → Iso A (π₁ is-rezk-A) a (u b)) x₂ y₂)
+  : dhom B x₁ y₁ g (\ b → Iso A (π₁ is-rezk-A) a (u b)) x₂ y₂
+  :=
+  ( \ t → (π₁ (γ t)
+    , is-iso-arrow-nat-trans-is-iso-arrow-boundary
+      ( A)
+      ( π₁ is-rezk-A)
+      ( a) a
+      ( u x₁) (u y₁)
+      ( id-hom A a) ( \ s → u (g s))
+      ( \ s → π₁ (γ s))
+      ( π₂ x₂)
+      ( π₂ y₂)
+      ( t)))
+
+#def dhom-dhom-htpy
+  ( a : A)
+  ( (x₁, x₂) (y₁, y₂) : (Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b)))
+  ( g : hom B x₁ y₁)
+  ( γ : dhom B x₁ y₁ g (\ b → Iso A (π₁ is-rezk-A) a (u b)) x₂ y₂)
+  : dhom-dhom-htpy-elem a (x₁, x₂) (y₁, y₂) g γ = γ
+  :=
+  eq-dhom-extext extext B x₁ y₁ g
+  ( \ b → Iso A (π₁ is-rezk-A) a (u b)) x₂ y₂
+  ( dhom-dhom-htpy-elem a (x₁, x₂) (y₁, y₂) g γ)
+  ( γ)
+  ( \ t →
+    ( eq-iso-eq-base-is-segal extext A (π₁ is-rezk-A) a (u (g t))
+      ( dhom-dhom-htpy-elem a (x₁, x₂) (y₁, y₂) g γ t)
+      ( γ t)
+      ( refl_{ (π₁ (γ t)) : hom A a (u (g t))})))
+
+#def is-equiv-dhom-iso-dhom-hom
+  ( a : A)
+  ( (x₁, x₂) (y₁, y₂) : (Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b)))
+  ( g : hom B x₁ y₁)
+  : is-equiv
+    ( dhom B x₁ y₁ g (\ b → Iso A (π₁ is-rezk-A) a (u b)) x₂ y₂)
+    ( dhom B x₁ y₁ g (\ b → hom A a (u b)) (π₁ x₂) (π₁ y₂))
+    ( \ γ t → π₁ (γ t))
+  :=
+  is-equiv-has-inverse
+  ( dhom B x₁ y₁ g (\ b → Iso A (π₁ is-rezk-A) a (u b)) x₂ y₂)
+  ( dhom B x₁ y₁ g (\ b → hom A a (u b)) (π₁ x₂) (π₁ y₂))
+  ( \ γ t → π₁ (γ t))
+  ( \ γ t → (γ t
+    , is-iso-arrow-nat-trans-is-iso-arrow-boundary
+      ( A)
+      ( π₁ is-rezk-A)
+      ( a) a
+      ( u x₁) (u y₁)
+      ( id-hom A a) ( \ s → u (g s))
+      ( γ)
+      ( π₂ x₂)
+      ( π₂ y₂)
+      ( t))
+  , ( \ γ → eq-dhom-extext extext B x₁ y₁ g
+          ( \ b → Iso A (π₁ is-rezk-A) a (u b)) x₂ y₂
+          ( \ t →
+            ( π₁ (γ t)
+            , is-iso-arrow-nat-trans-is-iso-arrow-boundary
+              ( A)
+              ( π₁ is-rezk-A)
+              ( a) a
+              ( u x₁) (u y₁)
+              ( id-hom A a) ( \ s → u (g s))
+              ( \ s → π₁ (γ s))
+              ( π₂ x₂)
+              ( π₂ y₂)
+              ( t)))
+          ( \ t → γ t)
+          ( \ t →
+            ( eq-iso-eq-base-is-segal extext A (π₁ is-rezk-A) a (u (g t))
+              ( π₁ (γ t)
+                , is-iso-arrow-nat-trans-is-iso-arrow-boundary
+                  ( A)
+                  ( π₁ is-rezk-A)
+                  ( a) a
+                  ( u x₁) (u y₁)
+                  ( id-hom A a) (\ s → u (g s))
+                  ( \ s → π₁ (γ s))
+                  ( π₂ x₂)
+                  ( π₂ y₂)
+                  ( t))
+              ( γ t)
+              ( refl_{ (π₁ (γ t)) : hom A a (u (g t))})))
+    , \ _ → refl))
+
+#def is-full-emb-total-hom-iso
+  ( a : A)
+  : is-full-emb (Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b)) (Σ (b : B) , hom A a (u b)) (total-hom-iso a)
+  :=
+  \ x y → is-equiv-has-inverse
+  ( hom (Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b)) x y)
+  ( hom (Σ (b : B) , hom A a (u b)) (total-hom-iso a x) (total-hom-iso a y))
+  ( ap-hom (Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b)) (Σ (b : B) , hom A a (u b)) (total-hom-iso a) x y)
+  ( \ g t →
+    ( π₁ (g t)
+    , (π₂ (g t)
+      , is-iso-arrow-nat-trans-is-iso-arrow-boundary
+        ( A)
+        ( π₁ is-rezk-A)
+        ( a) a
+        ( u (π₁ x)) (u (π₁ y))
+        ( id-hom A a) ( \ s → u (π₁ (g s)))
+        ( \ s → π₂ (g s))
+        ( π₂ (π₂ x))
+        ( π₂ (π₂ y))
+        ( t)))
+  , ( \ g → ap
+      ( Σ (h : hom B (π₁ x) (π₁ y))
+        , dhom B (π₁ x) (π₁ y) h (\ b → Iso A (π₁ is-rezk-A) a (u b)) (π₂ x) (π₂ y))
+      ( hom (Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b)) x y)
+      ( \ t → π₁ (g t), \ t →
+        ( π₁ (π₂ (g t))
+        , is-iso-arrow-nat-trans-is-iso-arrow-boundary
+          ( A)
+          ( π₁ is-rezk-A)
+          ( a) a
+          ( u (π₁ x)) (u (π₁ y))
+          ( id-hom A a) ( \ s → u (π₁ (g s)))
+          ( \ s → π₁ (π₂ (g s)))
+          ( π₂ (π₂ x))
+          ( π₂ (π₂ y))
+          ( t)))
+      ( \ t → π₁ (g t), \ t → π₂ (g t))
+      ( hom-sigma-dhom B (\ b → Iso A (π₁ is-rezk-A) a (u b)) x y)
+      ( path-of-pairs-pair-of-paths
+        ( hom B (π₁ x) (π₁ y))
+        ( \ h → dhom B (π₁ x) (π₁ y) h (\ b → Iso A (π₁ is-rezk-A) a (u b)) (π₂ x) (π₂ y))
+        ( \ t → π₁ (g t))
+        ( \ t → π₁ (g t))
+        ( refl)
+        ( \ t →
+          ( π₁ (π₂ (g t))
+          , is-iso-arrow-nat-trans-is-iso-arrow-boundary
+            ( A)
+            ( π₁ is-rezk-A)
+            ( a) a
+            ( u (π₁ x)) (u (π₁ y))
+            ( id-hom A a) ( \ s → u (π₁ (g s)))
+            ( \ s → π₁ (π₂ (g s)))
+            ( π₂ (π₂ x))
+            ( π₂ (π₂ y))
+            ( t)))
+        ( \ t → π₂ (g t))
+        ( eq-dhom-extext TODO B (π₁ x) (π₁ y) (\ t → π₁ (g t))
+          ( \ b → Iso A (π₁ is-rezk-A) a (u b))
+          ( π₂ x) (π₂ y)
+          ( \ t →
+            ( π₁ (π₂ (g t))
+            , is-iso-arrow-nat-trans-is-iso-arrow-boundary
+              ( A)
+              ( π₁ is-rezk-A)
+              ( a) a
+              ( u (π₁ x)) (u (π₁ y))
+              ( id-hom A a) ( \ s → u (π₁ (g s)))
+              ( \ s → π₁ (π₂ (g s)))
+              ( π₂ (π₂ x))
+              ( π₂ (π₂ y))
+              ( t)))
+          ( \ t → π₂ (g t))
+          ( \ t →
+            ( eq-iso-eq-base-is-segal extext A (π₁ is-rezk-A) a (u (π₁ (g t)))
+              ( π₁ (π₂ (g t))
+                , is-iso-arrow-nat-trans-is-iso-arrow-boundary
+                  ( A)
+                  ( π₁ is-rezk-A)
+                  ( a) a
+                  ( u (π₁ x)) (u (π₁ y))
+                  ( id-hom A a) ( \ s → u (π₁ (g s)))
+                  ( \ s → π₁ (π₂ (g s)))
+                  ( π₂ (π₂ x))
+                  ( π₂ (π₂ y))
+                  ( t))
+              ( π₂ (g t))
+              ( refl)))))
+    , \ g2 → {-F (G g) = g-} refl
+    ))
 
 #def sigma-hom-fib-is-transposing-adj-is-rezk uses (adj is-rezk-A)
   ( a : A)
@@ -309,9 +536,40 @@ show that it is a transposing adjunction:
   : is-full-emb (fib B A u a) (Σ (b : B) , hom B (f a) b)
   ( sigma-hom-fib-is-transposing-adj-is-rezk a)
   :=
+  is-full-emb-quadruple-comp funext
+  ( fib B A u a)
+  ( rev-fib B A u a)
+  ( Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b))
+  ( Σ (b : B) , hom A a (u b))
+  ( Σ (b : B) , hom B (f a) b)
+  ( \ (b, p) → (b, rev A (u b) a p))
+  ( is-full-emb-rev extext A (u b) a)
+  ( \ (b, p) → (b, iso-eq A (π₁ is-rezk-A) a (u b) p))
+  ( is-full-emb-is-equiv extext
+    ( rev-fib B A u a)
+    ( Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b))
+    ( \ (b, p) → (b, iso-eq A (π₁ is-rezk-A) a (u b) p))
+    ( π₂ is-rezk-A a (u b)))
+  ( total-hom-iso a)
+  ( is-full-emb-total-hom-iso a)
+  ( \ (b, g) → (b, π₁ (inv-equiv (hom B (f a) b) (hom A a (u b)) (adj a b)) g))
+  ( is-full-emb-is-equiv extext
+    ( hom A a (u b))
+    ( hom B (f a) b)
+    ( π₁ (inv-equiv (hom B (f a) b) (hom A a (u b)) (adj a b)))
+    ( π₂ (inv-equiv (hom B (f a) b) (hom A a (u b)) (adj a b))))
+
+{-
+#def is-full-emb-sigma-hom-fib-is-transposing-adj-is-rezk
+  uses (adj is-rezk-A funext extext)
+  ( a : A)
+  : is-full-emb (fib B A u a) (Σ (b : B) , hom B (f a) b)
+  ( sigma-hom-fib-is-transposing-adj-is-rezk a)
+  :=
   is-full-emb-total-type-is-full-emb-fiber TODO B (\ b → u b = a) (\ b → hom B (f a) b)
   ( hom-eq-is-transposing-adj-is-rezk a)
   ( is-full-emb-hom-eq-is-transposing-adj-is-rezk a)
+  -}
 
 ```
 
