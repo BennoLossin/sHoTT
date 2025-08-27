@@ -89,7 +89,7 @@ Not all proofs are done in this file:
   : U
   := (x : A) → is-initial (B x) (s x)
 
-#def initial-section
+#def has-initial-section
   : U
   := Σ (s : (a : A) → B a) , is-initial-section s
 ```
