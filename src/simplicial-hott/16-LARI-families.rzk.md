@@ -75,3 +75,37 @@ This is a literate `rzk` file:
     ( leibniz-cotensor-shape-codomain I X Y (total-type B P) B (projection-total-type B P))
     ( leibniz-cotensor-shape I X Y (total-type B P) B (projection-total-type B P)))
 ```
+
+```rzkk
+#def is-LARI-shape-family-orthogonal-to
+  ( I : CUBE)
+  ( ψ : I → TOPE)
+  ( φ : ψ → TOPE)
+  ( B : U)
+  ( P : B → U)
+  ( orthogonal-to-P : orthogonal-to I ψ φ B P)
+  : is-LARI-shape-family I ψ φ B P
+  :=
+  TODO: we have to show that orthogonal-to implies that the
+  leibniz-cotensor-shape I ψ φ (total-type B P) (...) map is an equivalence
+  and then that an equivalence gives rise to a trivial initial section (fibers
+  are contractible after all)
+```
+
+```rzk
+#def is-LARI-shape-family-product
+  ( I : CUBE)
+  ( X : I → TOPE)
+  ( Y : X → TOPE)
+  ( J : U)
+  ( B : J → U)
+  ( P : (j : J) → B j → U)
+  ( is-LARI-shape-family-P : (j : J) → is-LARI-shape-family I X Y (B j) (P j))
+  : is-LARI-shape-family I X Y (total-type J B) (\ (j, b) → P j b)
+  :=
+  ( \ (f, g, q) →
+    ( \ x → ((j, b), {-P j b-})
+    , )
+  , )
+  := Σ (f : Y → E) , Σ (g : X → B) , (\ (y : Y) → p (f y)) =_{ Y → B } (\ (y : Y) → g y)
+```
