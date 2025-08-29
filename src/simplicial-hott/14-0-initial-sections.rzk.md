@@ -128,3 +128,23 @@ simple:
 
 #end initial-sections
 ```
+
+## Equivalences and Initial Sections
+
+```rzk
+#def has-initial-section-is-equiv
+  ( A B : U)
+  ( f : A → B)
+  ( is-equiv-f : is-equiv A B f)
+  : has-initial-section B (fib A B f)
+  :=
+  ( \ b → center-contraction (fib A B f b)
+    ( is-contr-map-is-equiv A B f is-equiv-f b)
+  , \ b → is-contr-hom-is-contr extext (fib A B f b)
+    ( is-contr-map-is-equiv A B f is-equiv-f b)
+    ( center-contraction (fib A B f b)
+      ( is-contr-map-is-equiv A B f is-equiv-f b)))
+
+
+
+```

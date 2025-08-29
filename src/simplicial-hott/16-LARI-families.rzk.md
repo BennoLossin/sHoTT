@@ -6,43 +6,11 @@ This is a literate `rzk` file:
 #lang rzk-1
 ```
 
-## Leibniz cotensor
-
 ```rzk
-#def leibniz-cotensor-codomain
-  ( Y X E B : U)
-  ( j : Y → X)
-  ( p : E → B)
-  : U
-  := Σ (f : Y → E) , Σ (g : X → B) , comp Y E B p f = comp Y X B g j
-
-#def leibniz-cotensor-shape-codomain
-  ( I : CUBE)
-  ( X : I → TOPE)
-  ( Y : X → TOPE)
-  ( E B : U)
-  ( p : E → B)
-  : U
-  := Σ (f : Y → E) , Σ (g : X → B) , (\ (y : Y) → p (f y)) =_{ Y → B } (\ (y : Y) → g y)
-
-#def leibniz-cotensor
-  ( Y X E B : U)
-  ( j : Y → X)
-  ( p : E → B)
-  ( f : X → E)
-  : leibniz-cotensor-codomain Y X E B j p
-  := (comp Y X E f j , (comp X E B p f , refl))
-
-#def leibniz-cotensor-shape
-  ( I : CUBE)
-  ( X : I → TOPE)
-  ( Y : X → TOPE)
-  ( E B : U)
-  ( p : E → B)
-  ( f : X → E)
-  : leibniz-cotensor-shape-codomain I X Y E B p
-  := (\ (y : Y) → f y , (\ (x : X) → p (f x), refl))
+#assume TODO : (A : U) → A
+#assume extext : ExtExt
 ```
+
 
 ## LARI families
 
@@ -76,36 +44,89 @@ This is a literate `rzk` file:
     ( leibniz-cotensor-shape I X Y (total-type B P) B (projection-total-type B P)))
 ```
 
-```rzkk
+```rzk title="BW23, Corollary 3.2.4"
 #def is-LARI-shape-family-orthogonal-to
-  ( I : CUBE)
-  ( ψ : I → TOPE)
-  ( φ : ψ → TOPE)
-  ( B : U)
-  ( P : B → U)
-  ( orthogonal-to-P : orthogonal-to I ψ φ B P)
-  : is-LARI-shape-family I ψ φ B P
-  :=
-  TODO: we have to show that orthogonal-to implies that the
-  leibniz-cotensor-shape I ψ φ (total-type B P) (...) map is an equivalence
-  and then that an equivalence gives rise to a trivial initial section (fibers
-  are contractible after all)
-```
-
-```rzk
-#def is-LARI-shape-family-product
   ( I : CUBE)
   ( X : I → TOPE)
   ( Y : X → TOPE)
-  ( J : U)
-  ( B : J → U)
-  ( P : (j : J) → B j → U)
-  ( is-LARI-shape-family-P : (j : J) → is-LARI-shape-family I X Y (B j) (P j))
+  ( B : U)
+  ( P : B → U)
+  ( orthogonal-to-P : orthogonal-to I X Y B P)
+  : is-LARI-shape-family I X Y B P
+  :=
+  has-initial-section-is-equiv extext
+  ( X → total-type B P)
+  ( leibniz-cotensor-shape-codomain I X Y (total-type B P) B (projection-total-type B P))
+  ( leibniz-cotensor-shape I X Y (total-type B P) B (projection-total-type B P))
+  ( is-equiv-leibniz-cotensor-shap-orthogonal-to TODO I X Y B P)
+```
+
+```rzkk
+#section is-LARI-shape-family-product
+
+#variable I : CUBE
+#variable X : I → TOPE
+#variable Y : X → TOPE
+#variable J : U
+#variable B : J → U
+#variable P : (j : J) → B j → U
+#variable is-LARI-shape-family-P : (j : J) → is-LARI-shape-family I X Y (B j) (P j)
+
+#def initial-section-is-LARI-shape-family-product
+  ( (f, (g, p)) : leibniz-cotensor-shape-codomain I X Y
+    ( total-type (total-type J B) (\ (j, b) → P j b))
+    ( total-type J B)
+    ( projection-total-type (total-type J B) (\ (j, b) → P j b)))
+  : fib
+    ( X → total-type (total-type J B) (\ (j, b) → P j b))
+    ( leibniz-cotensor-shape-codomain I X Y
+      ( total-type (total-type J B) (\ (j, b) → P j b))
+      ( total-type J B)
+      ( projection-total-type (total-type J B) (\ (j, b) → P j b)))
+    ( leibniz-cotensor-shape I X Y
+      ( total-type (total-type J B) (\ (j, b) → P j b))
+      ( total-type J B)
+      ( projection-total-type (total-type J B) (\ (j, b) → P j b)))
+    ( f, (g, p))
+  :=
+  {-
+
+  f : Y → total-type (total-type J B) (\ (j, b) → P j b)
+  g : X → total-type J B
+  p : (\ y → projection-total-type (f y)) = (\ y → g y)
+
+
+  -}
+  ( {-F:=-} \ x → (g x, π₁ (is-LARI-shape-family-P (π₁ (g x)))
+    ( \ y → f y
+    , ( \ x →
+      , ? )))
+  , lcs F = (f, (g, p)))
+
+
+```
+
+```rzkk title="BW23, Proposition 3.2.5"
+#def is-LARI-shape-family-product
   : is-LARI-shape-family I X Y (total-type J B) (\ (j, b) → P j b)
   :=
-  ( \ (f, g, q) →
-    ( \ x → ((j, b), {-P j b-})
-    , )
-  , )
-  := Σ (f : Y → E) , Σ (g : X → B) , (\ (y : Y) → p (f y)) =_{ Y → B } (\ (y : Y) → g y)
+  TODO (has-initial-section
+  ( leibniz-cotensor-shape-codomain I X Y
+    ( total-type (total-type J B) (\ (j, b) → P j b))
+    ( total-type J B)
+    ( projection-total-type (total-type J B) (\ (j, b) → P j b)))
+  ( fib
+    ( X → total-type (total-type J B) (\ (j, b) → P j b))
+    ( leibniz-cotensor-shape-codomain I X Y
+      ( total-type (total-type J B) (\ (j, b) → P j b))
+      ( total-type J B)
+      ( projection-total-type (total-type J B) (\ (j, b) → P j b)))
+    ( leibniz-cotensor-shape I X Y
+      ( total-type (total-type J B) (\ (j, b) → P j b))
+      ( total-type J B)
+      ( projection-total-type (total-type J B) (\ (j, b) → P j b)))))
+```
+
+```rzkk
+#end is-LARI-shape-family-product
 ```
