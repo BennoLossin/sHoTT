@@ -892,6 +892,13 @@ types are contractible.
   := (x : A) → is-contr (hom A a x)
 ```
 
+```rzk
+#def has-initial
+  ( A : U)
+  : U
+  := Σ (a : A) , is-initial A a
+```
+
 Initial objects map to initial objects by equivalences.
 
 ```rzk
