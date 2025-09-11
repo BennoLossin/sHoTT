@@ -9,6 +9,7 @@ This is a literate `rzk` file:
 ```rzk
 #assume TODO : (A : U) → A
 #assume extext : ExtExt
+#assume weakfunext : WeakFunExt
 ```
 
 
@@ -53,7 +54,168 @@ This is a literate `rzk` file:
 
 ```
 
-```rzk title="BW23, Proposition 3.2.5"
+```rzk
+#def product-lift-is-LARI-family
+  ( g₀ : Y → ((j : J) → B j))
+  ( f₀ : (y : Y) → (j : J) → P j (g₀ y j))
+  ( g : (x : X) → ((j : J) → B j) [Y x ↦ g₀ x])
+  : (x : X) → ((j : J) → P j (g x j)) [Y x ↦ f₀ x]
+  := \ x j → π₁ (is-LARI-family-P j
+      ( \ y → g₀ y j)
+      ( \ y → f₀ y j)
+      ( \ x → g x j)) x
+
+#def is-weakly-contr-hom-product-lift
+  ( g₀ : Y → ((j : J) → B j))
+  ( f₀ : (y : Y) → (j : J) → P j (g₀ y j))
+  ( g : (x : X) → ((j : J) → B j) [Y x ↦ g₀ x])
+  ( f : (x : X) → ((j : J) → P j (g x j)) [Y x ↦ f₀ x])
+  : (j : J) → is-contr (hom
+    ( (x : X) → P j (g x j) [Y x ↦ f₀ x j])
+    ( \ x → product-lift-is-LARI-family g₀ f₀ g x j)
+    ( \ x → f x j))
+  :=
+  \ j → π₂
+  ( is-LARI-family-P j
+    ( \ y → g₀ y j)
+    ( \ y → f₀ y j)
+    ( \ x → g x j))
+  ( \ x → f x j)
+
+#def is-contr-fun-hom-product-lift uses (is-LARI-family-P)
+  ( g₀ : Y → ((j : J) → B j))
+  ( f₀ : (y : Y) → (j : J) → P j (g₀ y j))
+  ( g : (x : X) → ((j : J) → B j) [Y x ↦ g₀ x])
+  ( f : (x : X) → ((j : J) → P j (g x j)) [Y x ↦ f₀ x])
+  : is-contr ((j : J) → hom
+    ( (x : X) → P j (g x j) [Y x ↦ f₀ x j])
+    ( \ x → product-lift-is-LARI-family g₀ f₀ g x j)
+    ( \ x → f x j))
+  :=
+  weakfunext
+  ( J)
+  ( \ j → hom
+    ( (x : X) → P j (g x j) [Y x ↦ f₀ x j])
+    ( \ x → product-lift-is-LARI-family g₀ f₀ g x j)
+    ( \ x → f x j))
+  ( is-weakly-contr-hom-product-lift g₀ f₀ g f)
+
+#def is-contr-hom-product-lift uses (is-LARI-family-P weakfunext)
+  ( g₀ : Y → ((j : J) → B j))
+  ( f₀ : (y : Y) → (j : J) → P j (g₀ y j))
+  ( g : (x : X) → ((j : J) → B j) [Y x ↦ g₀ x])
+  ( f : (x : X) → ((j : J) → P j (g x j)) [Y x ↦ f₀ x])
+  : is-contr (hom
+    ( (j : J) → (x : X) → P j (g x j) [Y x ↦ f₀ x j])
+    ( \ j x → product-lift-is-LARI-family g₀ f₀ g x j)
+    ( \ j x → f x j))
+  :=
+  is-contr-is-equiv-is-contr
+  ( (j : J) → hom
+    ( (x : X) → P j (g x j) [Y x ↦ f₀ x j])
+    ( \ x → product-lift-is-LARI-family g₀ f₀ g x j)
+    ( \ x → f x j))
+  ( hom
+    ( (j : J) → (x : X) → P j (g x j) [Y x ↦ f₀ x j])
+    ( \ j x → product-lift-is-LARI-family g₀ f₀ g x j)
+    ( \ j x → f x j))
+  ( flip-ext-fun-inv 2 Δ¹ ∂Δ¹
+    ( J)
+    ( \ _ j → ((x : X) → P j (g x j) [Y x ↦ f₀ x j]))
+    ( \ t j → recOR(
+        t ≡ 0₂ ↦ ( \ (x : I | X x) → product-lift-is-LARI-family g₀ f₀ g x j)
+      , t ≡ 1₂ ↦ ( \ (x : I | X x) → f x j))))
+  ( is-contr-fun-hom-product-lift g₀ f₀ g f)
+
+#def is-equiv-hom-flipped-product-lift
+  ( g₀ : Y → ((j : J) → B j))
+  ( f₀ : (y : Y) → (j : J) → P j (g₀ y j))
+  ( g : (x : X) → ((j : J) → B j) [Y x ↦ g₀ x])
+  ( f : (x : X) → ((j : J) → P j (g x j)) [Y x ↦ f₀ x])
+  : Equiv
+  ( hom
+    ( (j : J) → (x : X) → P j (g x j) [Y x ↦ f₀ x j])
+    ( \ j x → product-lift-is-LARI-family g₀ f₀ g x j)
+    ( \ j x → f x j))
+  ( hom
+    ( (x : X) → ((j : J) → P j (g x j)) [Y x ↦ f₀ x])
+    ( product-lift-is-LARI-family g₀ f₀ g)
+    ( f))
+  :=
+
+#def is-contr-hom-flipped-product-lift
+  ( g₀ : Y → ((j : J) → B j))
+  ( f₀ : (y : Y) → (j : J) → P j (g₀ y j))
+  ( g : (x : X) → ((j : J) → B j) [Y x ↦ g₀ x])
+  ( f : (x : X) → ((j : J) → P j (g x j)) [Y x ↦ f₀ x])
+  : is-contr (hom
+    ( (x : X) → ((j : J) → P j (g x j)) [Y x ↦ f₀ x])
+    ( product-lift-is-LARI-family g₀ f₀ g)
+    ( f))
+  :=
+  is-contr-is-equiv-is-contr
+  ( hom
+    ( (j : J) → (x : X) → P j (g x j) [Y x ↦ f₀ x j])
+    ( \ j x → product-lift-is-LARI-family g₀ f₀ g x j)
+    ( \ j x → f x j))
+  ( hom
+    ( (x : X) → ((j : J) → P j (g x j)) [Y x ↦ f₀ x])
+    ( product-lift-is-LARI-family g₀ f₀ g)
+    ( f))
+
+```
+
+```rzkk title="BW23, Proposition 3.2.5"
+#def is-LARI-family-product-is-LARI-family
+  : is-LARI-family ((j : J) → B j) (\ bs → ((j : J) → (P j (bs j))))
+  :=
+  \ (g₀ : Y → ((j : J) → B j))
+  ( f₀ : (y : Y) → (j : J) → P j (g₀ y j))
+  ( g : (x : X) → ((j : J) → B j) [Y x ↦ g₀ x])
+  → ( product-lift-is-LARI-family g₀ f₀ g
+    , \ f →
+  {- we have a term with type:
+  ~> weakfunext gives us:
+
+  is-contr ((j : J) → hom
+    ((x : X) → P j (g x j) [Y x ↦ f₀ x j])
+    (..)
+    (\ x → f x j))
+
+
+  ~> hom-fun-fun-hom?
+
+  is-contr (hom
+    ((j : J) → (x : X) → P j (g x j) [Y x ↦ f₀ x j])
+    (..)
+    (f))
+
+  ~> fun-swap?
+
+  is-contr (hom
+    ((x : X) → (j : J) → P j (g x j) [Y x ↦ f₀ x j])
+    (..)
+    (f))
+
+  ~> extext?
+
+  is-contr (hom
+    ((x : X) → ((j : J) → P j (g x j)) [Y x ↦ f₀ x])
+    (..)
+    (f))
+
+  -}
+
+    TODO (is-contr
+      ( hom ((x : X) → ((j : J) → P j (g x j)) [Y x ↦ f₀ x])
+      ( \ x j → π₁ (is-LARI-family-P j
+        ( \ y → g₀ y j)
+        ( \ y → f₀ y j)
+        ( \ x → g x j)) x)
+      ( f))))
+```
+
+```rzkk title="BW23, Proposition 3.2.5"
 #def is-LARI-family-product-is-LARI-family
   : is-LARI-family (total-type J B) (\ (j, b) → P j b)
   :=
