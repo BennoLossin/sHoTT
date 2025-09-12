@@ -127,7 +127,7 @@ This is a literate `rzk` file:
       , t ≡ 1₂ ↦ ( \ (x : I | X x) → f x j))))
   ( is-contr-fun-hom-product-lift g₀ f₀ g f)
 
-#def is-equiv-hom-flipped-product-lift
+#def equiv-hom-flipped-product-lift uses (is-LARI-family-P)
   ( g₀ : Y → ((j : J) → B j))
   ( f₀ : (y : Y) → (j : J) → P j (g₀ y j))
   ( g : (x : X) → ((j : J) → B j) [Y x ↦ g₀ x])
@@ -142,8 +142,18 @@ This is a literate `rzk` file:
     ( product-lift-is-LARI-family g₀ f₀ g)
     ( f))
   :=
+  equiv-extensions-equiv extext 2 Δ¹ ∂Δ¹
+  ( \ _ → (j : J) → (x : X) → P j (g x j) [Y x ↦ f₀ x j])
+  ( \ _ → (x : X) → ((j : J) → P j (g x j)) [Y x ↦ f₀ x])
+  ( \ _ → flip-ext-fun-inv I X Y
+    ( J)
+    ( \ x j → P j (g x j))
+    ( \ (y : Y) (j : J) → f₀ y j))
+  ( \ t → recOR(
+      t ≡ 0₂ ↦ (\ (j : J) (x : I | X x) → product-lift-is-LARI-family g₀ f₀ g x j)
+    , t ≡ 1₂ ↦ (\ (j : J) (x : I | X x) → f x j)))
 
-#def is-contr-hom-flipped-product-lift
+#def is-contr-hom-flipped-product-lift uses (is-LARI-family-P weakfunext extext)
   ( g₀ : Y → ((j : J) → B j))
   ( f₀ : (y : Y) → (j : J) → P j (g₀ y j))
   ( g : (x : X) → ((j : J) → B j) [Y x ↦ g₀ x])
@@ -162,57 +172,21 @@ This is a literate `rzk` file:
     ( (x : X) → ((j : J) → P j (g x j)) [Y x ↦ f₀ x])
     ( product-lift-is-LARI-family g₀ f₀ g)
     ( f))
+  ( equiv-hom-flipped-product-lift g₀ f₀ g f)
+  ( is-contr-hom-product-lift g₀ f₀ g f)
 
 ```
 
-```rzkk title="BW23, Proposition 3.2.5"
+```rzk title="BW23, Proposition 3.2.5"
 #def is-LARI-family-product-is-LARI-family
+  uses (is-LARI-family-P weakfunext extext)
   : is-LARI-family ((j : J) → B j) (\ bs → ((j : J) → (P j (bs j))))
   :=
   \ (g₀ : Y → ((j : J) → B j))
   ( f₀ : (y : Y) → (j : J) → P j (g₀ y j))
   ( g : (x : X) → ((j : J) → B j) [Y x ↦ g₀ x])
   → ( product-lift-is-LARI-family g₀ f₀ g
-    , \ f →
-  {- we have a term with type:
-  ~> weakfunext gives us:
-
-  is-contr ((j : J) → hom
-    ((x : X) → P j (g x j) [Y x ↦ f₀ x j])
-    (..)
-    (\ x → f x j))
-
-
-  ~> hom-fun-fun-hom?
-
-  is-contr (hom
-    ((j : J) → (x : X) → P j (g x j) [Y x ↦ f₀ x j])
-    (..)
-    (f))
-
-  ~> fun-swap?
-
-  is-contr (hom
-    ((x : X) → (j : J) → P j (g x j) [Y x ↦ f₀ x j])
-    (..)
-    (f))
-
-  ~> extext?
-
-  is-contr (hom
-    ((x : X) → ((j : J) → P j (g x j)) [Y x ↦ f₀ x])
-    (..)
-    (f))
-
-  -}
-
-    TODO (is-contr
-      ( hom ((x : X) → ((j : J) → P j (g x j)) [Y x ↦ f₀ x])
-      ( \ x j → π₁ (is-LARI-family-P j
-        ( \ y → g₀ y j)
-        ( \ y → f₀ y j)
-        ( \ x → g x j)) x)
-      ( f))))
+    , is-contr-hom-flipped-product-lift g₀ f₀ g)
 ```
 
 ```rzkk title="BW23, Proposition 3.2.5"
