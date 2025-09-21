@@ -27,9 +27,8 @@ This is a literate `rzk` file:
   ( P : B → U)
   : U
   :=
-    (g₀ : Y → B)
-  → (f₀ : (y : Y) → P (g₀ y))
-  → (g : (x : X) → B [Y x ↦ g₀ x])
+    (g : (x : X) → B)
+  → (f₀ : (y : Y) → P (g y))
   → has-initial ((x : X) → P (g x) [Y x ↦ f₀ x])
 ```
 
