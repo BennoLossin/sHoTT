@@ -38,13 +38,13 @@ This is a literate `rzk` file:
   ( \ x → (g x, f x))
   ( \ y → π₂ (f₀ y))
 
-#def raw-comp-lift-2-is-LARI-family
+#def raw-comp-lift-2-is-LARI-family uses (is-LARI-family-P is-LARI-family-Q)
   ( g : (x : X) → B)
   ( f₀ : (y : Y) → Σ (p : P (g y)) , Q (g y) p)
   : has-initial ((x : X) → Q (g x) (comp-lift-1-is-LARI-family g f₀ x) [Y x ↦ π₂ (f₀ x)])
   := raw-comp-lift-is-LARI-family g f₀ (comp-lift-1-is-LARI-family g f₀)
 
-#def comp-lift-2-is-LARI-family
+#def comp-lift-2-is-LARI-family uses (is-LARI-family-P is-LARI-family-Q)
   ( g : (x : X) → B)
   ( f₀ : (y : Y) → Σ (p : P (g y)) , Q (g y) p)
   : (x : X) → (Σ (p : P (g x)) , Q (g x) p) [Y x ↦ f₀ x]
@@ -52,34 +52,174 @@ This is a literate `rzk` file:
   \ x → (comp-lift-1-is-LARI-family g f₀ x
   , π₁ (raw-comp-lift-2-is-LARI-family g f₀) x)
 
-#def center-comp-lift-is-LARI-family
+#def helper1
   ( g : (x : X) → B)
   ( f₀ : (y : Y) → Σ (p : P (g y)) , Q (g y) p)
-  ( f : (x : X) → (Σ (p : P (g x)) , Q (g x) p) [Y x ↦ f₀ x])
-  : hom
-  ( (x : X) → (Σ (p : P (g x)) , Q (g x) p) [Y x ↦ f₀ x])
-  ( comp-lift-2-is-LARI-family g f₀)
-  ( f)
-  :=
-  \ t x → ((π₁ (π₂ (is-LARI-family-P g (\ y → π₁ (f₀ y))) (\ x → π₁ (f x))) t x)
-  , π₁ (π₂ (raw-comp-lift-2-is-LARI-family g f₀) (\ x → π₂ (f x))) t x)
+  ( f : (x : X) → P (g x) [Y x ↦ π₁ (f₀ x)])
+  : is-contr (hom
+    ( (x : X) → P (g x) [Y x ↦ π₁ (f₀ x)])
+    ( comp-lift-1-is-LARI-family g f₀)
+    ( f))
+  := π₂ (is-LARI-family-P g (\ y → π₁ (f₀ y))) f
 
-#def is-LARI-family-comp uses (is-LARI-family-Q is-LARI-family-P)
+#def helper2 uses (is-LARI-family-P is-LARI-family-Q)
+  ( g : (x : X) → B)
+  ( f₀ : (y : Y) → Σ (p : P (g y)) , Q (g y) p)
+  ( f : (x : X) → P (g x) [Y x ↦ π₁ (f₀ x)])
+  ( F : (x : X) → Q (g x) (f x) [Y x ↦ π₂ (f₀ x)])
+  ( h : hom
+    ( (x : X) → P (g x) [Y x ↦ π₁ (f₀ x)])
+    ( comp-lift-1-is-LARI-family g f₀)
+    ( f))
+  : is-contr (dhom
+    ( (x : X) → P (g x) [Y x ↦ π₁ (f₀ x)])
+    ( comp-lift-1-is-LARI-family g f₀)
+    ( f)
+    ( h)
+    ( \ f → ((x : X) → Q (g x) (f x) [Y x ↦ π₂ (f₀ x)]))
+    ( \ x → π₁ (raw-comp-lift-2-is-LARI-family g f₀) x)
+    ( F))
+  :=
+  is-dhom-initial-section-is-initial-section
+  ( (x : X) → P (g x) [Y x ↦ π₁ (f₀ x)])
+  ( \ f → ((x : X) → Q (g x) (f x) [Y x ↦ π₂ (f₀ x)]))
+  ( TODO (is-inner-fib-type-fam
+    ( (x : X) → P (g x) [Y x ↦ π₁ (f₀ x)])
+    ( \ f → ((x : X) → Q (g x) (f x) [Y x ↦ π₂ (f₀ x)]))))
+  ( \ f x → π₁ (raw-comp-lift-is-LARI-family g f₀ f) x)
+  ( \ f → π₂ (raw-comp-lift-is-LARI-family g f₀ f))
+  ( comp-lift-1-is-LARI-family g f₀)
+  ( f)
+  ( F)
+  ( h)
+
+#def helper3 uses (is-LARI-family-P is-LARI-family-Q)
+  ( g : (x : X) → B)
+  ( f₀ : (y : Y) → Σ (p : P (g y)) , Q (g y) p)
+  ( f : (x : X) → (Σ (p : P (g x)) , Q (g x) p) [Y x ↦ (f₀ x)])
+  : Equiv
+  ( hom
+    ( (x : X) → (Σ (p : P (g x)) , Q (g x) p) [Y x ↦ (f₀ x)])
+    ( comp-lift-2-is-LARI-family g f₀)
+    ( f))
+  ( Σ (h : hom
+    ( (x : X) → P (g x) [Y x ↦ π₁ (f₀ x)])
+    ( comp-lift-1-is-LARI-family g f₀)
+    ( \ x → π₁ (f x)))
+  , dhom
+    ( (x : X) → P (g x) [Y x ↦ π₁ (f₀ x)])
+    ( comp-lift-1-is-LARI-family g f₀)
+    ( \ x → π₁ (f x))
+    ( h)
+    ( \ f → ((x : X) → Q (g x) (f x) [Y x ↦ π₂ (f₀ x)]))
+    ( \ x → π₁ (raw-comp-lift-2-is-LARI-family g f₀) x)
+    ( \ x → π₂ (f x)))
+  :=
+  TODO (Equiv
+  ( hom
+    ( (x : X) → (Σ (p : P (g x)) , Q (g x) p) [Y x ↦ (f₀ x)])
+    ( comp-lift-2-is-LARI-family g f₀)
+    ( f))
+  ( Σ (h : hom
+    ( (x : X) → P (g x) [Y x ↦ π₁ (f₀ x)])
+    ( comp-lift-1-is-LARI-family g f₀)
+    ( \ x → π₁ (f x)))
+  , dhom
+    ( (x : X) → P (g x) [Y x ↦ π₁ (f₀ x)])
+    ( comp-lift-1-is-LARI-family g f₀)
+    ( \ x → π₁ (f x))
+    ( h)
+    ( \ f → ((x : X) → Q (g x) (f x) [Y x ↦ π₂ (f₀ x)]))
+    ( \ x → π₁ (raw-comp-lift-2-is-LARI-family g f₀) x)
+    ( \ x → π₂ (f x))))
+
+#def helper4 uses (is-LARI-family-P is-LARI-family-Q TODO)
+  ( g : (x : X) → B)
+  ( f₀ : (y : Y) → Σ (p : P (g y)) , Q (g y) p)
+  ( f : (x : X) → (Σ (p : P (g x)) , Q (g x) p) [Y x ↦ (f₀ x)])
+  : Equiv
+  ( Σ (h : hom
+    ( (x : X) → P (g x) [Y x ↦ π₁ (f₀ x)])
+    ( comp-lift-1-is-LARI-family g f₀)
+    ( \ x → π₁ (f x)))
+  , dhom
+    ( (x : X) → P (g x) [Y x ↦ π₁ (f₀ x)])
+    ( comp-lift-1-is-LARI-family g f₀)
+    ( \ x → π₁ (f x))
+    ( h)
+    ( \ f → ((x : X) → Q (g x) (f x) [Y x ↦ π₂ (f₀ x)]))
+    ( \ x → π₁ (raw-comp-lift-2-is-LARI-family g f₀) x)
+    ( \ x → π₂ (f x)))
+  ( hom
+    ( (x : X) → P (g x) [Y x ↦ π₁ (f₀ x)])
+    ( comp-lift-1-is-LARI-family g f₀)
+    ( \ x → π₁ (f x)))
+  :=
+  equiv-total-type-is-contr
+  ( hom
+    ( (x : X) → P (g x) [Y x ↦ π₁ (f₀ x)])
+    ( comp-lift-1-is-LARI-family g f₀)
+    ( \ x → π₁ (f x)))
+  ( \ h → dhom
+    ( (x : X) → P (g x) [Y x ↦ π₁ (f₀ x)])
+    ( comp-lift-1-is-LARI-family g f₀)
+    ( \ x → π₁ (f x))
+    ( h)
+    ( \ f → ((x : X) → Q (g x) (f x) [Y x ↦ π₂ (f₀ x)]))
+    ( \ x → π₁ (raw-comp-lift-2-is-LARI-family g f₀) x)
+    ( \ x → π₂ (f x)))
+  ( \ h → helper2 g f₀ (\ x → π₁ (f x)) (\ x → π₂ (f x)) h)
+
+#def helper5 uses (is-LARI-family-P is-LARI-family-Q TODO)
+  ( g : (x : X) → B)
+  ( f₀ : (y : Y) → Σ (p : P (g y)) , Q (g y) p)
+  ( f : (x : X) → (Σ (p : P (g x)) , Q (g x) p) [Y x ↦ (f₀ x)])
+  : is-contr (hom
+    ( (x : X) → (Σ (p : P (g x)) , Q (g x) p) [Y x ↦ (f₀ x)])
+    ( comp-lift-2-is-LARI-family g f₀)
+    ( f))
+  :=
+  is-contr-equiv-is-contr'
+  ( hom
+    ( (x : X) → (Σ (p : P (g x)) , Q (g x) p) [Y x ↦ (f₀ x)])
+    ( comp-lift-2-is-LARI-family g f₀)
+    ( f))
+  ( hom
+    ( (x : X) → P (g x) [Y x ↦ π₁ (f₀ x)])
+    ( comp-lift-1-is-LARI-family g f₀)
+    ( \ x → π₁ (f x)))
+  ( equiv-comp
+    ( hom
+      ( (x : X) → (Σ (p : P (g x)) , Q (g x) p) [Y x ↦ (f₀ x)])
+      ( comp-lift-2-is-LARI-family g f₀)
+      ( f))
+    ( Σ (h : hom
+      ( (x : X) → P (g x) [Y x ↦ π₁ (f₀ x)])
+      ( comp-lift-1-is-LARI-family g f₀)
+      ( \ x → π₁ (f x)))
+    , dhom
+      ( (x : X) → P (g x) [Y x ↦ π₁ (f₀ x)])
+      ( comp-lift-1-is-LARI-family g f₀)
+      ( \ x → π₁ (f x))
+      ( h)
+      ( \ f → ((x : X) → Q (g x) (f x) [Y x ↦ π₂ (f₀ x)]))
+      ( \ x → π₁ (raw-comp-lift-2-is-LARI-family g f₀) x)
+      ( \ x → π₂ (f x)))
+    ( hom
+      ( (x : X) → P (g x) [Y x ↦ π₁ (f₀ x)])
+      ( comp-lift-1-is-LARI-family g f₀)
+      ( \ x → π₁ (f x)))
+    ( helper3 g f₀ f)
+    ( helper4 g f₀ f))
+  ( helper1 g f₀ (\ x → π₁ (f x)))
+
+#def is-LARI-family-comp uses (is-LARI-family-Q is-LARI-family-P TODO)
   : is-LARI-family I X Y B (\ b → Σ (p : P b) , Q b p)
   :=
   \ ( g : (x : X) → B)
   ( f₀ : (y : Y) → Σ (p : P (g y)) , Q (g y) p)
   → ( comp-lift-2-is-LARI-family g f₀
-    , \ f → TODO (is-contr (hom
-      ( (x : X) → (Σ (p : P (g x)) , Q (g x) p) [Y x ↦ f₀ x])
-      ( comp-lift-2-is-LARI-family g f₀)
-      ( f))))
-
-
-
-
-
-
+    , helper5 g f₀)
 
 #end is-LARI-family-comp
 ```
