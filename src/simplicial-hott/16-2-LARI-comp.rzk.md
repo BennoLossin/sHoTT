@@ -10,12 +10,94 @@ This is a literate `rzk` file:
 #assume TODO : (A : U) → A
 ```
 
-```rzk
-#section is-LARI-family-comp
+## Initial Objects in Sigma types
 
+```rzk
+#def has-initial-total-type-has-initial-fib-is-inner-fam
+  ( B : U)
+  ( P : B → U)
+  ( is-inner-fib-type-fam-P : is-inner-fib-type-fam B P)
+  ( has-initial-B : has-initial B)
+  ( has-initial-P : (b : B) → has-initial (P b))
+  : has-initial (total-type B P)
+  :=
+  ( (π₁ has-initial-B, π₁ (has-initial-P (π₁ has-initial-B)))
+  , \ (b, p) → is-contr-equiv-is-contr'
+    ( hom
+      ( total-type B P)
+      ( π₁ has-initial-B, π₁ (has-initial-P (π₁ has-initial-B)))
+      ( b, p))
+    ( hom B (π₁ has-initial-B) (b))
+    ( equiv-comp
+      ( hom
+        ( total-type B P)
+        ( π₁ has-initial-B, π₁ (has-initial-P (π₁ has-initial-B)))
+        ( b, p))
+      ( Σ (h : hom B (π₁ has-initial-B) (b))
+        , dhom B (π₁ has-initial-B) (b) h P (π₁ (has-initial-P (π₁ has-initial-B))) p)
+      ( hom B (π₁ has-initial-B) (b))
+      ( equiv-hom-sigma-dhom B P
+        ( π₁ has-initial-B, π₁ (has-initial-P (π₁ has-initial-B)))
+        ( b, p))
+      ( equiv-total-type-is-contr
+        ( hom B (π₁ has-initial-B) (b))
+        ( \ h → dhom B (π₁ has-initial-B) (b) h P (π₁ (has-initial-P (π₁ has-initial-B))) p)
+        ( is-dhom-initial-section-is-initial-section B P
+          ( is-inner-fib-type-fam-P)
+          ( \ b → π₁ (has-initial-P b))
+          ( \ b → π₂ (has-initial-P b))
+          ( π₁ has-initial-B)
+          ( b)
+          ( p))))
+    ( π₂ has-initial-B b))
+```
+
+
+```rzk
 #variable I : CUBE
 #variable X : I → TOPE
 #variable Y : X → TOPE
+```
+
+## Composing Liftings
+
+```rzk
+#def lift
+  ( B : X → U)
+  ( P : (x : X) → B x → U)
+  ( g : (x : X) → B x)
+  ( f₀ : (y : Y) → P y (g y))
+  : U
+  := (x : X) → P x (g x) [Y x ↦ f₀ x]
+```
+
+```rzk
+#def equiv-lift-comp
+  ( B : U)
+  ( P : B → U)
+  ( Q : (b : B) → P b → U)
+  ( g : X → B)
+  ( f₀ : (y : Y) → (Σ (p : P (g y)) , Q (g y) p))
+  : Equiv
+  ( lift (\ _ → B) (\ _ b → Σ (p : P b) , Q b p) (g) (f₀))
+  ( Σ (l : lift (\ _ → B) (\ _ → P) (g) (\ y → π₁ (f₀ y)))
+    , lift (\ _ → total-type B P) (\ _ (b, p) → Q b p) (\ x → (g x, l x)) (\ y →  π₂ (f₀ y)))
+  :=
+  equiv-is-inverse
+  ( lift (\ _ → B) (\ _ b → Σ (p : P b) , Q b p) (g) (f₀))
+  ( Σ (l : lift (\ _ → B) (\ _ → P) (g) (\ y → π₁ (f₀ y)))
+    , lift (\ _ → total-type B P) (\ _ (b, p) → Q b p) (\ x → (g x, l x)) (\ y →  π₂ (f₀ y)))
+  ( \ l → (\ x → π₁ (l x), \ x → π₂ (l x)))
+  ( \ (l₁, l₂) x → (l₁ x, l₂ x))
+  ( \ _ → refl)
+  ( \ _ → refl)
+```
+
+## ...
+
+```rzk
+#section is-LARI-family-comp
+
 #variable B : U
 #variable P : B → U
 #variable Q : (b : B) → P b → U
