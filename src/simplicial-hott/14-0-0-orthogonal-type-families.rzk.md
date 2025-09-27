@@ -23,6 +23,8 @@
   → is-contr ((t : ψ) → C (a t) [φ t ↦ f t])
 ```
 
+## `orthogonal-to` is the same as `is-right-orthogonal-to-shape`
+
 ```rzk
 #section has-contr-relative-extension-types-iff-orthogonal-to
 
@@ -177,18 +179,50 @@
   ( equiv-relative-extension-type-orthogonal-ext (\ t → (a t, f t)) a)
   ( has-contr-rel (\ t → (a t, f t)) a)
 
-#def has-contr-relative-extension-types-iff-orthogonal-to uses (extext)
-  : iff
-    ( has-contr-relative-extension-types I ψ ϕ
-      ( \ _ → total-type A C)
-      ( \ _ → A)
-      ( \ _ → projection-total-type A C))
-    ( orthogonal-to I ψ ϕ A C)
-  :=
-  ( orthogonal-to-has-contr-relative-extension-types
-  , has-contr-relative-extension-types-orthogonal-to)
-
 #end has-contr-relative-extension-types-iff-orthogonal-to
+```
+
+```rzk
+
+#section orthogonal-to-iff-is-right-orthogonal-to-shape
+
+#variable I : CUBE
+#variable ψ : I → TOPE
+#variable ϕ : ψ → TOPE
+#variable A : U
+#variable C : A → U
+
+#def is-right-orthogonal-to-shape-orthogonal-to
+  ( orthogonal-to-C : orthogonal-to I ψ ϕ A C)
+  : is-right-orthogonal-to-shape I ψ ϕ
+    ( total-type A C)
+    ( A)
+    ( projection-total-type A C)
+  :=
+  is-right-orthogonal-to-shape-has-contr-relative-extension-types
+  ( extext) I ψ ϕ
+  ( total-type A C)
+  ( A)
+  ( projection-total-type A C)
+  ( has-contr-relative-extension-types-orthogonal-to I ψ ϕ A C
+    ( orthogonal-to-C))
+
+#def orthogonal-to-is-right-orthogonal-to-shape
+  ( is-right-orth-C : is-right-orthogonal-to-shape I ψ ϕ
+    ( total-type A C)
+    ( A)
+    ( projection-total-type A C))
+  : orthogonal-to I ψ ϕ A C
+  :=
+  orthogonal-to-has-contr-relative-extension-types I ψ ϕ A C
+  ( has-contr-relative-extension-types-is-right-orthogonal-to-shape
+    ( extext) I ψ ϕ
+    ( total-type A C)
+    ( A)
+    ( projection-total-type A C)
+    ( is-right-orth-C))
+
+#end orthogonal-to-iff-is-right-orthogonal-to-shape
 ```
 
 ## Leibniz Cotensor is an Equivalence
