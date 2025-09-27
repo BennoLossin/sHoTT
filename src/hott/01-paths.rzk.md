@@ -695,6 +695,34 @@ Application of a function to homotopic paths yields homotopic paths.
       ( refl)
       ( y)
       ( p)
+
+#def transport-lift-first
+  ( x y : A)
+  ( p : x = y)
+  ( u : B x)
+  : ap
+    ( Σ (z : A) , B z)
+    ( A)
+    ( x , u)
+    ( y , transport x y p u)
+    ( \ (a, b) → a)
+    ( transport-lift x y p u)
+  = p
+  :=
+  ind-path
+  ( A)
+  ( x)
+  ( \ y p → ap
+      ( Σ (z : A) , B z)
+      ( A)
+      ( x , u)
+      ( y , transport x y p u)
+      ( \ (a, b) → a)
+      ( transport-lift x y p u)
+    = p)
+  ( refl)
+  ( y)
+  ( p)
 ```
 
 ### Transport along concatenated paths
@@ -787,6 +815,50 @@ Application of a function to homotopic paths yields homotopic paths.
 
 ```rzk
 #end transport
+```
+
+```rzk
+#def transport-eq-concat'-ap-rev
+  ( A B : U)
+  ( b : B)
+  ( f : A → B)
+  ( x y : A)
+  ( p : x = y)
+  ( u : f x = b)
+  : transport A (\ a → f a = b) x y p u
+  = concat' B (f y) (f x) (b) (ap A B y x f (rev A x y p)) (u)
+  :=
+  ind-path
+    ( A)
+    ( x)
+    ( \ y p → transport A (\ a → f a = b) x y p u
+      = concat' B (f y) (f x) (b) (ap A B y x f (rev A x y p)) (u))
+    ( refl)
+    ( y)
+    ( p)
+
+#def transport-eq-concat-ap-rev
+  ( A B : U)
+  ( b : B)
+  ( f : A → B)
+  ( x y : A)
+  ( p : x = y)
+  ( u : f x = b)
+  : transport A (\ a → f a = b) x y p u
+  = concat B (f y) (f x) (b) (ap A B y x f (rev A x y p)) (u)
+  :=
+  ind-path
+    ( A)
+    ( x)
+    ( \ y p → transport A (\ a → f a = b) x y p u
+      = concat B (f y) (f x) (b) (ap A B y x f (rev A x y p)) (u))
+    ( rev
+      ( f x = b)
+      ( concat B (f x) (f x) (b) (refl) (u))
+      ( u)
+      ( left-unit-concat B (f x) (b) (u)))
+    ( y)
+    ( p)
 ```
 
 ### Substitution law for transport
