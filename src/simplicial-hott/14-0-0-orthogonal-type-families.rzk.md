@@ -32,7 +32,124 @@
 #variable A : U
 #variable C : A → U
 
-#def has-contr-relative-extension-types-orthogonal-to
+#def equiv-relative-extension-type-orthogonal-ext
+  ( σ : (t : ϕ) → total-type A C)
+  ( τ : (t : ψ) → A [ϕ t ↦ projection-total-type A C (σ t)])
+  : Equiv
+  ( Σ ( τ' : (t : ψ) → total-type A C [ϕ t ↦ σ t])
+    , ( (t : ψ) → (projection-total-type A C (τ' t) = τ t) [ϕ t ↦ refl]))
+  ( (t : ψ) → C (τ t) [ϕ t ↦ π₂ (σ t)])
+  :=
+  equiv-comp
+  ( Σ ( τ' : (t : ψ) → total-type A C [ϕ t ↦ σ t])
+    , ( (t : ψ) → (projection-total-type A C (τ' t) = τ t) [ϕ t ↦ refl]))
+  ( (t : ψ) → (Σ (τ' : total-type A C) , (π₁ τ' = τ t)) [ϕ t ↦ (σ t, refl)])
+  ( (t : ψ) → C (τ t) [ϕ t ↦ π₂ (σ t)])
+  ( equiv-is-inverse
+    ( Σ ( τ' : (t : ψ) → total-type A C [ϕ t ↦ σ t])
+      , ( (t : ψ) → (projection-total-type A C (τ' t) = τ t) [ϕ t ↦ refl]))
+    ( (t : ψ) → (Σ (τ' : total-type A C) , (π₁ τ' = τ t)) [ϕ t ↦ (σ t, refl)])
+    ( \ (τ', p) t → (τ' t, p t))
+    ( \ f → (\ t → π₁ (f t), \ t → π₂ (f t)))
+    ( \ _ → refl)
+    ( \ _ → refl))
+  ( equiv-is-inverse
+    ( (t : ψ) → (Σ (τ' : total-type A C) , (π₁ τ' = τ t)) [ϕ t ↦ (σ t, refl)])
+    ( (t : ψ) → C (τ t) [ϕ t ↦ π₂ (σ t)])
+    ( \ f t → transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
+    ( \ f t → ((τ t, f t), refl))
+    ( \ f → naiveextext-extext extext I ψ ϕ
+      ( \ t → Σ (τ' : total-type A C) , (π₁ τ' = τ t))
+      ( \ t → (σ t, refl))
+      ( \ t → ((τ t
+          , transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
+        , refl))
+      ( f)
+      ( \ t → path-of-pairs-pair-of-paths (total-type A C) (\ τ' → π₁ τ' = τ t)
+        ( τ t , transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
+        ( π₁ (f t))
+        ( rev (total-type A C)
+          ( π₁ (f t))
+          ( τ t , transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
+          ( transport-lift A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t)))))
+        ( refl)
+        ( π₂ (f t))
+        ( triple-concat
+          ( π₁ (π₁ (f t)) = τ t)
+          ( transport
+            ( total-type A C)
+            ( \ (a, _) → a = τ t)
+            ( τ t , transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
+            ( π₁ (f t))
+            ( rev (total-type A C)
+              ( π₁ (f t))
+              ( τ t , transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
+              ( transport-lift A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t)))))
+            ( refl))
+          ( ap
+            ( total-type A C)
+            ( A)
+            ( π₁ (f t))
+            ( τ t, transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
+            ( \ (a, _) → a)
+            ( rev
+              ( total-type A C)
+              ( τ t, transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
+              ( π₁ (f t))
+              ( rev
+                ( total-type A C)
+                ( π₁ (f t))
+                ( τ t, transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
+                ( transport-lift A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t)))))))
+          ( ap
+            ( total-type A C)
+            ( A)
+            ( π₁ (f t))
+            ( τ t , transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
+            ( \ (a, _) → a)
+            ( transport-lift A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t)))))
+          ( π₂ (f t))
+          ( transport-eq-concat-ap-rev
+            ( total-type A C)
+            ( A)
+            ( τ t)
+            ( \ (a, _) → a)
+            ( τ t , transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
+            ( π₁ (f t))
+            ( rev (total-type A C)
+              ( π₁ (f t))
+              ( τ t , transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
+              ( transport-lift A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t)))))
+            ( refl))
+          ( ap
+            ( ( π₁ (f t))
+              = ( τ t, transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t)))))
+            ( π₁ (π₁ (f t)) = τ t)
+            ( rev
+              ( total-type A C)
+              ( τ t, transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
+              ( π₁ (f t))
+              ( rev
+                ( total-type A C)
+                ( π₁ (f t))
+                ( τ t, transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
+                ( transport-lift A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))))
+            ( transport-lift A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
+            ( ap
+              ( total-type A C)
+              ( A)
+              ( π₁ (f t))
+              ( τ t, transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
+              ( \ (a, _) → a))
+            ( rev-rev
+              ( total-type A C)
+              ( π₁ (f t))
+              ( τ t, transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
+              ( transport-lift A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))))
+          ( transport-lift-first A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t)))))))
+    ( \ _ → refl))
+
+#def has-contr-relative-extension-types-orthogonal-to uses (extext)
   ( orthogonal-to-C : orthogonal-to I ψ ϕ A C)
   : has-contr-relative-extension-types I ψ ϕ
   ( \ _ → total-type A C)
@@ -43,133 +160,34 @@
   ( Σ ( τ' : (t : ψ) → total-type A C [ϕ t ↦ σ t])
     , ( (t : ψ) → (projection-total-type A C (τ' t) = τ t) [ϕ t ↦ refl]))
   ( (t : ψ) → C (τ t) [ϕ t ↦ π₂ (σ t)])
-  ( equiv-comp
-    ( Σ ( τ' : (t : ψ) → total-type A C [ϕ t ↦ σ t])
-      , ( (t : ψ) → (projection-total-type A C (τ' t) = τ t) [ϕ t ↦ refl]))
-    ( (t : ψ) → (Σ (τ' : total-type A C) , (π₁ τ' = τ t)) [ϕ t ↦ (σ t, refl)])
-    ( (t : ψ) → C (τ t) [ϕ t ↦ π₂ (σ t)])
-    ( equiv-is-inverse
-      ( Σ ( τ' : (t : ψ) → total-type A C [ϕ t ↦ σ t])
-        , ( (t : ψ) → (projection-total-type A C (τ' t) = τ t) [ϕ t ↦ refl]))
-      ( (t : ψ) → (Σ (τ' : total-type A C) , (π₁ τ' = τ t)) [ϕ t ↦ (σ t, refl)])
-      ( \ (τ', p) t → (τ' t, p t))
-      ( \ f → (\ t → π₁ (f t), \ t → π₂ (f t)))
-      ( \ _ → refl)
-      ( \ _ → refl))
-    ( equiv-is-inverse
-      ( (t : ψ) → (Σ (τ' : total-type A C) , (π₁ τ' = τ t)) [ϕ t ↦ (σ t, refl)])
-      ( (t : ψ) → C (τ t) [ϕ t ↦ π₂ (σ t)])
-      ( \ f t → transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
-      ( \ f t → ((τ t, f t), refl))
-      ( \ f → naiveextext-extext extext I ψ ϕ
-        ( \ t → Σ (τ' : total-type A C) , (π₁ τ' = τ t))
-        ( \ t → (σ t, refl))
-        ( \ t → ((τ t
-            , transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
-          , refl))
-        ( f)
-        ( \ t → path-of-pairs-pair-of-paths (total-type A C) (\ τ' → π₁ τ' = τ t)
-          ( τ t , transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
-          ( π₁ (f t))
-          ( rev (total-type A C)
-            ( π₁ (f t))
-            ( τ t , transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
-            ( transport-lift A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t)))))
-          ( refl)
-          ( π₂ (f t))
-          ( triple-concat
-            ( π₁ (π₁ (f t)) = τ t)
-            ( transport
-              ( total-type A C)
-              ( \ (a, _) → a = τ t)
-              ( τ t , transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
-              ( π₁ (f t))
-              ( rev (total-type A C)
-                ( π₁ (f t))
-                ( τ t , transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
-                ( transport-lift A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t)))))
-              ( refl))
-            ( ap
-              ( total-type A C)
-              ( A)
-              ( π₁ (f t))
-              ( τ t, transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
-              ( \ (a, _) → a)
-              ( rev
-                ( total-type A C)
-                ( τ t, transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
-                ( π₁ (f t))
-                ( rev
-                  ( total-type A C)
-                  ( π₁ (f t))
-                  ( τ t, transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
-                  ( transport-lift A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t)))))))
-            ( ap
-              ( total-type A C)
-              ( A)
-              ( π₁ (f t))
-              ( τ t , transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
-              ( \ (a, _) → a)
-              ( transport-lift A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t)))))
-            ( π₂ (f t))
-            ( transport-eq-concat-ap-rev
-              ( total-type A C)
-              ( A)
-              ( τ t)
-              ( \ (a, _) → a)
-              ( τ t , transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
-              ( π₁ (f t))
-              ( rev (total-type A C)
-                ( π₁ (f t))
-                ( τ t , transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
-                ( transport-lift A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t)))))
-              ( refl))
-            ( ap
-              ( ( π₁ (f t))
-                = ( τ t, transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t)))))
-              ( π₁ (π₁ (f t)) = τ t)
-              ( rev
-                ( total-type A C)
-                ( τ t, transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
-                ( π₁ (f t))
-                ( rev
-                  ( total-type A C)
-                  ( π₁ (f t))
-                  ( τ t, transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
-                  ( transport-lift A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))))
-              ( transport-lift A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
-              ( ap
-                ( total-type A C)
-                ( A)
-                ( π₁ (f t))
-                ( τ t, transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
-                ( \ (a, _) → a))
-              ( rev-rev
-                ( total-type A C)
-                ( π₁ (f t))
-                ( τ t, transport A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))
-                ( transport-lift A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t))))))
-            ( transport-lift-first A C (π₁ (π₁ (f t))) (τ t) (π₂ (f t)) (π₂ (π₁ (f t)))))))
-      ( \ _ → refl)))
+  ( equiv-relative-extension-type-orthogonal-ext σ τ)
   ( orthogonal-to-C τ (\ t → π₂ (σ t)))
 
+#def orthogonal-to-has-contr-relative-extension-types uses (extext)
+  ( has-contr-rel : has-contr-relative-extension-types I ψ ϕ
+                    ( \ _ → total-type A C)
+                    ( \ _ → A)
+                    ( \ _ → projection-total-type A C))
+  : orthogonal-to I ψ ϕ A C
+  :=
+  \ a f → is-contr-equiv-is-contr
+  ( Σ ( τ' : (t : ψ) → total-type A C [ϕ t ↦ (a t, f t)])
+    , ( (t : ψ) → (projection-total-type A C (τ' t) = a t) [ϕ t ↦ refl]))
+  ( (t : ψ) → C (a t) [ϕ t ↦ f t])
+  ( equiv-relative-extension-type-orthogonal-ext (\ t → (a t, f t)) a)
+  ( has-contr-rel (\ t → (a t, f t)) a)
 
-  {-
-  Σ ( τ' : (t : ψ) → total-type A C [ϕ t ↦ σ t])
-  , ( (t : ψ) → (pr (τ' t) = τ t) [ϕ t ↦ refl])
+#def has-contr-relative-extension-types-iff-orthogonal-to uses (extext)
+  : iff
+    ( has-contr-relative-extension-types I ψ ϕ
+      ( \ _ → total-type A C)
+      ( \ _ → A)
+      ( \ _ → projection-total-type A C))
+    ( orthogonal-to I ψ ϕ A C)
+  :=
+  ( orthogonal-to-has-contr-relative-extension-types
+  , has-contr-relative-extension-types-orthogonal-to)
 
-  ~=
-
-  (t : ψ) → (Σ (x: total-type A C), pr x = τ t) [ϕ t ↦ (σ t, refl)]
-
-  ~=
-
-  (t : ψ) → (fib pr (τ t)) [ϕ t ↦ (σ t, refl)]
-
-  ~=
-
-  (t : ψ) → C (τ t) [ϕ t ↦ π₂ (σ t)]
-  -}
 #end has-contr-relative-extension-types-iff-orthogonal-to
 ```
 
