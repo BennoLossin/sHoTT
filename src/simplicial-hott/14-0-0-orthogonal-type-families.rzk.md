@@ -231,13 +231,6 @@
 
 ```rzk
 #def leibniz-cotensor-codomain
-  ( Y X E B : U)
-  ( j : Y → X)
-  ( p : E → B)
-  : U
-  := Σ (f : Y → E) , Σ (g : X → B) , comp Y E B p f = comp Y X B g j
-
-#def leibniz-cotensor-shape-codomain
   ( I : CUBE)
   ( X : I → TOPE)
   ( Y : X → TOPE)
@@ -247,28 +240,88 @@
   := Σ (f : Y → E) , Σ (g : X → B) , (\ (y : Y) → p (f y)) =_{ Y → B } (\ (y : Y) → g y)
 
 #def leibniz-cotensor
-  ( Y X E B : U)
-  ( j : Y → X)
-  ( p : E → B)
-  ( f : X → E)
-  : leibniz-cotensor-codomain Y X E B j p
-  := (comp Y X E f j , (comp X E B p f , refl))
-
-#def leibniz-cotensor-shape
   ( I : CUBE)
   ( X : I → TOPE)
   ( Y : X → TOPE)
   ( E B : U)
   ( p : E → B)
   ( f : X → E)
-  : leibniz-cotensor-shape-codomain I X Y E B p
+  : leibniz-cotensor-codomain I X Y E B p
   := (\ (y : Y) → f y , (\ (x : X) → p (f x), refl))
 ```
 
 ### Orthogonal Families: Leibniz Cotensor is an Equivalence
 
+
 ```rzk
-#def is-equiv-leibniz-cotensor-shap-orthogonal-to
+#def equiv-sigma-ext
+  ( I : CUBE)
+  ( X : I → TOPE)
+  ( Y : X → TOPE)
+  ( A : U)
+  : Equiv (X → A) (Σ (f : Y → A) , ((x : X) → A [Y x ↦ f x]))
+  :=
+  equiv-is-inverse (X → A) (Σ (f : Y → A) , ((x : X) → A [Y x ↦ f x]))
+  ( \ f → (\ y → f y, \ x → f x))
+  ( \ (_, f) x → f x)
+  ( \ _ → refl)
+  ( \ _ → refl)
+```
+
+```rzk
+#def equiv-todo
+  ( I : CUBE)
+  ( X : I → TOPE)
+  ( Y : X → TOPE)
+  ( A : U)
+  ( g : Y → A)
+  : Equiv ((x : X) → A [Y x ↦ g x]) (Σ (f : X → A) , (\ y → f y) =_{Y → A} g)
+  :=
+  equiv-is-inverse ((x : X) → A [Y x ↦ g x]) (Σ (f : X → A) , (\ y → f y) =_{Y → A} g)
+  ( \ f → (f, refl))
+  ( \ (f, p) → transport (Y → A) (\ g → (x : X) → A [Y x ↦ g x])
+    ( \ y → f y)
+    ( g)
+    ( p)
+    ( f))
+  ( \ _ → refl)
+  ( \ (f, p) → path-of-pairs-pair-of-paths (X → A) (\ f → (\ y → f y) =_{Y → A} g)
+    ( f)
+    ( transport (Y → A) (\ g → (x : X) → A [Y x ↦ g x])
+      ( \ y → f y)
+      ( g)
+      ( p)
+      ( f))
+    ( TODO ...)
+    ( p)
+    ( refl)
+    ( TODO ...)
+  )
+```
+
+```rzk
+#def is-equiv-leibniz-cotensor-orthogonal-to
+  ( I : CUBE)
+  ( X : I → TOPE)
+  ( Y : X → TOPE)
+  ( E B : U)
+  ( p : E → B)
+  ( orth : is-right-orthogonal-to-shape I X Y E B p)
+  : is-equiv
+    ( X → E)
+    ( leibniz-cotensor-codomain I X Y E B p)
+    ( leibniz-cotensor I X Y E B p)
+  :=
+  is-equiv-has-inverse
+  ( X → E)
+  ( leibniz-cotensor-codomain I X Y E B p)
+  ( leibniz-cotensor I X Y E B p)
+  ( \ (f, (g, q)) → orth)
+```
+
+
+```rzk
+#def is-equiv-leibniz-cotensor-orthogonal-to
   ( I : CUBE)
   ( X : I → TOPE)
   ( Y : X → TOPE)
