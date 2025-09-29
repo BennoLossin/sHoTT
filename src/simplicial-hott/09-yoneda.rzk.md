@@ -899,6 +899,17 @@ types are contractible.
   := Σ (a : A) , is-initial A a
 ```
 
+```rzk
+#def has-initial-is-contr
+  ( A : U)
+  ( is-contr-A : is-contr A)
+  : has-initial A
+  :=
+  ( center-contraction A is-contr-A
+  , \ x → is-contr-hom-is-contr extext A is-contr-A
+    ( center-contraction A is-contr-A) x)
+```
+
 Initial objects map to initial objects by equivalences.
 
 ```rzk

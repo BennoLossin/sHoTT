@@ -7,9 +7,8 @@ This is a literate `rzk` file:
 ```
 
 ```rzk
-#assume TODO : (A : U) → A
+#assume extext : ExtExt
 ```
-
 
 ## LARI families
 
@@ -38,7 +37,10 @@ This is a literate `rzk` file:
   ( P : B → U)
   ( orthogonal-to-P : orthogonal-to I X Y B P)
   : is-LARI-family B P
-  := TODO (is-LARI-family B P)
+  :=
+  \ g f₀ → has-initial-is-contr extext
+    ( (x : X) → P (g x) [Y x ↦ f₀ x])
+    ( orthogonal-to-P g f₀)
 ```
 
 ```rzk
