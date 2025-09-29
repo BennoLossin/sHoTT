@@ -342,6 +342,39 @@ The center of contraction in the based path space is `#!rzk (a , refl)`.
   := (center-based-paths A a , contraction-based-paths A a)
 ```
 
+```rzk
+#def equiv-based-paths-family
+  ( A : U)
+  ( B : A → U)
+  ( a : A)
+  : Equiv (Σ (x : A) , product (a = x) (B x)) (B a)
+  :=
+  equiv-is-inverse (Σ (x : A) , product (a = x) (B x)) (B a)
+  ( \ (x, (p, b)) → transport A B x a (rev A a x p) b)
+  ( \ b → (a, (refl, b)))
+  ( \ (x, (p, b)) → path-of-pairs-pair-of-paths
+    ( A) ( \ y → product (a = y) (B y))
+    ( a) (x) (p)
+    ( refl, transport A B x a (rev A a x p) b)
+    ( p, b)
+    ( concat
+      ( product (a = x) (B x))
+      ( transport A (\ x' → product (a = x') (B x')) a x p
+        ( refl, transport A B x a (rev A a x p) b))
+      ( transport A (\ y → a = y) a x p refl
+      , transport A B a x p (transport A B x a (rev A a x p) b))
+      ( p, b)
+      ( transport-product A (\ x → a = x) B a x p refl (transport A B x a (rev A a x p) b))
+      ( path-of-product (a = x) (B x)
+        ( transport A (\ y → a = y) a x p refl) (p)
+        ( transport A B a x p (transport A B x a (rev A a x p) b)) (b)
+        ( transport-eq'-concat'-rev A a a x p refl)
+        ( transport-rev-transport A B a x p b)
+      )))
+  ( \ _ → refl)
+
+```
+
 ## Contractible products
 
 ```rzk

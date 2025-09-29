@@ -5,7 +5,6 @@
 ```
 
 ```rzk
-#assume TODO : (A : U) → A
 #assume extext : ExtExt
 ```
 
@@ -269,38 +268,30 @@
 ```
 
 ```rzk
-#def equiv-todo
+#def equiv-ext-sigma-eq-ext-constraint
   ( I : CUBE)
   ( X : I → TOPE)
   ( Y : X → TOPE)
   ( A : U)
   ( g : Y → A)
-  : Equiv ((x : X) → A [Y x ↦ g x]) (Σ (f : X → A) , (\ y → f y) =_{Y → A} g)
+  : Equiv (Σ (f : X → A) , g =_{Y → A} (\ y → f y)) ((x : X) → A [Y x ↦ g x])
   :=
-  equiv-is-inverse ((x : X) → A [Y x ↦ g x]) (Σ (f : X → A) , (\ y → f y) =_{Y → A} g)
-  ( \ f → (f, refl))
-  ( \ (f, p) → transport (Y → A) (\ g → (x : X) → A [Y x ↦ g x])
-    ( \ y → f y)
-    ( g)
-    ( p)
-    ( f))
-  ( \ _ → refl)
-  ( \ (f, p) → path-of-pairs-pair-of-paths (X → A) (\ f → (\ y → f y) =_{Y → A} g)
-    ( f)
-    ( transport (Y → A) (\ g → (x : X) → A [Y x ↦ g x])
-      ( \ y → f y)
-      ( g)
-      ( p)
-      ( f))
-    ( TODO ...)
-    ( p)
-    ( refl)
-    ( TODO ...)
-  )
+  equiv-comp
+  ( Σ (f : X → A) , g =_{Y → A} (\ y → f y))
+  ( Σ (f : Y → A) , product (g = f) ((x : X) → A [Y x ↦ f x]))
+  ( (x : X) → A [Y x ↦ g x])
+  ( equiv-is-inverse
+    ( Σ (f : X → A) , g =_{Y → A} (\ y → f y))
+    ( Σ (f : Y → A) , product (g = f) ((x : X) → A [Y x ↦ f x]))
+    ( \ (f, p) → ((\ y → f y), (p, f)))
+    ( \ (_, (p, F)) → (F, p))
+    ( \ _ → refl)
+    ( \ _ → refl))
+  ( equiv-based-paths-family (Y → A) (\ f → ((x : X) → A [Y x ↦ f x])) g)
 ```
 
 ```rzk
-#def is-equiv-leibniz-cotensor-orthogonal-to
+#def is-equiv-leibniz-cotensor-is-right-orthogonal-to-shape
   ( I : CUBE)
   ( X : I → TOPE)
   ( Y : X → TOPE)
@@ -312,34 +303,48 @@
     ( leibniz-cotensor-codomain I X Y E B p)
     ( leibniz-cotensor I X Y E B p)
   :=
-  is-equiv-has-inverse
-  ( X → E)
-  ( leibniz-cotensor-codomain I X Y E B p)
-  ( leibniz-cotensor I X Y E B p)
-  ( \ (f, (g, q)) → orth)
+  π₂
+  ( equiv-triple-comp
+    ( X → E)
+    ( Σ (f : Y → E) , (x : X) → E [Y x ↦ f x])
+    ( Σ (f : Y → E) , (x : X) → B [Y x ↦ p (f x)])
+    ( leibniz-cotensor-codomain I X Y E B p)
+    ( equiv-sigma-ext I X Y E)
+    ( total-equiv-family-of-equiv
+      ( Y → E)
+      ( \ f → (x : X) → E [Y x ↦ f x])
+      ( \ f → (x : X) → B [Y x ↦ p (f x)])
+      ( \ f → (\ F x → p (F x), orth f)))
+    ( total-equiv-family-of-equiv
+      ( Y → E)
+      ( \ f → (x : X) → B [Y x ↦ p (f x)])
+      ( \ f → Σ (g : X → B) , (\ y → p (f y)) =_{Y → B} (\ y → g y))
+      ( \ f → inv-equiv
+        ( Σ (g : X → B) , (\ y → p (f y)) =_{Y → B} (\ y → g y))
+        ( (x : X) → B [Y x ↦ p (f x)])
+        ( equiv-ext-sigma-eq-ext-constraint I X Y B (\ y → p (f y))))))
 ```
 
 
 ```rzk
-#def is-equiv-leibniz-cotensor-orthogonal-to
+#def is-equiv-leibniz-cotensor-orthogonal-to uses (extext)
   ( I : CUBE)
   ( X : I → TOPE)
   ( Y : X → TOPE)
   ( B : U)
   ( P : B → U)
+  ( orth : orthogonal-to I X Y B P)
   : is-equiv
   ( X → total-type B P)
-  ( leibniz-cotensor-shape-codomain I X Y (total-type B P) B
+  ( leibniz-cotensor-codomain I X Y (total-type B P) B
     ( projection-total-type B P))
-  ( leibniz-cotensor-shape I X Y (total-type B P) B
+  ( leibniz-cotensor I X Y (total-type B P) B
     ( projection-total-type B P))
   :=
-  TODO (is-equiv
-  ( X → total-type B P)
-  ( leibniz-cotensor-shape-codomain I X Y (total-type B P) B
-    ( projection-total-type B P))
-  ( leibniz-cotensor-shape I X Y (total-type B P) B
-    ( projection-total-type B P)))
+  is-equiv-leibniz-cotensor-is-right-orthogonal-to-shape I X Y
+  ( total-type B P) (B)
+  ( projection-total-type B P)
+  ( is-right-orthogonal-to-shape-orthogonal-to I X Y B P orth)
 ```
 
 ## Inner Families

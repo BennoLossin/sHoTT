@@ -119,6 +119,13 @@ choice of definition.
   := ind-path (A) (x) (\ y' p' → (concat A x x y' refl p') = p') (refl) (y) (p)
 ```
 
+```rzk
+#def right-unit-concat'
+  ( q : x = y)
+  : ( concat' A x y y q refl) = q
+  := ind-path (A) (x) (\ y' q' → (concat' A x y' y' q' refl) = q') (refl) (y) (q)
+```
+
 ### Associativity of path concatenation
 
 ```rzk
@@ -221,6 +228,23 @@ Concatenation of two paths with common domain; defined using `#!rzk concat` and
 
 #end basic-path-coherence
 ```
+
+## Paths in Products
+
+```rzk
+#def path-of-product
+  ( A B : U)
+  ( a₁ a₂ : A)
+  ( b₁ b₂ : B)
+  ( p : a₁ = a₂)
+  ( q : b₁ = b₂)
+  : (a₁, b₁) = (a₂, b₂)
+  :=
+  ind-path A a₁ (\ a' _ → (a₁, b₁) = (a', b₂))
+  ( ind-path B b₁ (\ b' _ → (a₁, b₁) = (a₁, b')) (refl) (b₂) (q))
+  ( a₂) (p)
+```
+
 
 ## Some derived coherences in path algebra
 
@@ -817,6 +841,32 @@ Application of a function to homotopic paths yields homotopic paths.
 #end transport
 ```
 
+### Transport in a product
+
+```rzk
+#def transport-product
+  ( A : U)
+  ( B : A → U)
+  ( C : A → U)
+  ( x y : A)
+  ( p : x = y)
+  ( b : B x)
+  ( c : C x)
+  : transport A (\ a → product (B a) (C a)) x y p (b, c)
+  = (transport A B x y p b, transport A C x y p c)
+  :=
+  ind-path
+  ( A)
+  ( x)
+  ( \ y' p' → transport A (\ a → product (B a) (C a)) x y' p' (b, c)
+    = (transport A B x y' p' b, transport A C x y' p' c))
+  ( refl)
+  ( y)
+  ( p)
+```
+
+### Transport in paths
+
 ```rzk
 #def transport-eq-concat'-ap-rev
   ( A B : U)
@@ -857,6 +907,70 @@ Application of a function to homotopic paths yields homotopic paths.
       ( concat B (f x) (f x) (b) (refl) (u))
       ( u)
       ( left-unit-concat B (f x) (b) (u)))
+    ( y)
+    ( p)
+
+#def transport-eq'-concat-ap-rev
+  ( A B : U)
+  ( b : B)
+  ( f : A → B)
+  ( x y : A)
+  ( p : x = y)
+  ( u : b = f x)
+  : transport A (\ a → b = f a) x y p u
+  =_{b = f y} concat B (b) (f x) (f y) (u) (ap A B x y f p)
+  :=
+  ind-path
+    ( A)
+    ( x)
+    ( \ y p → transport A (\ a → b = f a) x y p u
+      = concat B (b) (f x) (f y) (u) (ap A B x y f p))
+    ( refl)
+    ( y)
+    ( p)
+
+#def transport-eq'-concat'-ap-rev
+  ( A B : U)
+  ( b : B)
+  ( f : A → B)
+  ( x y : A)
+  ( p : x = y)
+  ( u : b = f x)
+  : transport A (\ a → b = f a) x y p u
+  =_{b = f y} concat' B (b) (f x) (f y) (u) (ap A B x y f p)
+  :=
+  ind-path
+    ( A)
+    ( x)
+    ( \ y p → transport A (\ a → b = f a) x y p u
+      = concat' B (b) (f x) (f y) (u) (ap A B x y f p))
+    ( rev
+      ( b = f x)
+      ( concat' B (b) (f x) (f x) (u) (refl))
+      ( u)
+      ( right-unit-concat' B (b) (f x) (u)))
+    ( y)
+    ( p)
+
+#def transport-eq'-concat'-rev
+  ( A : U)
+  ( a : A)
+  ( x y : A)
+  ( p : x = y)
+  ( u : a = x)
+  : transport A (\ a' → a = a') x y p u
+  =_{a = y} concat' A a x y u p
+  :=
+  ind-path
+    ( A)
+    ( x)
+    ( \ y p → transport A (\ a' → a = a') x y p u
+      = concat' A a x y u p)
+    ( rev
+      ( a = x)
+      ( concat' A a x x u refl)
+      ( u)
+      ( right-unit-concat' A a x u))
     ( y)
     ( p)
 ```
