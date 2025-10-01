@@ -21,24 +21,39 @@
 #variable B : U
 #variable P : B → U
 
-#def todo
+#def dependent-compositions-are-horn-fillings
   ( b b' : B)
   ( u : hom B b b')
   ( e : P b)
   ( e' : P b')
   ( f : dhom B b b' u P e e')
-  ( b'' : B)
-  ( v : hom B b' b'')
-  ( w : hom B b b'')
-  ( σ : hom2 B b b' b'' u v w)
-  ( e'' : P b'')
-  ( h : dhom B b b'' w P e e'')
+  ( e'' : P b')
+  ( h : dhom B b b' u P e e'')
   : Equiv
-    ( Σ ( g : dhom B b' b'' v P e' e'')
-    , ( dhom2 B b b' b'' u v w sigma P e e' e'' f g h))
-    ( (F : (t : Δ¹) → P (u t) [t ≡ 0₂ ↦ e]) → hom ((t : Δ¹) → P (u t) [t ≡ 0₂ ↦ e]) F)
+    ( Σ ( g : dhom B b' b' (id-hom B b') P e' e'')
+    , ( dhom2 B b b' b' u (id-hom B b') u (\ (s, t) → u s) P e e' e'' f g h))
+    ( hom ((t : Δ¹) → P (u t) [t ≡ 0₂ ↦ e]) f h)
   :=
-  TODO
+  equiv-is-inverse
+  ( Σ ( g : dhom B b' b' (id-hom B b') P e' e'')
+  , ( dhom2 B b b' b' u (id-hom B b') u (\ (s, t) → u s) P e e' e'' f g h))
+  ( hom ((t : Δ¹) → P (u t) [t ≡ 0₂ ↦ e]) f h)
+  ( \ (_ , σ) s t → recOR(s ≤ t ↦ σ (t, s), t ≤ s ↦ h t))
+  ( \ H → transport
+    ( dhom B b b' u P e e'')
+    ( \ F → (((t, s) : Δ²) → P (u t) [t ≡ s ↦ F t, s ≡ 0₂ ↦ f t]))
+    ( \ t → H (t, t))
+    ( h)
+    ( TODO (
+    ( \ t → H (t, t))
+    =
+    ( h)
+    )
+    )
+    ( H)
+    )
+  ( \ _ → refl)
+  ( \ _ → refl)
 
 #def is-LARI-family-is-cocartesian-family
   ( is-cocartesian-family-P : is-cocartesian-family B P)
