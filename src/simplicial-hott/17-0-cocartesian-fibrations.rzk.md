@@ -39,19 +39,30 @@
   , ( dhom2 B b b' b' u (id-hom B b') u (\ (s, t) → u s) P e e' e'' f g h))
   ( hom ((t : Δ¹) → P (u t) [t ≡ 0₂ ↦ e]) f h)
   ( \ (_ , σ) s t → recOR(s ≤ t ↦ σ (t, s), t ≤ s ↦ h t))
-  ( \ H → transport
-    ( dhom B b b' u P e e'')
-    ( \ F → (((t, s) : Δ²) → P (u t) [t ≡ s ↦ F t, s ≡ 0₂ ↦ f t]))
-    ( \ t → H (t, t))
-    ( h)
-    ( TODO (
-    ( \ t → H (t, t))
-    =
-    ( h)
-    )
-    )
-    ( H)
-    )
+  ( \ H →
+    ( \ t → transport
+      ( dhom B b b' u P e e'')
+      ( \ F → (((t, s) : Δ²) → P (u t) [t ≡ s ↦ F t, s ≡ 0₂ ↦ f t]))
+      ( \ t → H t t)
+      ( h)
+      ( TODO (
+        ( \ t → H t t)
+        =_{dhom B b b' u P e e''}
+        ( h)))
+      ( \ (t, s) → H s t)
+      ( 1₂, t)
+    , \ (s, t) → transport
+      ( dhom B b b' u P e e'')
+      ( \ F → (((t, s) : Δ²) → P (u t) [t ≡ s ↦ F t, s ≡ 0₂ ↦ f t]))
+      ( \ t → H t t)
+      ( h)
+      ( TODO (
+        ( \ t → H t t)
+        =_{dhom B b b' u P e e''}
+        ( h)))
+      ( \ (t, s) → H s t)
+      (t, s)
+    ))
   ( \ _ → refl)
   ( \ _ → refl)
 
