@@ -1386,6 +1386,31 @@ A dual notion of homotopy can be defined similarly.
         ( h)))
 ```
 
+```rzk
+#def map-homotopy-hom2
+  ( A : U)
+  ( is-segal-A : is-segal A)
+  ( x y : A)
+  ( f h : hom A x y)
+  : (hom2 A x x y (id-hom A x) f h) → (f = h)
+  :=
+  π₁
+  ( inv-equiv (f = h) (hom2 A x x y (id-hom A x) f h)
+    ( equiv-homotopy-hom2-is-segal A is-segal-A x y f h))
+
+#def map-homotopy-hom2'
+  ( A : U)
+  ( is-segal-A : is-segal A)
+  ( x y : A)
+  ( f h : hom A x y)
+  : (hom2 A x y y f (id-hom A y) h) → (f = h)
+  :=
+  π₁
+  ( inv-equiv (f = h) (hom2 A x y y f (id-hom A y) h)
+    ( equiv-homotopy-hom2'-is-segal A is-segal-A x y f h))
+
+```
+
 More generally, a homotopy between a composite and another map is equivalent to
 the data provided by a commutative triangle with that boundary.
 

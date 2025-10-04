@@ -33,7 +33,7 @@ Not all proofs are done in this file:
     ( \ t → recOR(t ≡ 0₂ ↦ x, t ≡ 1₂ ↦ y)))
 ```
 
-```rzk
+```rzkk
 #def is-iso-arrow-nat-trans-is-iso-arrow-boundary-type
   : U
   :=
@@ -48,31 +48,20 @@ Not all proofs are done in this file:
   → ( ( t : Δ¹) → is-iso-arrow A (π₁ is-rezk-A) (f t) (g t) (α t)
     [t ≡ 0₂ ↦ is-iso-α-0, t ≡ 1₂ ↦ is-iso-α-1])
 
-{-
 #def is-iso-arrow-nat-trans-is-iso-arrow-boundary
   ( A : U)
-  ( is-segal-A : is-segal A)
+  ( is-rezk-A : is-rezk A)
   ( x₁ y₁ : A)
   ( x₂ y₂ : A)
   ( f : hom A x₁ y₁)
   ( g : hom A x₂ y₂)
   ( α : (t : Δ¹) → hom A (f t) (g t))
-  ( has-iso-arrows-α : (t : Δ¹) → is-iso-arrow A is-segal-A (f t) (g t) (α t))
-  ( is-iso-α-0 : is-iso-arrow A is-segal-A x₁ x₂ (α 0₂))
-  ( is-iso-α-1 : is-iso-arrow A is-segal-A y₁ y₂ (α 1₂))
-  : ( t : Δ¹) → is-iso-arrow A is-segal-A (f t) (g t) (α t)
+  ( is-iso-α-0 : is-iso-arrow A (π₁ is-rezk-A) x₁ x₂ (α 0₂))
+  ( is-iso-α-1 : is-iso-arrow A (π₁ is-rezk-A) y₁ y₂ (α 1₂))
+  : ( t : Δ¹) → is-iso-arrow A (π₁ is-rezk-A) (f t) (g t) (α t)
     [t ≡ 0₂ ↦ is-iso-α-0, t ≡ 1₂ ↦ is-iso-α-1]
   :=
-  dhom-ext-is-locally-contr-extext
-  ( \ t → is-iso-arrow A is-segal-A (f t) (g t) (α t))
-  ( \ t → is-contr-is-inhabited-is-prop
-    ( is-iso-arrow A is-segal-A (f t) (g t) (α t))
-    ( is-prop-is-iso-arrow extext A is-segal-A (f t) (g t) (α t))
-    ( has-iso-arrows-α t))
-  ( is-iso-α-0)
-  ( is-iso-α-1)
--}
-
+  TODO
 -- #assume is-iso-arrow-nat-trans-is-iso-arrow-boundary : is-iso-arrow-nat-trans-is-iso-arrow-boundary-type
 ```
 

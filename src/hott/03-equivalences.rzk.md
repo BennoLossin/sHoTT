@@ -525,6 +525,15 @@ functions with these stronger hypotheses.
 ```
 
 ```rzk
+#def equiv-quadruple-comp
+  ( A B C D E : U)
+  ( A≃B : Equiv A B)
+  ( B≃C : Equiv B C)
+  ( C≃D : Equiv C D)
+  ( D≃E : Equiv D E)
+  : Equiv A E
+  := equiv-triple-comp A B C E (A≃B) (B≃C) (equiv-comp C D E C≃D D≃E)
+
 #def is-equiv-quadruple-comp
   ( A B C D E : U)
   ( f : A → B)

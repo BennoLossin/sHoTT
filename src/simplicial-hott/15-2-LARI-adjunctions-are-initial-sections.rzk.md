@@ -11,7 +11,7 @@ This is a literate `rzk` file:
 ```rzk
 #assume funext : FunExt
 #assume extext : ExtExt
-#assume is-iso-arrow-nat-trans-is-iso-arrow-boundary : is-iso-arrow-nat-trans-is-iso-arrow-boundary-type
+-- #assume is-iso-arrow-nat-trans-is-iso-arrow-boundary : is-iso-arrow-nat-trans-is-iso-arrow-boundary-type
 ```
 
 
@@ -72,7 +72,14 @@ This is a literate `rzk` file:
   ( γ : dhom B x₁ y₁ g (\ b → hom A a (u b)) (π₁ x₂) (π₁ y₂))
   : dhom B x₁ y₁ g (\ b → Iso A (π₁ is-rezk-A) a (u b)) x₂ y₂
   :=
-  ( \ t → (γ t
+  iso-square-sides-iso-is-rezk A is-rezk-A
+  ( a) (a) (u x₁) (u y₁)
+  ( \ t → γ t 0₂)
+  ( \ t → γ t 1₂)
+  ( x₂)
+  ( y₂)
+  ( \ (t, s) → γ t s)
+  {-( \ t → (γ t
     , is-iso-arrow-nat-trans-is-iso-arrow-boundary
       ( A)
       ( is-rezk-A)
@@ -83,9 +90,9 @@ This is a literate `rzk` file:
       ( γ)
       ( π₂ x₂)
       ( π₂ y₂)
-      ( t)))
+      ( t)))-}
 
-#def dhom-dhom-htpy uses (is-iso-arrow-nat-trans-is-iso-arrow-boundary)
+#def dhom-dhom-htpy
   ( a : A)
   ( (x₁, x₂) (y₁, y₂) : (Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b)))
   ( g : hom B x₁ y₁)
@@ -112,7 +119,7 @@ This is a literate `rzk` file:
       ( \ s → π₂ (γ s))
       ( t)))
 
-#def is-equiv-dhom-iso-dhom-hom uses (is-iso-arrow-nat-trans-is-iso-arrow-boundary extext)
+#def is-equiv-dhom-iso-dhom-hom uses (extext)
   ( a : A)
   ( (x₁, x₂) (y₁, y₂) : (Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b)))
   ( g : hom B x₁ y₁)
@@ -129,7 +136,7 @@ This is a literate `rzk` file:
   , ( \ γ → dhom-dhom-htpy a (x₁, x₂) (y₁, y₂) g γ
     , \ _ → refl))
 
-#def is-full-emb-total-hom-iso uses (is-iso-arrow-nat-trans-is-iso-arrow-boundary extext)
+#def is-full-emb-total-hom-iso uses (extext)
   ( a : A)
   : is-full-emb (Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b)) (Σ (b : B) , hom A a (u b)) (total-hom-iso a)
   :=
@@ -165,7 +172,7 @@ This is a literate `rzk` file:
   := \ (b , p) → (b , hom-eq-is-transposing-adj-is-rezk a b p)
 
 #def is-full-emb-sigma-hom-fib-is-transposing-adj-is-rezk
-  uses (adj is-rezk-A funext extext is-iso-arrow-nat-trans-is-iso-arrow-boundary)
+  uses (adj is-rezk-A funext extext)
   ( a : A)
   : is-full-emb (fib B A u a) (Σ (b : B) , hom B (f a) b)
   ( sigma-hom-fib-is-transposing-adj-is-rezk a)
@@ -364,7 +371,7 @@ This is a literate `rzk` file:
   ( tmpp-eq a)
 
 #def is-initial-section-is-transposing-LARI-adj
-  uses (is-LARI-f-u adj is-rezk-A f funext extext is-iso-arrow-nat-trans-is-iso-arrow-boundary)
+  uses (is-LARI-f-u adj is-rezk-A f funext extext)
   : is-initial-section A (fib B A u) section-is-transposing-LARI-adj
   :=
   \ a → is-initial-is-full-emb-is-initial (fib B A u a) (Σ (b : B) , hom B (f a) b)

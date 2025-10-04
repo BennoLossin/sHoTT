@@ -16,6 +16,9 @@
   := \ t → t ≡ 0₂
 ```
 
+```rzk
+
+```
 
 ```rzk
 #variable B : U
