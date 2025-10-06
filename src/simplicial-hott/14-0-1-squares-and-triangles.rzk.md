@@ -5,10 +5,6 @@
 ```
 
 ```rzk
---#assume TODO : (A : U) → A
-```
-
-```rzk
 #def square
   ( A : U)
   ( x y z w : A)
@@ -23,6 +19,44 @@
   , t ≡ 1₂ ↦ g₂ s
   , s ≡ 0₂ ↦ f₁ t
   , s ≡ 1₂ ↦ f₂ t]
+```
+
+```rzk
+#def curried-square
+  ( A : U)
+  ( x y z w : A)
+  ( f₁ : hom A x y)
+  ( g₁ : hom A x z)
+  ( f₂ : hom A z w)
+  ( g₂ : hom A y w)
+  : U
+  :=
+  (t : 2) → (s : 2) → A
+  [ s ≡ 0₂ ↦ f₁ t
+  , s ≡ 1₂ ↦ f₂ t
+  , t ≡ 0₂ ↦ g₁ s
+  , t ≡ 1₂ ↦ g₂ s]
+```
+
+```rzk
+#def equiv-square-curried-square
+  ( A : U)
+  ( x y z w : A)
+  ( f₁ : hom A x y)
+  ( g₁ : hom A x z)
+  ( f₂ : hom A z w)
+  ( g₂ : hom A y w)
+  : Equiv
+    ( square A x y z w f₁ g₁ f₂ g₂)
+    ( curried-square A x y z w f₁ g₁ f₂ g₂)
+  :=
+  equiv-is-inverse
+  ( square A x y z w f₁ g₁ f₂ g₂)
+  ( curried-square A x y z w f₁ g₁ f₂ g₂)
+  ( \ σ t s → σ (t, s))
+  ( \ σ (t, s) → σ t s)
+  ( \ _ → refl)
+  ( \ _ → refl)
 ```
 
 ```rzk
@@ -132,6 +166,80 @@
     ( f = g)
     ( hom2 A x y y f (id-hom A y) g)
     ( equiv-homotopy-hom2'-is-segal A is-segal-A x y f g))
+
+#def eq-square-id-hom-is-segal
+  ( A : U)
+  ( is-segal-A : is-segal A)
+  ( x y : A)
+  ( f : hom A x y)
+  ( g : hom A x y)
+  ( σ : square A x y x y f (id-hom A x) g (id-hom A y))
+  : f = g
+  :=
+  π₁
+  ( equiv-square-sides-id-eq-is-segal A is-segal-A x y f g)
+  ( σ)
+
+#def square-id-hom-eq-is-segal
+  ( A : U)
+  ( is-segal-A : is-segal A)
+  ( x y : A)
+  ( f : hom A x y)
+  ( g : hom A x y)
+  ( p : f = g)
+  : square A x y x y f (id-hom A x) g (id-hom A y)
+  :=
+  π₁
+  ( inv-equiv
+    ( square A x y x y f (id-hom A x) g (id-hom A y))
+    ( f = g)
+    ( equiv-square-sides-id-eq-is-segal A is-segal-A x y f g))
+  ( p)
+
+#def ind-square-sides-id-is-segal
+  ( A : U)
+  ( is-segal-A : is-segal A)
+  ( x y : A)
+  ( f : hom A x y)
+  ( C : (g : hom A x y) → (square A x y x y f (id-hom A x) g (id-hom A y)) → U)
+  ( d : C f (\ (t, s) → f t))
+  ( g : hom A x y)
+  ( σ : square A x y x y f (id-hom A x) g (id-hom A y))
+  : C g σ
+  :=
+  transport
+  ( square A x y x y f (id-hom A x) g (id-hom A y))
+  ( C g)
+  ( square-id-hom-eq-is-segal A is-segal-A x y f g
+    ( eq-square-id-hom-is-segal A is-segal-A x y f g σ))
+  ( σ)
+  ( inv-equiv-cancel
+    ( square A x y x y f (id-hom A x) g (id-hom A y))
+    ( f = g)
+    ( equiv-square-sides-id-eq-is-segal A is-segal-A x y f g)
+    ( σ))
+  ( ind-path (hom A x y) f
+    ( \ g p → C g (square-id-hom-eq-is-segal A is-segal-A x y f g p))
+    ( d)
+    ( g)
+    ( eq-square-id-hom-is-segal A is-segal-A x y f g σ))
+
+#def ind-curried-square-sides-id-is-segal
+  ( A : U)
+  ( is-segal-A : is-segal A)
+  ( x y : A)
+  ( f : hom A x y)
+  ( C : (g : hom A x y) → (curried-square A x y x y f (id-hom A x) g (id-hom A y)) → U)
+  ( d : C f (\ t _ → f t))
+  ( g : hom A x y)
+  ( σ : curried-square A x y x y f (id-hom A x) g (id-hom A y))
+  : C g σ
+  :=
+  ind-square-sides-id-is-segal A is-segal-A x y f
+  ( \ g σ → C g (\ t s → σ (t, s)))
+  ( d)
+  ( g)
+  ( \ (t, s) → σ t s)
 
 #def triangle-square-left-id-is-segal
   ( A : U)
@@ -247,7 +355,7 @@
 ```
 
 ```rzk
-#def σ-eq-iso-square-sides-iso-is-rezk
+#def is-iso-arrow-square-sides-iso-is-rezk
   ( A : U)
   ( is-rezk-A : is-rezk A)
   ( x₁ y₁ : A)
@@ -256,87 +364,30 @@
   ( g : hom A x₂ y₂)
   ( h : Iso A (π₁ is-rezk-A) x₁ x₂)
   ( k : Iso A (π₁ is-rezk-A) y₁ y₂)
-  ( σ : square A x₁ y₁ x₂ y₂ f (π₁ h) g (π₁ k))
-  : ( \ t → iso-square-sides-iso-is-rezk A is-rezk-A
-      ( x₁) (y₁) ( x₂) (y₂)
-      ( f) (g) (h) (k) (σ)
-      ( t))
-    = (\ t s → σ (t, s))
-```
-
-```rzkk
-#def is-iso-arrow-nat-trans-is-iso-arrow-boundary
-  ( A : U)
-  ( is-rezk-A : is-rezk A)
-  ( x₁ y₁ : A)
-  ( x₂ y₂ : A)
-  ( f : hom A x₁ y₁)
-  ( g : hom A x₂ y₂)
-  ( α : (t : Δ¹) → hom A (f t) (g t))
-  ( is-iso-α-0 : is-iso-arrow A (π₁ is-rezk-A) x₁ x₂ (α 0₂))
-  ( is-iso-α-1 : is-iso-arrow A (π₁ is-rezk-A) y₁ y₂ (α 1₂))
-  : ( t : Δ¹) → is-iso-arrow A (π₁ is-rezk-A) (f t) (g t) (α t)
-    [t ≡ 0₂ ↦ is-iso-α-0, t ≡ 1₂ ↦ is-iso-α-1]
+  ( σ : curried-square A x₁ y₁ x₂ y₂ f (π₁ h) g (π₁ k))
+  : (t : Δ¹) → is-iso-arrow A (π₁ is-rezk-A) (f t) (g t) (\ s → σ t s)
+    [ t ≡ 0₂ ↦ π₂ h, t ≡ 1₂ ↦ π₂ k]
   :=
-  \ t → π₂ (iso-square-sides-iso-is-rezk A is-rezk-A x₁ y₁ x₂ y₂
-  ( f)
+  iso-ind-is-rezk A is-rezk-A x₁
+  ( \ x₂ h → (g : hom A x₂ y₂)
+    → ( σ : curried-square A x₁ y₁ x₂ y₂ f (π₁ h) g (π₁ k))
+    → ( (t : Δ¹) → is-iso-arrow A (π₁ is-rezk-A) (f t) (g t) (\ s → σ t s)
+      [ t ≡ 0₂ ↦ π₂ h, t ≡ 1₂ ↦ π₂ k]))
+  ( iso-ind-is-rezk A is-rezk-A y₁
+    ( \ y₂ k → (g : hom A x₁ y₂)
+      → ( σ : curried-square A x₁ y₁ x₁ y₂ f (id-hom A x₁) g (π₁ k))
+      → ( (t : Δ¹) → is-iso-arrow A (π₁ is-rezk-A) (f t) (g t) (\ s → σ t s)
+        [ t ≡ 0₂ ↦ is-iso-arrow-id-hom A (π₁ is-rezk-A) x₁
+        , t ≡ 1₂ ↦ π₂ k]))
+    ( \ g σ → ind-curried-square-sides-id-is-segal A (π₁ is-rezk-A) x₁ y₁ f
+      ( \ g σ → ( (t : Δ¹) → is-iso-arrow A (π₁ is-rezk-A) (f t) (g t) (\ s → σ t s)
+        [ t ≡ 0₂ ↦ is-iso-arrow-id-hom A (π₁ is-rezk-A) x₁
+        , t ≡ 1₂ ↦ is-iso-arrow-id-hom A (π₁ is-rezk-A) y₁]))
+      ( \ t → is-iso-arrow-id-hom A (π₁ is-rezk-A) (f t))
+      ( g)
+      ( σ))
+    ( y₂) (k))
+  ( x₂) (h)
   ( g)
-  ( α 0₂, is-iso-α-0)
-  ( α 1₂, is-iso-α-1)
-  ( \ (t, s) → α t s)
-  ( t))
-```
-
-```rzkk
-
-#def equiv
-  ( A : U)
-  ( is-segal-A : is-segal A)
-  ( a : A)
-  ( f g : (t : Δ¹) → A [t ≡ 0₂ ↦ a])
-
-```
-
-```rzkk
-
-
-#def t
-  ( A : U)
-  ( is-segal-A : is-segal A)
-  ( a : A)
-  ( f g : (t : Δ¹) → A [t ≡ 0₂ ↦ a])
-  : Equiv
-    ( ((t₁, t₂) : 2 × 2) → A [t₂ ≡ 0₂ ↦ f t₁, t₂ ≡ 1₂ ↦ g t₁, t₁ ≡ 0₂ ↦ a])
-    ( ((t₁, t₂) : Δ²) → A [t₂ ≡ 0₂ ↦ f t₁, t₁ ≡ t₂ ↦ g t₁])
-  :=
-  equiv-comp
-  ( ((t₁, t₂) : 2 × 2) → A [t₂ ≡ 0₂ ↦ f t₁, t₂ ≡ 1₂ ↦ g t₁, t₁ ≡ 0₂ ↦ a])
-  ( Σ (f' : (t : Δ¹) → A [t ≡ 0₂ ↦ a])
-    , product
-      ( f = f')
-      ( ((t₁, t₂) : Δ²) → A [t₂ ≡ 0₂ ↦ f' t₁, t₁ ≡ t₂ ↦ g t₁]))
-  ( ((t₁, t₂) : Δ²) → A [t₂ ≡ 0₂ ↦ f t₁, t₁ ≡ t₂ ↦ g t₁])
-  ( equiv-is-inverse
-    ( ((t₁, t₂) : 2 × 2) → A [t₂ ≡ 0₂ ↦ f t₁, t₂ ≡ 1₂ ↦ g t₁, t₁ ≡ 0₂ ↦ a])
-    ( Σ (g' : (t : Δ¹) → A [t ≡ 0₂ ↦ a, t ≡ 1₂ ↦ g 1₂])
-      , product
-        ( g = g')
-        ( ((t₁, t₂) : Δ²) → A [t₂ ≡ 0₂ ↦ f t₁, t₁ ≡ t₂ ↦ g' t₁]))
-    ( \ σ → ( \ t → σ (t, t)
-      , ( map-homotopy-hom2 A is-segal-A
-          ( a) ( g 1₂)
-          ( \ t → g t) ( \ t → σ (t, t))
-          ( \ (t₁, t₂) → σ (t₂, t₁))
-        , \ tt → σ tt)))
-    ( \ (g', (p, σ)) (t₁, t₂) → recOR
-      ( t₂ ≤ t₁ ↦ σ (t₁, t₂)
-      , t₁ ≤ t₂ ↦ map-hom2-homotopy A a (g 1₂) (\ t → g t) g' p (t₂, t₁)))
-    ( \ _ → refl)
-    ( \ _ → refl))
-  ( equiv-based-paths-family
-    ( (t : Δ¹) → A [t ≡ 0₂ ↦ a])
-    ( \ f' → ( ((t₁, t₂) : Δ²) → A [t₂ ≡ 0₂ ↦ f' t₁, t₁ ≡ t₂ ↦ g t₁]))
-    ( f))
-
-
+  ( σ)
 ```

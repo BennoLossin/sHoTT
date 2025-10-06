@@ -349,6 +349,7 @@ The center of contraction in the based path space is `#!rzk (a , refl)`.
   ( a : A)
   : Equiv (Σ (x : A) , product (a = x) (B x)) (B a)
   :=
+  -- TODO: simplify proof
   equiv-is-inverse (Σ (x : A) , product (a = x) (B x)) (B a)
   ( \ (x, (p, b)) → transport A B x a (rev A a x p) b)
   ( \ b → (a, (refl, b)))

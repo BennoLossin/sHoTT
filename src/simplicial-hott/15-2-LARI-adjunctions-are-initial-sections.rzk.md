@@ -65,106 +65,91 @@ This is a literate `rzk` file:
   : Σ (b : B) , hom A a (u b)
   := (b, π₁ g)
 
-#def dhom-dhom-htpy-elem
+#def equiv-dhom-iso-dhom-hom uses (extext)
   ( a : A)
   ( (x₁, x₂) (y₁, y₂) : (Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b)))
   ( g : hom B x₁ y₁)
-  ( γ : dhom B x₁ y₁ g (\ b → hom A a (u b)) (π₁ x₂) (π₁ y₂))
-  : dhom B x₁ y₁ g (\ b → Iso A (π₁ is-rezk-A) a (u b)) x₂ y₂
-  :=
-  iso-square-sides-iso-is-rezk A is-rezk-A
-  ( a) (a) (u x₁) (u y₁)
-  ( \ t → γ t 0₂)
-  ( \ t → γ t 1₂)
-  ( x₂)
-  ( y₂)
-  ( \ (t, s) → γ t s)
-  {-( \ t → (γ t
-    , is-iso-arrow-nat-trans-is-iso-arrow-boundary
-      ( A)
-      ( is-rezk-A)
-      ( a) a
-      ( u x₁) (u y₁)
-      ( id-hom A a)
-      ( \ s → u (g s))
-      ( γ)
-      ( π₂ x₂)
-      ( π₂ y₂)
-      ( t)))-}
-
-#def dhom-dhom-htpy
-  ( a : A)
-  ( (x₁, x₂) (y₁, y₂) : (Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b)))
-  ( g : hom B x₁ y₁)
-  ( γ : dhom B x₁ y₁ g (\ b → Iso A (π₁ is-rezk-A) a (u b)) x₂ y₂)
-  : dhom-dhom-htpy-elem a (x₁, x₂) (y₁, y₂) g (\ t → π₁ (γ t)) = γ
-  :=
-  eq-dhom-extext extext B x₁ y₁ g
-  ( \ b → Iso A (π₁ is-rezk-A) a (u b)) x₂ y₂
-  ( dhom-dhom-htpy-elem a (x₁, x₂) (y₁, y₂) g (\ t → π₁ (γ t)))
-  ( γ)
-  ( \ t → path-of-pairs-pair-of-paths (hom A a (u (g t)))
-    ( is-iso-arrow A (π₁ is-rezk-A) a (u (g t)))
-    ( π₁ (γ t)) (π₁ (γ t)) refl
-    ( π₂ (dhom-dhom-htpy-elem a (x₁, x₂) (y₁, y₂) g (\ s → π₁ (γ s)) t)) (π₂ (γ t))
-    ( ctie
-      ( \ s → is-iso-arrow A (π₁ is-rezk-A) a (u (g s)) (π₁ (γ s)))
-      ( \ s → is-contr-is-inhabited-is-prop
-        ( is-iso-arrow A (π₁ is-rezk-A) a (u (g s)) (π₁ (γ s)))
-        ( is-prop-is-iso-arrow extext A (π₁ is-rezk-A) a (u (g s)) (π₁ (γ s)))
-        ( π₂ (γ s)))
-      ( π₂ x₂)
-      ( π₂ y₂)
-      ( \ s → π₂ (dhom-dhom-htpy-elem a (x₁, x₂) (y₁, y₂) g (\ s' → π₁ (γ s')) s))
-      ( \ s → π₂ (γ s))
-      ( t)))
-
-#def is-equiv-dhom-iso-dhom-hom uses (extext)
-  ( a : A)
-  ( (x₁, x₂) (y₁, y₂) : (Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b)))
-  ( g : hom B x₁ y₁)
-  : is-equiv
+  : Equiv
     ( dhom B x₁ y₁ g (\ b → Iso A (π₁ is-rezk-A) a (u b)) x₂ y₂)
     ( dhom B x₁ y₁ g (\ b → hom A a (u b)) (π₁ x₂) (π₁ y₂))
-    ( \ γ t → π₁ (γ t))
   :=
-  is-equiv-has-inverse
+  equiv-is-inverse
   ( dhom B x₁ y₁ g (\ b → Iso A (π₁ is-rezk-A) a (u b)) x₂ y₂)
   ( dhom B x₁ y₁ g (\ b → hom A a (u b)) (π₁ x₂) (π₁ y₂))
   ( \ γ t → π₁ (γ t))
-  ( \ γ → dhom-dhom-htpy-elem a (x₁, x₂) (y₁, y₂) g γ
-  , ( \ γ → dhom-dhom-htpy a (x₁, x₂) (y₁, y₂) g γ
-    , \ _ → refl))
+  ( \ γ t → ( γ t
+  , is-iso-arrow-square-sides-iso-is-rezk A is-rezk-A
+    ( a) (a) (u x₁) (u y₁)
+    ( id-hom A a)
+    ( \ t → u (g t))
+    ( x₂)
+    ( y₂)
+    ( \ t s → γ t s)
+    ( t)))
+  ( \ γ → naiveextext-extext extext 2 Δ¹ ∂Δ¹
+    ( \ t → Iso A (π₁ is-rezk-A) a (u (g t)))
+    ( \ t → recOR(t ≡ 0₂ ↦ x₂, t ≡ 1₂ ↦ y₂))
+    ( \ t → ( π₁ (γ t)
+      , is-iso-arrow-square-sides-iso-is-rezk A is-rezk-A
+        ( a) (a) (u x₁) (u y₁)
+        ( id-hom A a)
+        ( \ t → u (g t))
+        ( x₂)
+        ( y₂)
+        ( \ t s → π₁ (γ t) s)
+        ( t)))
+    ( γ)
+    ( \ t → path-of-pairs-pair-of-paths
+      ( hom A a (u (g t)))
+      ( is-iso-arrow A (π₁ is-rezk-A) a (u (g t)))
+      ( π₁ (γ t))
+      ( π₁ (γ t))
+      ( refl)
+      ( is-iso-arrow-square-sides-iso-is-rezk A is-rezk-A
+        ( a) (a) (u x₁) (u y₁)
+        ( id-hom A a)
+        ( \ t → u (g t))
+        ( x₂)
+        ( y₂)
+        ( \ t s → π₁ (γ t) s)
+        ( t))
+      ( π₂ (γ t))
+      ( ctie
+        ( \ t → is-iso-arrow A (π₁ is-rezk-A) a (u (g t)) (π₁ (γ t)))
+        ( \ t → is-contr-is-inhabited-is-prop
+          ( is-iso-arrow A (π₁ is-rezk-A) a (u (g t)) (π₁ (γ t)))
+          ( is-prop-is-iso-arrow extext A (π₁ is-rezk-A) a (u (g t)) (π₁ (γ t)))
+          ( π₂ (γ t)))
+        ( π₂ x₂)
+        ( π₂ y₂)
+        ( is-iso-arrow-square-sides-iso-is-rezk A is-rezk-A
+          ( a) (a) (u x₁) (u y₁)
+          ( id-hom A a)
+          ( \ t → u (g t))
+          ( x₂)
+          ( y₂)
+          ( \ t s → π₁ (γ t) s))
+        ( \ t → π₂ (γ t))
+        ( t))))
+  (\ _ → refl)
 
 #def is-full-emb-total-hom-iso uses (extext)
   ( a : A)
   : is-full-emb (Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b)) (Σ (b : B) , hom A a (u b)) (total-hom-iso a)
   :=
-  \ x y → is-equiv-has-inverse
+  \ x y → π₂ (equiv-triple-comp
   ( hom (Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b)) x y)
+  ( Σ (g : hom B (π₁ x) (π₁ y))
+  , dhom B (π₁ x) (π₁ y) g (\ b → Iso A (π₁ is-rezk-A) a (u b)) (π₂ x) (π₂ y))
+  ( Σ (g : hom B (π₁ x) (π₁ y))
+  , dhom B (π₁ x) (π₁ y) g (\ b → hom A a (u b)) (π₁ (π₂ x)) (π₁ (π₂ y)))
   ( hom (Σ (b : B) , hom A a (u b)) (total-hom-iso a x) (total-hom-iso a y))
-  ( ap-hom (Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b)) (Σ (b : B) , hom A a (u b)) (total-hom-iso a) x y)
-  ( \ g t →
-    ( π₁ (g t)
-    , dhom-dhom-htpy-elem a x y (\ s → π₁ (g s)) (\ s → π₂ (g s)) t)
-  , ( \ g → ap
-      ( Σ (h : hom B (π₁ x) (π₁ y))
-        , dhom B (π₁ x) (π₁ y) h (\ b → Iso A (π₁ is-rezk-A) a (u b)) (π₂ x) (π₂ y))
-      ( hom (Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b)) x y)
-      ( \ t → π₁ (g t)
-      , dhom-dhom-htpy-elem a x y (\ s → π₁ (g s)) (\ s → π₁ (π₂ (g s))))
-      ( \ t → π₁ (g t), \ t → π₂ (g t))
-      ( hom-sigma-dhom B (\ b → Iso A (π₁ is-rezk-A) a (u b)) x y)
-      ( path-of-pairs-pair-of-paths
-        ( hom B (π₁ x) (π₁ y))
-        ( \ h → dhom B (π₁ x) (π₁ y) h (\ b → Iso A (π₁ is-rezk-A) a (u b)) (π₂ x) (π₂ y))
-        ( \ t → π₁ (g t))
-        ( \ t → π₁ (g t))
-        ( refl)
-        ( dhom-dhom-htpy-elem a x y (\ s → π₁ (g s)) (\ s → π₁ (π₂ (g s))))
-        ( \ t → π₂ (g t))
-        ( dhom-dhom-htpy a x y (\ s → π₁ (g s)) (\ s → π₂ (g s))))
-    , \ g2 → refl))
+  ( equiv-hom-sigma-dhom B (\ b → Iso A (π₁ is-rezk-A) a (u b)) x y)
+  ( total-equiv-family-of-equiv (hom B (π₁ x) (π₁ y))
+    ( \ g → dhom B (π₁ x) (π₁ y) g (\ b → Iso A (π₁ is-rezk-A) a (u b)) (π₂ x) (π₂ y))
+    ( \ g → dhom B (π₁ x) (π₁ y) g (\ b → hom A a (u b)) (π₁ (π₂ x)) (π₁ (π₂ y)))
+    ( equiv-dhom-iso-dhom-hom a x y))
+  ( equiv-sigma-dhom-hom B (\ b → hom A a (u b)) (π₁ x, π₁ (π₂ x)) (π₁ y, π₁ (π₂ y))))
 
 #def sigma-hom-fib-is-transposing-adj-is-rezk uses (adj is-rezk-A)
   ( a : A)
