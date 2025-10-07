@@ -7,7 +7,7 @@ This is a literate `rzk` file:
 ```
 
 ```rzk
-#def LARI-cell
+#def is-LARI-cell
   ( I : CUBE)
   ( ψ : I → TOPE)
   ( ϕ : ψ → TOPE)
@@ -24,4 +24,18 @@ This is a literate `rzk` file:
   → is-contr (
     ( (t, s) : 2 × I | Δ¹ t ∧ ψ s) → P (α₂ (t, s))
     [ t ≡ 0₂ ↦ g s, t ≡ 1₂ ↦ m s, ϕ s ↦ α₃ (t, s)])
+```
+
+```rzk
+#def has-enough-LARI-lifts
+  ( I : CUBE)
+  ( ψ : I → TOPE)
+  ( ϕ : ψ → TOPE)
+  ( B : U)
+  ( P : B → U)
+  : U
+  :=
+    ( v : ψ → B)
+  → ( f : (t : ϕ) → P (u t))
+  → Σ ( g : (t : ψ) → P (v t) [ϕ t → f t]) , is-LARI-cell I ψ ϕ B P v g
 ```
