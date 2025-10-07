@@ -30,3 +30,15 @@ This is a literate `rzk` file:
   , ( Σ ( adj : is-transposing-adj A B f u)
     , is-transposing-LARI-adj A B is-segal-A f u adj)
 ```
+
+```rzk
+#def has-transposing-LARI-adj
+  ( A B : U)
+  ( is-segal-A : is-segal A)
+  ( f : A → B)
+  : U
+  :=
+  Σ (u : B → A)
+  , Σ (adj : is-transposing-adj A B f u)
+    , is-transposing-LARI-adj A B is-segal-A f u adj
+```

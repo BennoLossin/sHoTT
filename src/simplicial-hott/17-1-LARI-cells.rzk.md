@@ -20,7 +20,8 @@ This is a literate `rzk` file:
     ( w : ψ → B)
   → ( m : (t : ψ) → P (w t))
   → ( α₂ : ((t, s) : 2 × I | Δ¹ t ∧ ψ s) → B [t ≡ 0₂ ↦ v s, t ≡ 1₂ ↦ w s])
-  → ( α₃ : ((t, s) : 2 × I | Δ¹ t ∧ ϕ s) → P (α₂ (t, s)) [t ≡ 0₂ ↦ g s, t ≡ 1₂ ↦ m s])
+  → ( α₃ : ((t, s) : 2 × I | Δ¹ t ∧ ϕ s) → P (α₂ (t, s))
+      [ t ≡ 0₂ ↦ g s, t ≡ 1₂ ↦ m s])
   → is-contr (
     ( (t, s) : 2 × I | Δ¹ t ∧ ψ s) → P (α₂ (t, s))
     [ t ≡ 0₂ ↦ g s, t ≡ 1₂ ↦ m s, ϕ s ↦ α₃ (t, s)])
@@ -37,5 +38,9 @@ This is a literate `rzk` file:
   :=
     ( v : ψ → B)
   → ( f : (t : ϕ) → P (u t))
-  → Σ ( g : (t : ψ) → P (v t) [ϕ t → f t]) , is-LARI-cell I ψ ϕ B P v g
+  → (Σ ( g : (t : ψ) → P (v t) [ϕ t ↦ f t]) , is-LARI-cell I ψ ϕ B P v g)
+```
+
+```rzk
+--#def is-LARI-family-has-enough-LARI-lifts
 ```

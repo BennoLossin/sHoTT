@@ -133,7 +133,18 @@ simple:
     ( is-contr-map-is-equiv A B f is-equiv-f b)
     ( center-contraction (fib A B f b)
       ( is-contr-map-is-equiv A B f is-equiv-f b)))
+```
 
-
-
+```rzk
+#def is-initial-section-equiv-is-initial-section uses (extext)
+  ( A : U)
+  ( B C : A → U)
+  ( B≃C : (a : A) → Equiv (B a) (C a))
+  ( s : (a : A) → B a)
+  ( is-initial-section-s : is-initial-section A B s)
+  : is-initial-section A C (\ a → π₁ (B≃C a) (s a))
+  :=
+  \ a → is-inital-equiv-is-initial extext
+  ( B a) ( C a) (B≃C a)
+  ( s a) (is-initial-section-s a)
 ```

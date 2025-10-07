@@ -31,6 +31,35 @@ This is a literate `rzk` file:
   → has-initial ((x : X) → P (g x) [Y x ↦ f₀ x])
 ```
 
+```rzk
+#def is-LARI-family-has-transposing-LARI-adj-leibniz-cotensor
+  ( B : U)
+  ( P : B → U)
+  ( has-transposing-LARI-adj-leibniz-cotensor
+    : has-transposing-LARI-adj
+      ( X → total-type B P)
+      ( leibniz-cotensor-codomain I X Y (total-type B P) B
+        ( projection-total-type B P))
+      ( leibniz-cotensor I X Y (total-type B P) B
+        ( projection-total-type B P)))
+  : is-LARI-family B P
+  := TODO
+```
+
+```rzk
+#def has-transposing-LARI-adj-leibniz-cotensor-is-LARI-family
+  ( B : U)
+  ( P : B → U)
+  ( is-LARI-family-P : is-LARI-family B P)
+  : has-transposing-LARI-adj
+      ( X → total-type B P)
+      ( leibniz-cotensor-codomain I X Y (total-type B P) B
+        ( projection-total-type B P))
+      ( leibniz-cotensor I X Y (total-type B P) B
+        ( projection-total-type B P))
+  := TODO
+```
+
 ```rzk title="BW23, Corollary 3.2.4"
 #def is-LARI-family-orthogonal-to
   ( B : U)

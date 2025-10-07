@@ -372,3 +372,112 @@ This is a literate `rzk` file:
 
 #end is-initial-section-is-transposing-LARI-adj-is-rezk
 ```
+
+```rzk
+#def toname2
+  ( B : U)
+  ( P : B → U)
+  ( is-rezk-B : is-rezk B)
+  ( s : (b : B) → P b)
+  ( adj : is-transposing-adj B (total-type B P)
+          ( \ b → (b, s b))
+          ( projection-total-type B P))
+  : ( \ b → homotopy-fiber-strict-fiber B P b (s b))
+  = ( section-is-transposing-LARI-adj B (total-type B P) is-rezk-A
+      ( \ b → (b, s b))
+      ( projection-total-type B P)
+      ( adj))
+  := TODO (( \ b → homotopy-fiber-strict-fiber B P b (s b))
+  = ( section-is-transposing-LARI-adj B (total-type B P) is-rezk-A
+      ( \ b → (b, s b))
+      ( projection-total-type B P)
+      ( adj)))
+```
+
+```rzk
+#def toname
+  ( B : U)
+  ( P : B → U)
+  ( is-rezk-B : is-rezk B)
+  ( is-segal-P : is-segal (total-type B P))
+  ( s : (b : B) → P b)
+  ( adj : is-transposing-adj B (total-type B P)
+          ( \ b → (b, s b))
+          ( projection-total-type B P))
+  ( LARI-adj : is-transposing-LARI-adj B (total-type B P)
+               ( π₁ is-rezk-B)
+               ( \ b → (b, s b))
+               ( projection-total-type B P)
+               ( adj))
+  : is-initial-section B P s
+  :=
+  is-initial-section-equiv-is-initial-section extext
+  ( B) (fib (total-type B P) B (projection-total-type B P)) (P)
+  ( \ b → inv-equiv (P b)
+    ( fib (total-type B P) B (projection-total-type B P) b)
+    ( equiv-homotopy-fiber-strict-fiber B P b))
+  ( \ b → homotopy-fiber-strict-fiber B P b (s b))
+  ( transport ((a : A) → fib B A u a) ()
+    is-initial-section-is-transposing-LARI-adj
+    ( B) (total-type B P) is-rezk-B is-segal-P
+    ( \ b → (b, s b))
+    ( projection-total-type B P)
+    ( adj)
+    ( LARI-adj))
+```
+
+```rzk
+#def ctie2
+  ( B : U)
+  ( P : B → U)
+  ( is-rezk-B : is-rezk B)
+  ( is-segal-P : is-segal (total-type B P))
+  ( s : (b : B) → P b)
+  ( adj : is-transposing-adj B (total-type B P)
+          ( \ b → (b, s b))
+          ( projection-total-type B P))
+  ( is-LARI-proj : is-transposing-LARI-adj
+                   ( B) ( total-type B P)
+                   ( π₁ (is-rezk-B))
+                   ( \ b → (b, s b))
+                   ( projection-total-type B P)
+                   ( adj))
+  ( x : B)
+  : section-is-transposing-LARI-adj B (total-type B P) is-rezk-B
+    ( \ (b : B) → (b, s b))
+    ( projection-total-type B P)
+    ( adj)
+    ( is-LARI-proj)
+    ( x)
+  = s x
+  := TODO
+```
+
+```rzk
+#def is-initial-section-is-transposing-LARI-adj-projection-total-type
+  ( B : U)
+  ( P : B → U)
+  ( is-rezk-B : is-rezk B)
+  ( is-segal-P : is-segal (total-type B P))
+  ( s : (b : B) → P b)
+  ( adj : is-transposing-adj B (total-type B P)
+          ( \ b → (b, s b))
+          ( projection-total-type B P))
+  ( is-LARI-proj : is-transposing-LARI-adj
+                   ( B) ( total-type B P)
+                   ( π₁ (is-rezk-B))
+                   ( \ b → (b, s b))
+                   ( projection-total-type B P)
+                   ( adj))
+  : is-initial-section B P s
+  :=
+  is-initial-section-is-transposing-LARI-adj
+  ( B)
+  ( total-type B P)
+  ( is-rezk-B)
+  ( is-segal-P)
+  ( \ b → (b, s b))
+  ( projection-total-type B P)
+  ( adj)
+  ( is-LARI-proj)
+```
