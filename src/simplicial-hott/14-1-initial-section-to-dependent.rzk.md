@@ -261,3 +261,32 @@ The second one requires a bit more work:
 
 #end is-dhom-initial-section-is-initial-section
 ```
+
+```rzk
+#def has-dhom-initial-has-initial-is-inner-fib-type-fam
+  ( A : U)
+  ( B : A → U)
+  ( has-initial-B : (a : A) → has-initial (B a))
+  ( is-inner-fib-type-fam-B : is-inner-fib-type-fam A B)
+  : (a : A) → has-dhom-initial A B a
+  :=
+  \ a → (π₁ (has-initial-B a)
+  , tmp A B is-inner-fib-type-fam-B
+    ( \ a → π₁ (has-initial-B a))
+    ( \ a → π₂ (has-initial-B a))
+    ( a))
+```
+
+```rzk
+#def is-dhom-initial-has-initial-is-inner-fib-type-fam
+  ( A : U)
+  ( B : A → U)
+  ( has-initial-B : (a : A) → has-initial (B a))
+  ( is-inner-fib-type-fam-B : is-inner-fib-type-fam A B)
+  : (a : A) → is-dhom-initial A B a (π₁ (has-initial-B a))
+  :=
+  \ a → tmp A B is-inner-fib-type-fam-B
+  ( \ a → π₁ (has-initial-B a))
+  ( \ a → π₂ (has-initial-B a))
+  ( a)
+```

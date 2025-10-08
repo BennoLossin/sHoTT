@@ -89,11 +89,25 @@ we need an a priori more powerful definition.
 ## Dependent initial sections
 
 ```rzk
+#def is-dhom-initial
+  ( x : A)
+  ( X : B x)
+  : U
+  :=
+    ( y : A)
+  → ( Y : B y)
+  → ( f : hom A x y)
+  → is-contr (dhom A x y f B X Y)
+
+#def has-dhom-initial
+  ( x : A)
+  : U
+  := (Σ (b : B x), is-dhom-initial x b)
+
 #def is-dhom-initial-section
   ( s : (a : A) → B a)
   : U
-  := (x : A) → (y : A) → (Y : B y) → (f : hom A x y)
-  → is-contr (dhom A x y f B (s x) Y)
+  := (x : A) → is-dhom-initial x (s x)
 
 #def dhom-initial-section
   : U
