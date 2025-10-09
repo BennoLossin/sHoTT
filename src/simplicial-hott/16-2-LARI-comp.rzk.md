@@ -16,7 +16,7 @@ This is a literate `rzk` file:
 #def has-initial-total-type-has-initial-fib-is-inner-fam
   ( B : U)
   ( P : B → U)
-  ( is-inner-fib-type-fam-P : is-inner-fib-type-fam B P)
+  ( is-inner-family-P : is-inner-family B P)
   ( has-initial-B : has-initial B)
   ( has-initial-P : (b : B) → has-initial (P b))
   : has-initial (total-type B P)
@@ -43,7 +43,7 @@ This is a literate `rzk` file:
         ( hom B (π₁ has-initial-B) (b))
         ( \ h → dhom B (π₁ has-initial-B) (b) h P (π₁ (has-initial-P (π₁ has-initial-B))) p)
         ( is-dhom-initial-section-is-initial-section B P
-          ( is-inner-fib-type-fam-P)
+          ( is-inner-family-P)
           ( \ b → π₁ (has-initial-P b))
           ( \ b → π₂ (has-initial-P b))
           ( π₁ has-initial-B)
@@ -165,7 +165,7 @@ This is a literate `rzk` file:
   is-dhom-initial-section-is-initial-section
   ( (x : X) → P (g x) [Y x ↦ π₁ (f₀ x)])
   ( \ f → ((x : X) → Q (g x) (f x) [Y x ↦ π₂ (f₀ x)]))
-  ( TODO (is-inner-fib-type-fam
+  ( TODO (is-inner-family
     ( (x : X) → P (g x) [Y x ↦ π₁ (f₀ x)])
     ( \ f → ((x : X) → Q (g x) (f x) [Y x ↦ π₂ (f₀ x)]))))
   ( \ f x → π₁ (raw-comp-lift-is-LARI-family g f₀ f) x)

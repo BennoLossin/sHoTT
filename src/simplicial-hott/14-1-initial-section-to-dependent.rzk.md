@@ -15,7 +15,7 @@ The second one requires a bit more work:
 
 #variable A : U
 #variable B : A → U
-#variable is-inner-fib-type-fam-B : is-inner-fib-type-fam A B
+#variable is-inner-family-B : is-inner-family A B
 #variable s : (a : A) → B a
 #variable is-initial-section-s : is-initial-section A B s
 
@@ -38,11 +38,11 @@ The second one requires a bit more work:
   ( f : hom A x y)
   : (t : Δ²) → B (f (π₁ t)) [Λ²₁ t ↦ fff x y Y f t]
   :=
-  lift-is-inner-fib-type-fam A B is-inner-fib-type-fam-B
+  lift-is-inner-family A B is-inner-family-B
   ( \ (t : Δ²) → f (π₁ t))
   ( fff x y Y f)
 
-#def c uses (is-initial-section-s s is-inner-fib-type-fam-B)
+#def c uses (is-initial-section-s s is-inner-family-B)
   ( x y : A)
   ( Y : B y)
   ( f : hom A x y)
@@ -92,7 +92,7 @@ The second one requires a bit more work:
   ( F : dhom A x y f B (s x) Y)
   : (t : Δ²) → B (f (π₂ t)) [Λ²₁ t ↦ FFF x y Y f F t]
   :=
-  lift-is-inner-fib-type-fam A B is-inner-fib-type-fam-B
+  lift-is-inner-family A B is-inner-family-B
   ( \ (t : Δ²) → f (π₂ t))
   ( FFF x y Y f F)
 
@@ -151,7 +151,7 @@ The second one requires a bit more work:
   ( F : dhom A x y f B (s x) Y)
   : C' x y Y f F = xgcstie x y Y f F
   :=
-  is-unique-lift-is-inner-fib-type-fam A B is-inner-fib-type-fam-B
+  is-unique-lift-is-inner-family A B is-inner-family-B
   ( \ (t : Δ²) → f (π₂ t))
   ( FFF x y Y f F)
   ( xgcstie x y Y f F)
@@ -163,13 +163,13 @@ The second one requires a bit more work:
   ( F : dhom A x y f B (s x) Y)
   : C' x y Y f F = lower-triag-F x y Y f F
   :=
-  is-unique-lift-is-inner-fib-type-fam A B is-inner-fib-type-fam-B
+  is-unique-lift-is-inner-family A B is-inner-family-B
   ( \ (t : Δ²) → f (π₂ t))
   ( FFF x y Y f F)
   ( lower-triag-F x y Y f F)
 
 #def diag-F-square-eq-F
-  uses (is-initial-section-s s is-inner-fib-type-fam-B)
+  uses (is-initial-section-s s is-inner-family-B)
   ( x y : A)
   ( Y : B y)
   ( f : hom A x y)
@@ -219,12 +219,12 @@ The second one requires a bit more work:
   ( F : dhom A x y f B (s x) Y)
   : C x y Y f = upper-triag-F x y Y f F
   :=
-  is-unique-lift-is-inner-fib-type-fam A B is-inner-fib-type-fam-B
+  is-unique-lift-is-inner-family A B is-inner-family-B
   ( \ (t : Δ²) → f (π₁ t))
   ( fff x y Y f)
   ( upper-triag-F x y Y f F)
 
-#def c-eq-diag-F-square uses (is-initial-section-s is-inner-fib-type-fam-B)
+#def c-eq-diag-F-square uses (is-initial-section-s is-inner-family-B)
   ( x y : A)
   ( Y : B y)
   ( f : hom A x y)
@@ -239,7 +239,7 @@ The second one requires a bit more work:
   ( \ D t → D (t, t))
   ( mtpie x y Y f F)
 
-#def tmp uses (is-initial-section-s s is-inner-fib-type-fam-B)
+#def tmp uses (is-initial-section-s s is-inner-family-B)
   ( x y : A)
   ( Y : B y)
   ( f : hom A x y)
@@ -255,7 +255,7 @@ The second one requires a bit more work:
     ( diag-F-square-eq-F x y Y f F))
 
 #def is-dhom-initial-section-is-initial-section
-  uses (is-initial-section-s s is-inner-fib-type-fam-B)
+  uses (is-initial-section-s s is-inner-family-B)
   : is-dhom-initial-section A B s
   := tmp
 
@@ -263,29 +263,29 @@ The second one requires a bit more work:
 ```
 
 ```rzk
-#def has-dhom-initial-has-initial-is-inner-fib-type-fam
+#def has-dhom-initial-has-initial-is-inner-family
   ( A : U)
   ( B : A → U)
   ( has-initial-B : (a : A) → has-initial (B a))
-  ( is-inner-fib-type-fam-B : is-inner-fib-type-fam A B)
+  ( is-inner-family-B : is-inner-family A B)
   : (a : A) → has-dhom-initial A B a
   :=
   \ a → (π₁ (has-initial-B a)
-  , tmp A B is-inner-fib-type-fam-B
+  , tmp A B is-inner-family-B
     ( \ a → π₁ (has-initial-B a))
     ( \ a → π₂ (has-initial-B a))
     ( a))
 ```
 
 ```rzk
-#def is-dhom-initial-has-initial-is-inner-fib-type-fam
+#def is-dhom-initial-has-initial-is-inner-family
   ( A : U)
   ( B : A → U)
   ( has-initial-B : (a : A) → has-initial (B a))
-  ( is-inner-fib-type-fam-B : is-inner-fib-type-fam A B)
+  ( is-inner-family-B : is-inner-family A B)
   : (a : A) → is-dhom-initial A B a (π₁ (has-initial-B a))
   :=
-  \ a → tmp A B is-inner-fib-type-fam-B
+  \ a → tmp A B is-inner-family-B
   ( \ a → π₁ (has-initial-B a))
   ( \ a → π₂ (has-initial-B a))
   ( a)

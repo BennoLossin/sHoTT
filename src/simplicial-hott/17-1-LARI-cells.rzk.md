@@ -75,8 +75,8 @@ This is a literate `rzk` file:
 ```rzk
 #def has-enough-LARI-lifts-is-LARI-family-is-inner-type-fam
   ( is-LARI-family-P : is-LARI-family I ψ ϕ B P)
-  ( is-inner-fib-type-fam-P
-    : is-inner-fib-type-fam
+  ( is-inner-family-P
+    : is-inner-family
       ( Σ (vw : ψ → B), (s : ϕ) → P (vw s))
       ( \ (vw, f₀) → ((s : ψ) → P (vw s) [ϕ s ↦ f₀ s])))
   : has-enough-LARI-lifts
@@ -108,11 +108,11 @@ This is a literate `rzk` file:
       ( \ σ t s → σ (t, s))
       ( \ _ → refl)
       ( \ _ → refl))
-    ( is-dhom-initial-has-initial-is-inner-fib-type-fam
+    ( is-dhom-initial-has-initial-is-inner-family
       ( Σ (vw : ψ → B) , (s : ϕ) → P (vw s))
       ( \ (vw, f₀) → ((s : ψ) → P (vw s) [ϕ s ↦ f₀ s]))
       ( \ (vw, f₀) → is-LARI-family-P vw f₀)
-      ( is-inner-fib-type-fam-P)
+      ( is-inner-family-P)
       ( v, f)
       ( w, \ s → m s)
       ( m)
@@ -133,12 +133,12 @@ This is a literate `rzk` file:
   :=
   ( is-isoinner-family-P
   , \ b b' u e →
-    ( π₁ (has-enough-LARI-lifts u (\ _ → e)) 1₂
-    , ( π₁ (has-enough-LARI-lifts u (\ _ → e))
+    ( π₁ (has-enough-LARI-lifts-P u (\ _ → e)) 1₂
+    , ( π₁ (has-enough-LARI-lifts-P u (\ _ → e))
       , \ b'' v w σ e'' h → is-contr-equiv-is-contr
         ( ( (t, s) : 2 × 2 | Δ¹ t ∧ Δ¹ s)
           → P (recOR(s ≤ t ↦ σ (t, s), t ≤ s ↦ b))
-          [ t ≡ 0₂ ↦ π₁ (has-enough-LARI-lifts u (\ _ → e)) s
+          [ t ≡ 0₂ ↦ π₁ (has-enough-LARI-lifts-P u (\ _ → e)) s
           , t ≡ 1₂ ↦ h s
           , s ≡ 0₂ ↦ e])
         ( Σ ( g : dhom B b' b'' v P e' e'')
@@ -146,15 +146,19 @@ This is a literate `rzk` file:
         ( equiv-is-inverse
           ( ( (t, s) : 2 × 2 | Δ¹ t ∧ Δ¹ s)
             → P (recOR(s ≤ t ↦ σ (t, s), t ≤ s ↦ b))
-            [ t ≡ 0₂ ↦ π₁ (has-enough-LARI-lifts u (\ _ → e)) s
+            [ t ≡ 0₂ ↦ π₁ (has-enough-LARI-lifts-P u (\ _ → e)) s
             , t ≡ 1₂ ↦ h s
             , s ≡ 0₂ ↦ e])
-          ( Σ ( g : dhom B b' b'' v P e' e'')
-          , ( dhom2 B b b' b'' u v w σ P e e' e'' f g h))
+          ( Σ ( gg : dhom B b' b'' v P e' e'')
+          , ( dhom2 B b b' b'' u v w σ P e e' e''
+              ( π₁ (has-enough-LARI-lifts-P u (\ _ → e))) gg h))
           ( \ σ → ((\ t → σ (1₂, t))
-            , π₁ ()))
+            , transport (dhom B b b'' w P e e'')
+              ( dhom2 B b b' b'' u v w σ P e e' e''
+                ( π₁ (has-enough-LARI-lifts-P u (\ _ → e))) gg)
+            ))
         )
-        ( π₂ (has-enough-LARI-lifts u (\ _ → e))
+        ( π₂ (has-enough-LARI-lifts-P u (\ _ → e))
           ( w) (\ _ → e) (\ (t, s) → recOR(s ≤ t ↦ σ (t, s), t ≤ s ↦ b))
           ( \ _ → e))
       )))

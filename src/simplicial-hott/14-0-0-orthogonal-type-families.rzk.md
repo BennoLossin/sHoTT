@@ -350,7 +350,7 @@
 ## Inner Families
 
 ```rzk
-#def is-inner-fib-type-fam
+#def is-inner-family
   ( A : U)
   ( B : A → U)
   : U
@@ -362,23 +362,80 @@
 
 #variable A : U
 #variable B : A → U
-#variable is-inner-fib-type-fam-B : is-inner-fib-type-fam A B
+#variable is-inner-family-B : is-inner-family A B
 #variable a : Δ² → A
 #variable b : (t : Λ²₁) → B (a t)
 
-#def lift-is-inner-fib-type-fam uses (A)
+#def lift-is-inner-family uses (A)
   : (t : Δ²) → B (a t) [Λ²₁ t ↦ b t]
   :=
   center-contraction
   ( (t : Δ²) → B (a t) [Λ²₁ t ↦ b t])
-  ( is-inner-fib-type-fam-B a b)
+  ( is-inner-family-B a b)
 
-#def is-unique-lift-is-inner-fib-type-fam uses (A)
-  : (z : (t : Δ²) → B (a t) [Λ²₁ t ↦ b t]) → lift-is-inner-fib-type-fam = z
+#def is-unique-lift-is-inner-family uses (A)
+  : (z : (t : Δ²) → B (a t) [Λ²₁ t ↦ b t]) → lift-is-inner-family = z
   :=
   homotopy-contraction
   ( (t : Δ²) → B (a t) [Λ²₁ t ↦ b t])
-  ( is-inner-fib-type-fam-B a b)
+  ( is-inner-family-B a b)
 
 #end inner-fib-lifts
+```
+
+```rzk
+#def is-segal-fiber-is-inner-family
+  ( B : U)
+  ( P : B → U)
+  ( is-inner-family-P : is-inner-family B P)
+  ( b : B)
+  : is-segal (P b)
+  :=
+  \ x y z f g → is-contr-equiv-is-contr
+  ( ((t, s) : Δ²) → P b [s ≡ 0₂ ↦ f t, t ≡ 1₂ ↦ g s])
+  ( Σ (h : hom (P b) x z) , (hom2 (P b) x y z f g h))
+  ( equiv-is-inverse
+    ( ((t, s) : Δ²) → P b [s ≡ 0₂ ↦ f t, t ≡ 1₂ ↦ g s])
+    ( Σ (h : hom (P b) x z) , (hom2 (P b) x y z f g h))
+    ( \ σ → (\ t → σ (t, t), (\ ts → σ ts)))
+    ( \ (_, σ) ts → σ ts)
+    ( \ _ → refl)
+    ( \ _ → refl))
+  ( is-inner-family-P
+    ( \ _ → b)
+    ( \ (t, s) → recOR(s ≡ 0₂ ↦ f t, t ≡ 1₂ ↦ g s)))
+```
+
+## Isoinner Families
+
+```rzk
+#def Iso-arr
+  ( A : U)
+  ( is-segal-A : is-segal A)
+  : U
+  := Σ (f : arr A) , is-iso-arrow A is-segal-A (f 0₂) (f 1₂) f
+
+#def iso-arr-eq
+  ( A : U)
+  ( is-segal-A : is-segal A)
+  ( x y : A)
+  ( p : x = y)
+  : Iso-arr A is-segal-A
+  := ( hom-eq A x y p, is-iso-arrow-hom-eq A is-segal-A x y p)
+```
+
+```rzk
+#def is-isoinner-family
+  ( B : U)
+  ( P : B → U)
+  : U
+  :=
+  Σ ( is-inner-family-P : is-inner-family B P)
+  , ( (b : B)
+    → (f : Iso-arr (P b)
+           ( is-segal-fiber-is-inner-family B P is-inner-family-P b))
+    → is-contr (Σ (e : P b)
+      , f = iso-arr-eq (P b)
+            ( is-segal-fiber-is-inner-family B P is-inner-family-P b)
+            ( e) (e) (refl)))
 ```
