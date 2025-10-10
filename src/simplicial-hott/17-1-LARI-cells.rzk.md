@@ -124,42 +124,142 @@ This is a literate `rzk` file:
 ```
 
 ```rzk
-#def is-cocartesian-family-has-enough-LARI-lifts
-  ( B : U)
-  ( P : B → U)
-  ( is-isoinner-family-P : is-isoinner-family B P)
-  ( has-enough-LARI-lifts-P : has-enough-LARI-lifts 2 Δ¹ (\ t → t ≡ 0₂) B P)
+#section is-cocartesian-family-has-enough-LARI-lifts
+
+#variable B : U
+#variable P : B → U
+#variable is-isoinner-family-P : is-isoinner-family B P
+#variable has-enough-LARI-lifts-P : has-enough-LARI-lifts 2 Δ¹ (\ t → t ≡ 0₂) B P
+
+#def toname-equiv
+  ( b b' b'' : B)
+  ( u : hom B b b')
+  ( v : hom B b' b'')
+  ( w : hom B b b'')
+  ( τ : hom2 B b b' b'' u v w)
+  ( e : P b)
+  ( e'' : P b'')
+  ( h : dhom B b b'' w P e e'')
+  : Equiv
+    ( ( (t, s) : 2 × 2 | Δ¹ t ∧ Δ¹ s)
+      → P (recOR(t ≤ s ↦ τ (s, t), s ≤ t ↦ w s))
+      [ t ≡ 0₂ ↦ π₁ (has-enough-LARI-lifts-P u (\ _ → e)) s
+      , t ≡ 1₂ ↦ h s
+      , s ≡ 0₂ ↦ e])
+    ( Σ ( gg : dhom B b' b'' v P
+               ( π₁ (has-enough-LARI-lifts-P u (\ _ → e)) 1₂)
+               ( e''))
+      , ( dhom2 B b b' b'' u v w τ P
+          ( e) (π₁ (has-enough-LARI-lifts-P u (\ _ → e)) 1₂) e''
+          ( \ t → π₁ (has-enough-LARI-lifts-P u (\ _ → e)) t) gg h))
+  :=
+  equiv-comp
+  ( ( (t, s) : 2 × 2 | Δ¹ t ∧ Δ¹ s)
+    → P (recOR(t ≤ s ↦ τ (s, t), s ≤ t ↦ w s))
+    [ t ≡ 0₂ ↦ π₁ (has-enough-LARI-lifts-P u (\ _ → e)) s
+    , t ≡ 1₂ ↦ h s
+    , s ≡ 0₂ ↦ e])
+  ( Σ ( gg : dhom B b' b'' v P
+             ( π₁ (has-enough-LARI-lifts-P u (\ _ → e)) 1₂)
+             ( e''))
+    , dsquare B b b' b b'' u (id-hom B b) w v
+      ( square-hom2 B b b' b'' u w v τ)
+      ( P) e (π₁ (has-enough-LARI-lifts-P u (\ _ → e)) 1₂) e e''
+      ( \ t → π₁ (has-enough-LARI-lifts-P u (\ _ → e)) t) (id-dhom B b P e) h gg)
+  ( Σ ( gg : dhom B b' b'' v P
+             ( π₁ (has-enough-LARI-lifts-P u (\ _ → e)) 1₂)
+             ( e''))
+    , dhom2 B b b' b'' u v w τ P
+      ( e) (π₁ (has-enough-LARI-lifts-P u (\ _ → e)) 1₂) e''
+      ( \ t → π₁ (has-enough-LARI-lifts-P u (\ _ → e)) t) gg h)
+  ( equiv-is-inverse
+    ( ( (t, s) : 2 × 2 | Δ¹ t ∧ Δ¹ s)
+      → P (recOR(t ≤ s ↦ τ (s, t), s ≤ t ↦ w s))
+      [ t ≡ 0₂ ↦ π₁ (has-enough-LARI-lifts-P u (\ _ → e)) s
+      , t ≡ 1₂ ↦ h s
+      , s ≡ 0₂ ↦ e])
+    ( Σ ( gg : dhom B b' b'' v P
+               ( π₁ (has-enough-LARI-lifts-P u (\ _ → e)) 1₂)
+               ( e''))
+      , dsquare B b b' b b'' u (id-hom B b) w v
+        ( square-hom2 B b b' b'' u w v τ)
+        ( P) e (π₁ (has-enough-LARI-lifts-P u (\ _ → e)) 1₂) e e''
+        ( \ t → π₁ (has-enough-LARI-lifts-P u (\ _ → e)) t) (id-dhom B b P e) h gg)
+    ( \ σ → (\ t → σ (t, 1₂), \ (t, s) → σ (s, t)))
+    ( \ (_, σ) (t, s) → σ (s, t))
+    ( \ _ → refl)
+    ( \ _ → refl))
+  ( total-equiv-family-of-equiv
+    ( dhom B b' b'' v P
+      ( π₁ (has-enough-LARI-lifts-P u (\ _ → e)) 1₂)
+      ( e''))
+    ( \ gg → dsquare B b b' b b'' u (id-hom B b) w v
+      ( square-hom2 B b b' b'' u w v τ)
+      ( P) e (π₁ (has-enough-LARI-lifts-P u (\ _ → e)) 1₂) e e''
+      ( \ t → π₁ (has-enough-LARI-lifts-P u (\ _ → e)) t) (id-dhom B b P e) h gg)
+    ( \ gg → dhom2 B b b' b'' u v w τ P
+      ( e) (π₁ (has-enough-LARI-lifts-P u (\ _ → e)) 1₂) e''
+      ( \ t → π₁ (has-enough-LARI-lifts-P u (\ _ → e)) t) gg h)
+    ( \ gg → equiv-dsquare-left-id-dhom2-is-inner-family
+      ( B) b b' b'' u w v τ
+      ( P) (π₁ is-isoinner-family-P) e
+      ( π₁ (has-enough-LARI-lifts-P u (\ _ → e)) 1₂) e''
+      ( \ t → π₁ (has-enough-LARI-lifts-P u (\ _ → e)) t) h gg))
+
+#def is-cocartesian-family-has-enough-LARI-lifts-is-isoinner-family
   : is-cocartesian-family B P
   :=
   ( is-isoinner-family-P
   , \ b b' u e →
     ( π₁ (has-enough-LARI-lifts-P u (\ _ → e)) 1₂
-    , ( π₁ (has-enough-LARI-lifts-P u (\ _ → e))
+    , ( \ t → π₁ (has-enough-LARI-lifts-P u (\ _ → e)) t
       , \ b'' v w σ e'' h → is-contr-equiv-is-contr
         ( ( (t, s) : 2 × 2 | Δ¹ t ∧ Δ¹ s)
-          → P (recOR(s ≤ t ↦ σ (t, s), t ≤ s ↦ b))
+          → P (recOR(t ≤ s ↦ σ (s, t), s ≤ t ↦ w s))
           [ t ≡ 0₂ ↦ π₁ (has-enough-LARI-lifts-P u (\ _ → e)) s
           , t ≡ 1₂ ↦ h s
           , s ≡ 0₂ ↦ e])
-        ( Σ ( g : dhom B b' b'' v P e' e'')
-        , ( dhom2 B b b' b'' u v w sigma P e e' e'' f g h))
-        ( equiv-is-inverse
-          ( ( (t, s) : 2 × 2 | Δ¹ t ∧ Δ¹ s)
-            → P (recOR(s ≤ t ↦ σ (t, s), t ≤ s ↦ b))
-            [ t ≡ 0₂ ↦ π₁ (has-enough-LARI-lifts-P u (\ _ → e)) s
-            , t ≡ 1₂ ↦ h s
-            , s ≡ 0₂ ↦ e])
-          ( Σ ( gg : dhom B b' b'' v P e' e'')
-          , ( dhom2 B b b' b'' u v w σ P e e' e''
-              ( π₁ (has-enough-LARI-lifts-P u (\ _ → e))) gg h))
-          ( \ σ → ((\ t → σ (1₂, t))
-            , transport (dhom B b b'' w P e e'')
-              ( dhom2 B b b' b'' u v w σ P e e' e''
-                ( π₁ (has-enough-LARI-lifts-P u (\ _ → e))) gg)
-            ))
-        )
+        ( Σ ( gg : dhom B b' b'' v P
+                   ( π₁ (has-enough-LARI-lifts-P u (\ _ → e)) 1₂)
+                   ( e''))
+          , ( dhom2 B b b' b'' u v w σ P
+              ( e) (π₁ (has-enough-LARI-lifts-P u (\ _ → e)) 1₂) e''
+              ( \ t → π₁ (has-enough-LARI-lifts-P u (\ _ → e)) t) gg h))
+        ( toname-equiv b b' b'' u v w σ e e'' h)
         ( π₂ (has-enough-LARI-lifts-P u (\ _ → e))
-          ( w) (\ _ → e) (\ (t, s) → recOR(s ≤ t ↦ σ (t, s), t ≤ s ↦ b))
-          ( \ _ → e))
-      )))
+          ( w) h
+          ( \ (t, s) → recOR(t ≤ s ↦ σ (s, t), s ≤ t ↦ w s))
+          ( \ _ → e)))))
+
+#end is-cocartesian-family-has-enough-LARI-lifts
+```
+
+
+cannot prove this?
+
+```rzkk
+#def has-enough-LARI-lifts-is-cocartesian-family
+  ( B : U)
+  ( P : B → U)
+  ( is-cocartesian-family-P : is-cocartesian-family B P)
+  : has-enough-LARI-lifts 2 Δ¹ (\ t → t ≡ 0₂) B P
+  :=
+  \ v f → ( π₁ (π₂ (π₂ (is-cocartesian-family-P) (v 0₂) (v 1₂) (v) (f 0₂)))
+  , \ w m α₂ α₃ → is-contr-equiv-is-contr
+    ( ( (t, s) : 2 × 2 | Δ¹ t ∧ Δ¹ s)
+      → P (recOR(t ≤ s ↦ τ (s, t), s ≤ t ↦ w s))
+      [ t ≡ 0₂ ↦ π₁ (has-enough-LARI-lifts-P u (\ _ → e)) s
+      , t ≡ 1₂ ↦ h s
+      , s ≡ 0₂ ↦ e])
+    ( Σ ( gg : dhom B b' b'' v P
+               ( π₁ (has-enough-LARI-lifts-P u (\ _ → e)) 1₂)
+               ( e''))
+      , ( dhom2 B b b' b'' u v w τ P
+          ( e) (π₁ (has-enough-LARI-lifts-P u (\ _ → e)) 1₂) e''
+          ( \ t → π₁ (has-enough-LARI-lifts-P u (\ _ → e)) t) gg h))
+    ( toname-equiv B P)
+    ( π₂ (π₂ (π₂ (is-cocartesian-family-P) (v 0₂) (v 1₂) (v) (f 0₂)))
+
+    )
+  )
 ```

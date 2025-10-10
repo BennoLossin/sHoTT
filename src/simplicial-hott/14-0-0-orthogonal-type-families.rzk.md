@@ -439,3 +439,72 @@
             ( is-segal-fiber-is-inner-family B P is-inner-family-P b)
             ( e) (e) (refl)))
 ```
+
+## Homotopies in inner families
+
+```rzk
+#def is-equiv-map-total-dhom2-homotopy-is-inner-family
+  ( B : U)
+  ( x y : B)
+  ( u : hom B x y)
+  ( P : B → U)
+  ( is-inner-family-P : is-inner-family B P)
+  ( X : P x)
+  ( Y : P y)
+  ( F : dhom B x y u P X Y)
+  : is-equiv
+    ( Σ ( G : dhom B x y u P X Y) , F = G)
+    ( Σ ( G : dhom B x y u P X Y) , dhom-hpty B x y u P X Y F G)
+    ( map-total-dhom2-homotopy B x y u P X Y F)
+  :=
+  is-equiv-are-contr
+  ( Σ ( G : dhom B x y u P X Y) , F = G)
+  ( Σ ( G : dhom B x y u P X Y) , dhom-hpty B x y u P X Y F G)
+  ( is-contr-based-paths (dhom B x y u P X Y) F)
+  ( is-contr-equiv-is-contr'
+    ( Σ ( G : dhom B x y u P X Y) , dhom-hpty B x y u P X Y F G)
+    ( ((t, s) : Δ²) → P (u s) [s ≡ 0₂ ↦ X, t ≡ 1₂ ↦ F s])
+    ( equiv-is-inverse
+      ( Σ ( G : dhom B x y u P X Y) , dhom-hpty B x y u P X Y F G)
+      ( ((t, s) : Δ²) → P (u s) [s ≡ 0₂ ↦ X, t ≡ 1₂ ↦ F s])
+      ( \ (_, τ) ts → τ ts)
+      ( \ τ → (\ t → τ (t, t), \ ts → τ ts))
+      ( \ _ → refl)
+      ( \ _ → refl))
+    ( is-inner-family-P
+      ( \ (_, s) → u s)
+      ( \ (t, s) → recOR(s ≡ 0₂ ↦ X, t ≡ 1₂ ↦ F s))))
+  ( map-total-dhom2-homotopy B x y u P X Y F)
+
+
+#def equiv-homotopy-dhom2-is-inner-family
+  ( B : U)
+  ( x y : B)
+  ( u : hom B x y)
+  ( P : B → U)
+  ( is-inner-family-P : is-inner-family B P)
+  ( X : P x)
+  ( Y : P y)
+  ( F G : dhom B x y u P X Y)
+  : Equiv
+    ( F = G)
+    ( dhom2 B x x y
+      ( id-hom B x) u u
+      ( \ (_, s) → u s)
+      ( P) X X Y
+      ( id-dhom B x P X) F G)
+  :=
+  ( map-dhom2-homotopy B x y u P X Y F G
+  , is-equiv-fiberwise-is-equiv-total
+    ( dhom B x y u P X Y)
+    ( \ K → F = K)
+    ( dhom2 B x x y
+      ( id-hom B x) u u
+      ( \ (_, s) → u s)
+      ( P) X X Y
+      ( id-dhom B x P X) F)
+    ( map-dhom2-homotopy B x y u P X Y F)
+    ( is-equiv-map-total-dhom2-homotopy-is-inner-family
+      B x y u P is-inner-family-P X Y F)
+    ( G))
+```

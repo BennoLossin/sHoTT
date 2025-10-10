@@ -5,7 +5,7 @@
 ```
 
 ```rzk
-#assume TODO : (A : U) → A
+-- #assume TODO : (A : U) → A
 ```
 
 ## Cocartesian Arrows
@@ -20,7 +20,7 @@
 
 ```
 
-```rzk
+```rzkk
 #variable B : U
 #variable P : B → U
 

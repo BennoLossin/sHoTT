@@ -147,6 +147,28 @@
     ( \ _ → refl))
   ( equiv-based-paths-family (hom A x w) (\ d → hom2 A x y w f₁ g₂ d) f₂)
 
+#def hom2-square-is-segal
+  ( A : U)
+  ( is-segal-A : is-segal A)
+  ( x y w : A)
+  ( f₁ : hom A x y)
+  ( f₂ : hom A x w)
+  ( g₂ : hom A y w)
+  : square A x y x w f₁ (id-hom A x) f₂ g₂ → hom2 A x y w f₁ g₂ f₂
+  :=
+  π₁ (equiv-square-left-id-triangle-is-segal A is-segal-A x y w f₁ f₂ g₂)
+
+#def square-hom2
+  ( A : U)
+  ( x y w : A)
+  ( f₁ : hom A x y)
+  ( f₂ : hom A x w)
+  ( g₂ : hom A y w)
+  ( τ : hom2 A x y w f₁ g₂ f₂)
+  : square A x y x w f₁ (id-hom A x) f₂ g₂
+  :=
+  \ (t, s) → recOR(s ≤ t ↦ τ (t, s), t ≤ s ↦ f₂ t)
+
 #def equiv-square-sides-id-eq-is-segal
   ( A : U)
   ( is-segal-A : is-segal A)
@@ -390,4 +412,227 @@
   ( x₂) (h)
   ( g)
   ( σ)
+```
+
+## Dependent Squares
+
+```rzk
+#def dsquare
+  ( B : U)
+  ( x y z w : B)
+  ( f₁ : hom B x y)
+  ( g₁ : hom B x z)
+  ( f₂ : hom B z w)
+  ( g₂ : hom B y w)
+  ( σ : square B x y z w f₁ g₁ f₂ g₂)
+  ( P : B → U)
+  ( X : P x)
+  ( Y : P y)
+  ( Z : P z)
+  ( W : P w)
+  ( F₁ : dhom B x y f₁ P X Y)
+  ( G₁ : dhom B x z g₁ P X Z)
+  ( F₂ : dhom B z w f₂ P Z W)
+  ( G₂ : dhom B y w g₂ P Y W)
+  : U
+  :=
+  ( (t, s) : 2 × 2) → P (σ (t, s))
+  [ t ≡ 0₂ ↦ G₁ s
+  , t ≡ 1₂ ↦ G₂ s
+  , s ≡ 0₂ ↦ F₁ t
+  , s ≡ 1₂ ↦ F₂ t]
+```
+
+```rzk
+#def equiv-dsquare-glued-dhom2
+  ( B : U)
+  ( x y z w : B)
+  ( f₁ : hom B x y)
+  ( g₁ : hom B x z)
+  ( f₂ : hom B z w)
+  ( g₂ : hom B y w)
+  ( σ : square B x y z w f₁ g₁ f₂ g₂)
+  ( P : B → U)
+  ( X : P x)
+  ( Y : P y)
+  ( Z : P z)
+  ( W : P w)
+  ( F₁ : dhom B x y f₁ P X Y)
+  ( G₁ : dhom B x z g₁ P X Z)
+  ( F₂ : dhom B z w f₂ P Z W)
+  ( G₂ : dhom B y w g₂ P Y W)
+  : Equiv
+    ( dsquare B x y z w f₁ g₁ f₂ g₂ σ P X Y Z W F₁ G₁ F₂ G₂)
+    ( Σ (D : dhom B x w (\ t → σ (t, t)) P X W)
+      , product
+        ( dhom2 B x y w
+          ( f₁) (g₂) (\ t → σ (t, t))
+          (\ ts → σ ts)
+          ( P) (X) (Y) (W)
+          ( F₁) (G₂) (D))
+        ( dhom2 B x z w
+          ( g₁) (f₂) (\ t → σ (t, t))
+          (\ (t, s) → σ (s, t))
+          ( P) (X) (Z) (W)
+          ( G₁) (F₂) (D)))
+  :=
+  equiv-is-inverse
+  ( dsquare B x y z w f₁ g₁ f₂ g₂ σ P X Y Z W F₁ G₁ F₂ G₂)
+  ( Σ (D : dhom B x w (\ t → σ (t, t)) P X W)
+    , product
+      ( dhom2 B x y w
+        ( f₁) (g₂) (\ t → σ (t, t))
+        (\ ts → σ ts)
+        ( P) (X) (Y) (W)
+        ( F₁) (G₂) (D))
+      ( dhom2 B x z w
+        ( g₁) (f₂) (\ t → σ (t, t))
+        (\ (t, s) → σ (s, t))
+        ( P) (X) (Z) (W)
+        ( G₁) (F₂) (D)))
+  ( \ S → (\ t → S (t, t), (\ ts → S ts, \ (t, s) → S (s, t))))
+  ( \ (_, (τ₁, τ₂)) (t, s) → recOR
+    ( s ≤ t ↦ τ₁ (t, s)
+    , t ≤ s ↦ τ₂ (s, t)))
+  ( \ _ → refl)
+  ( \ _ → refl)
+```
+
+```rzk
+#def equiv-dsquare-left-id-dhom2-is-inner-family
+  ( B : U)
+  ( x y w : B)
+  ( f₁ : hom B x y)
+  ( f₂ : hom B x w)
+  ( g₂ : hom B y w)
+  ( τ : hom2 B x y w f₁ g₂ f₂)
+  ( P : B → U)
+  ( is-inner-family-P : is-inner-family B P)
+  ( X : P x)
+  ( Y : P y)
+  ( W : P w)
+  ( F₁ : dhom B x y f₁ P X Y)
+  ( F₂ : dhom B x w f₂ P X W)
+  ( G₂ : dhom B y w g₂ P Y W)
+  : Equiv
+    ( dsquare B x y x w f₁ (id-hom B x) f₂ g₂
+      ( square-hom2 B x y w f₁ f₂ g₂ τ)
+      ( P) X Y X W F₁ (id-dhom B x P X) F₂ G₂)
+    ( dhom2 B x y w f₁ g₂ f₂ τ P X Y W F₁ G₂ F₂)
+  :=
+  equiv-quadruple-comp
+  ( dsquare B x y x w f₁ (id-hom B x) f₂ g₂
+    ( square-hom2 B x y w f₁ f₂ g₂ τ)
+    ( P) X Y X W F₁ (id-dhom B x P X) F₂ G₂)
+  ( Σ (D : dhom B x w f₂ P X W)
+    , product
+      ( dhom2 B x y w
+        ( f₁) (g₂) (f₂)
+        ( τ)
+        ( P) (X) (Y) (W)
+        ( F₁) (G₂) (D))
+      ( dhom2 B x x w
+        ( id-hom B x) (f₂) (f₂)
+        ( \ (_, s) → f₂ s)
+        ( P) (X) (X) (W)
+        ( id-dhom B x P X) (F₂) (D)))
+  ( Σ (D : dhom B x w f₂ P X W)
+    , product
+      ( dhom2 B x y w
+        ( f₁) (g₂) (f₂)
+        ( τ)
+        ( P) (X) (Y) (W)
+        ( F₁) (G₂) (D))
+      ( F₂ = D))
+  ( Σ (D : dhom B x w f₂ P X W)
+    , product
+      ( F₂ = D)
+      ( dhom2 B x y w
+        ( f₁) (g₂) (f₂)
+        ( τ)
+        ( P) (X) (Y) (W)
+        ( F₁) (G₂) (D)))
+  ( dhom2 B x y w f₁ g₂ f₂ τ P X Y W F₁ G₂ F₂)
+  ( equiv-dsquare-glued-dhom2 B x y x w f₁ (id-hom B x) f₂ g₂
+    ( square-hom2 B x y w f₁ f₂ g₂ τ) P X Y X W F₁ (id-dhom B x P X) F₂ G₂)
+  ( total-equiv-family-of-equiv
+    ( dhom B x w f₂ P X W)
+    ( \ D → product
+      ( dhom2 B x y w
+        ( f₁) (g₂) (f₂)
+        ( τ)
+        ( P) (X) (Y) (W)
+        ( F₁) (G₂) (D))
+      ( dhom2 B x x w
+        ( id-hom B x) (f₂) (f₂)
+        ( \ (_, s) → f₂ s)
+        ( P) (X) (X) (W)
+        ( id-dhom B x P X) (F₂) (D)))
+    ( \ D → product
+      ( dhom2 B x y w
+        ( f₁) (g₂) (f₂)
+        ( τ)
+        ( P) (X) (Y) (W)
+        ( F₁) (G₂) (D))
+      ( F₂ = D))
+    ( \ D → equiv-product-equivs
+      ( dhom2 B x y w
+        ( f₁) (g₂) (f₂)
+        ( τ)
+        ( P) (X) (Y) (W)
+        ( F₁) (G₂) (D))
+      ( dhom2 B x y w
+        ( f₁) (g₂) (f₂)
+        ( τ)
+        ( P) (X) (Y) (W)
+        ( F₁) (G₂) (D))
+      ( equiv-identity
+        ( dhom2 B x y w
+          ( f₁) (g₂) (f₂)
+          ( τ)
+          ( P) (X) (Y) (W)
+          ( F₁) (G₂) (D)))
+      ( dhom2 B x x w
+        ( id-hom B x) (f₂) (f₂)
+        ( \ (_, s) → f₂ s)
+        ( P) (X) (X) (W)
+        ( id-dhom B x P X) (F₂) (D))
+      ( F₂ = D)
+      ( inv-equiv
+        ( F₂ = D)
+        ( dhom2 B x x w
+          ( id-hom B x) (f₂) (f₂)
+          ( \ (_, s) → f₂ s)
+          ( P) (X) (X) (W)
+          ( id-dhom B x P X) (F₂) (D))
+        ( equiv-homotopy-dhom2-is-inner-family B x w f₂
+          ( P) is-inner-family-P X W F₂ D))))
+  ( equiv-is-inverse
+    ( Σ (D : dhom B x w f₂ P X W)
+      , product
+        ( dhom2 B x y w
+          ( f₁) (g₂) (f₂)
+          ( τ)
+          ( P) (X) (Y) (W)
+          ( F₁) (G₂) (D))
+        ( F₂ = D))
+    ( Σ (D : dhom B x w f₂ P X W)
+      , product
+        ( F₂ = D)
+        ( dhom2 B x y w
+          ( f₁) (g₂) (f₂)
+          ( τ)
+          ( P) (X) (Y) (W)
+          ( F₁) (G₂) (D)))
+    ( \ (D, (τ', p)) → (D, (p, τ')))
+    ( \ (D, (p, τ')) → (D, (τ', p)))
+    ( \ _ → refl)
+    ( \ _ → refl))
+  ( equiv-based-paths-family (dhom B x w f₂ P X W)
+    ( \ D → dhom2 B x y w
+        ( f₁) (g₂) (f₂)
+        ( τ)
+        ( P) (X) (Y) (W)
+        ( F₁) (G₂) (D))
+    ( F₂))
 ```
