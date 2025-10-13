@@ -136,7 +136,10 @@ This is a literate `rzk` file:
 
 #def is-full-emb-total-hom-iso uses (extext)
   ( a : A)
-  : is-full-emb (Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b)) (Σ (b : B) , hom A a (u b)) (total-hom-iso a)
+  : is-full-emb
+    ( Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b))
+    ( Σ (b : B) , hom A a (u b))
+    ( total-hom-iso a)
   :=
   \ x y → π₂ (equiv-triple-comp
   ( hom (Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b)) x y)
@@ -514,14 +517,7 @@ This is a literate `rzk` file:
   ( is-rezk-B : is-rezk B)
   ( is-segal-P : is-segal (total-type B P))
   ( s : (b : B) → P b)
-  ( adj : is-transposing-adj B (total-type B P)
-          ( \ b → (b, s b))
-          ( projection-total-type B P))
-  ( LARI-adj : is-transposing-LARI-adj B (total-type B P)
-               ( π₁ is-rezk-B)
-               ( \ b → (b, s b))
-               ( projection-total-type B P)
-               ( adj))
+  ( _ : is-transposing-unit B (total-type B P) (\ b → (b, s b)) (\ b → hom-eq refl))
   : is-initial-section B P s
   :=
   is-initial-section-equiv-is-initial-section extext
@@ -548,4 +544,29 @@ This is a literate `rzk` file:
       ( projection-total-type B P)
       ( adj)
       ( LARI-adj)))
+```
+
+(b : B) → ((b', p) : ΣP) → Equiv (hom (ΣP) (b, s b) (b', p)) (hom B b b')
+
+Equiv (hom (ΣP) (b, s b) (b', p)) (Σ (f : hom B b b') , dhom B b b' f P (s b) p)
+
+
+A : U
+Q : A → U
+
+A ≃ ΣQ ≃ (total-type (ΣQ) (equiv comp Q)) ...
+
+hom B (s a) b -> hom A (u (s a)) (u b) -unit> hom A a (u b)
+
+
+```rzkk
+#def is-transposing-unit
+  ( A B : U)
+  ( s : A → B)
+  ( u : B → A)
+  ( α : (a : A) → hom A a (u (s a)))
+  : U
+  :=
+  (a : A) → (b : B) → is-equiv (hom B (s a) b) (hom A a (u b))
+  ( comp ...)
 ```

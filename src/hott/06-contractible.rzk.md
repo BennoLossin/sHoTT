@@ -417,6 +417,22 @@ The center of contraction in the based path space is `#!rzk (a , refl)`.
               ( second is-contr-AB (a , b a)))
 ```
 
+```rzk
+#def equiv-product-is-contr
+  ( A B : U)
+  ( is-contr-A : is-contr A)
+  : Equiv (product A B) B
+  :=
+  equiv-is-inverse (product A B) B
+  ( \ (_, b) → b)
+  ( \ b → (center-contraction A is-contr-A, b))
+  ( \ (a, b) → path-of-product A B (center-contraction A is-contr-A) a
+    ( b) b
+    ( homotopy-contraction A is-contr-A a)
+    ( refl))
+  ( \ b → refl)
+```
+
 ## Weak function extensionality
 
 The weak function extensionality axiom asserts that if a dependent type is
