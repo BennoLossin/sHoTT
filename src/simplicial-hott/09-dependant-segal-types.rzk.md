@@ -76,66 +76,6 @@ Using this, we can define dependant composition.
 
 The total type of a dependant segal type is segal.
 
-```rzk
-#section is-segal-total-type-is-dsegal
-
-#variable A : U
-#variable is-segal-A : is-segal A
-#variable B : A → U
-#variable is-dsegal-B : is-dsegal A is-segal-A B
-
-#def center-total-type-is-dsegal
-  ( x : total-type A B)
-  ( y : total-type A B)
-  ( z : total-type A B)
-  ( f : hom (total-type A B) x y)
-  ( g : hom (total-type A B) y z)
-  : Σ ( h : hom (total-type A B) x z)
-  , hom2 (total-type A B) x y z f g h
-  :=
-  ( hom-sigma-dhom A B x z
-    ( comp-is-segal A is-segal-A (π₁ x) (π₁ y) (π₁ z)
-      ( π₁ (sigma-dhom-hom A B x y f))
-      ( π₁ (sigma-dhom-hom A B y z g))
-    , π₁ (π₁ (is-dsegal-B
-      ( π₁ x) (π₁ y) (π₁ z)
-      ( π₁ (sigma-dhom-hom A B x y f))
-      ( π₁ (sigma-dhom-hom A B y z g))
-      ( π₂ x) (π₂ y) (π₂ z)
-      ( π₂ (sigma-dhom-hom A B x y f))
-      ( π₂ (sigma-dhom-hom A B y z g)))))
-  , hom2-sigma-dhom2 A B x y z f g
-    ( hom-sigma-dhom A B x z
-      ( comp-is-segal A is-segal-A (π₁ x) (π₁ y) (π₁ z)
-        ( π₁ (sigma-dhom-hom A B x y f))
-        ( π₁ (sigma-dhom-hom A B y z g))
-      , π₁ (π₁ (is-dsegal-B
-        ( π₁ x) (π₁ y) (π₁ z)
-        ( π₁ (sigma-dhom-hom A B x y f))
-        ( π₁ (sigma-dhom-hom A B y z g))
-        ( π₂ x) (π₂ y) (π₂ z)
-        ( π₂ (sigma-dhom-hom A B x y f))
-        ( π₂ (sigma-dhom-hom A B y z g))))))
-    ( π₂ (π₁ (is-segal-A (π₁ x) (π₁ y) (π₁ z)
-      ( π₁ (sigma-dhom-hom A B x y f))
-      ( π₁ (sigma-dhom-hom A B y z g))))
-    , π₂ (π₁ (is-dsegal-B
-      ( π₁ x) (π₁ y) (π₁ z)
-      ( π₁ (sigma-dhom-hom A B x y f))
-      ( π₁ (sigma-dhom-hom A B y z g))
-      ( π₂ x) (π₂ y) (π₂ z)
-      ( π₂ (sigma-dhom-hom A B x y f))
-      ( π₂ (sigma-dhom-hom A B y z g))))))
-
-#def is-segal-total-type-is-dsegal uses (is-segal-A is-dsegal-B)
-  : is-segal (total-type A B)
-  := \ x y z f g →
-  ( center-total-type-is-dsegal x y z f g
-  , \ cc → TODO (center-total-type-is-dsegal x y z f g = cc))
-
-#end is-segal-total-type-is-dsegal
-```
-
 ## Homotopies
 
 Similar to independant segal types, homotopies between parallel morphisms are
