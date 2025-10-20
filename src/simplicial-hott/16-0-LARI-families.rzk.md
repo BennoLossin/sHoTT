@@ -33,12 +33,12 @@ This is a literate `rzk` file:
 ```
 
 ```rzk
-#def is-LARI-family-has-transposing-LARI-adj-leibniz-cotensor
+#def is-LARI-family-is-transposing-LARI-leibniz-cotensor
   ( B : U)
   ( P : B → U)
   ( is-segal-total-typ : is-segal (X → total-type B P))
-  ( has-transposing-LARI-adj-leibniz-cotensor
-    : has-transposing-LARI-adj
+  ( is-transposing-LARI-leibniz-cotensor
+    : is-transposing-LARI
       ( X → total-type B P)
       ( leibniz-cotensor-codomain I X Y (total-type B P) B
         ( projection-total-type B P))
@@ -50,20 +50,20 @@ This is a literate `rzk` file:
 ```
 
 ```rzk
-#def has-transposing-LARI-adj-leibniz-cotensor-is-LARI-family
+#def is-transposing-LARI-leibniz-cotensor-is-LARI-family
   ( B : U)
   ( P : B → U)
   ( is-segal-total-typ : is-segal (X → total-type B P))
   ( is-LARI-family-P : is-LARI-family B P)
-  : has-transposing-LARI-adj
-      ( X → total-type B P)
-      ( leibniz-cotensor-codomain I X Y (total-type B P) B
-        ( projection-total-type B P))
-      ( is-segal-total-typ)
-      ( leibniz-cotensor I X Y (total-type B P) B
-        ( projection-total-type B P))
+  : is-transposing-LARI
+    ( X → total-type B P)
+    ( leibniz-cotensor-codomain I X Y (total-type B P) B
+      ( projection-total-type B P))
+    ( is-segal-total-typ)
+    ( leibniz-cotensor I X Y (total-type B P) B
+      ( projection-total-type B P))
   :=
-  TODO (has-transposing-LARI-adj
+  TODO (is-transposing-LARI
   ( X → total-type B P)
   ( leibniz-cotensor-codomain I X Y (total-type B P) B
     ( projection-total-type B P))
