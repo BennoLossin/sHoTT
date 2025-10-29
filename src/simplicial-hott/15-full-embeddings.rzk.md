@@ -202,7 +202,8 @@ We opt to show a more general statement
   : is-equiv
     ( ( t : Δ¹) → Iso A is-segal-A (x t) (y t) [t ≡ 0₂ ↦ f , t ≡ 1₂ ↦ g])
     ( Σ ( F : (t : Δ¹) → hom A (x t) (y t) [t ≡ 0₂ ↦ first f , t ≡ 1₂ ↦ first g])
-      , ( t : Δ¹) → is-iso-arrow A is-segal-A (x t) (y t) (F t))
+      , ( t : Δ¹) → is-iso-arrow A is-segal-A (x t) (y t) (F t)
+        [ t ≡ 0₂ ↦ second f , t ≡ 1₂ ↦ second g])
     ( \ σ → (\ t → first (σ t) , \ t → second (σ t)))
   :=
   is-equiv-has-inverse
