@@ -233,6 +233,13 @@ The type of equivalences between types uses `#!rzk is-equiv` rather than
   := (f , ((g , h1) , (g , h2)))
 ```
 
+```rzk
+#def equiv-identity
+  ( A : U)
+  : Equiv A A
+  := (identity A, is-equiv-identity A)
+```
+
 ## Induction with section
 
 We have two variants of induction with section that say that if `f : A → B` has
