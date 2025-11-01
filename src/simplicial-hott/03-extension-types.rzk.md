@@ -375,6 +375,56 @@ For each of these we provide a corresponding functorial instance
     ( axiom-choice I ψ ϕ X Y a b)
 ```
 
+```rzk
+#def equiv-extension-subshape
+  ( I : CUBE)
+  ( X : I → TOPE)
+  ( Y : X → TOPE)
+  ( A : U)
+  : Equiv
+    ( X → A)
+    ( Σ (f : Y → A) , (x : X) → A [Y x ↦ f x])
+  :=
+  ( \ f → (\ t → f t, \ t → f t)
+  , ( ( \ (_, f) t → f t , \ _ → refl)
+    , ( \ (_, f) t → f t , \ _ → refl)))
+```
+
+```rzk
+#def equiv-extension-homotopy-constraint
+  ( I : CUBE)
+  ( X : I → TOPE)
+  ( Y : X → TOPE)
+  ( A : U)
+  ( g : Y → A)
+  : Equiv
+    ( Σ (f : X → A) , g =_{Y → A} (\ y → f y))
+    ( (x : X) → A [Y x ↦ g x])
+  :=
+  equiv-quadruple-comp
+  ( Σ (f : X → A) , g =_{Y → A} (\ y → f y))
+  ( Σ (f : Σ (f' : Y → A) , (x : X) → A [Y x ↦ f' x]) , g =_{Y → A} first f)
+  ( Σ (f : Y → A) , product ((x : X) → A [Y x ↦ f x]) (g =_{Y → A} f))
+  ( Σ (f : Y → A) , product (g =_{Y → A} f) ((x : X) → A [Y x ↦ f x]))
+  ( (x : X) → A [Y x ↦ g x])
+  ( equiv-total-pullback-is-equiv
+    ( X → A)
+    ( Σ (f : Y → A) , (x : X) → A [Y x ↦ f x])
+    ( first (equiv-extension-subshape I X Y A))
+    ( second (equiv-extension-subshape I X Y A))
+    ( \ f → g =_{Y → A} first f))
+  ( inv-equiv
+    ( Σ (f : Y → A) , product ((x : X) → A [Y x ↦ f x]) (g =_{Y → A} f))
+    ( Σ (f : Σ (f' : Y → A) , (x : X) → A [Y x ↦ f' x]) , g =_{Y → A} first f)
+    ( associative-Σ (Y → A) (\ f → (x : X) → A [Y x ↦ f x])
+      ( \ f _ → g =_{Y → A} f)))
+  ( total-equiv-family-of-equiv (Y → A)
+    ( \ f → product ((x : X) → A [Y x ↦ f x]) (g =_{Y → A} f))
+    ( \ f → product (g =_{Y → A} f) ((x : X) → A [Y x ↦ f x]))
+    ( \ f → sym-product ((x : X) → A [Y x ↦ f x]) (g =_{Y → A} f)))
+  ( equiv-based-paths-family (Y → A) (\ f → ((x : X) → A [Y x ↦ f x])) g)
+```
+
 ## Composites and unions of cofibrations
 
 The original form.
