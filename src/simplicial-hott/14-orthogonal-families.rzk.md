@@ -236,6 +236,136 @@ TODO
     ( \ (t, s) → recOR(s ≡ 0₂ ↦ f t, t ≡ 1₂ ↦ g s)))
 ```
 
+## Homotopies in inner families
+
+```rzk
+#def dhom-htpy
+  ( A : U)
+  ( x y : A)
+  ( f : hom A x y)
+  ( B : A → U)
+  ( X : B x)
+  ( Y : B y)
+  ( F G : dhom A x y f B X Y)
+  : U
+  :=
+  dhom2
+    A x x y (id-hom A x) f f (id-comp-witness A x y f)
+    B X X Y (id-dhom A x B X) F G
+```
+
+```rzk
+#def id-dcomp-witness
+  ( A : U)
+  ( x y : A)
+  ( f : hom A x y)
+  ( B : A → U)
+  ( X : B x)
+  ( Y : B y)
+  ( F : dhom A x y f B X Y)
+  : dhom-htpy A x y f B X Y F F
+  := \ (t₁ , t₂) → F t₂
+```
+
+```rzk
+#def map-dhom2-homotopy
+  ( A : U)
+  ( x y : A)
+  ( f : hom A x y)
+  ( B : A → U)
+  ( X : B x)
+  ( Y : B y)
+  ( F G : dhom A x y f B X Y)
+  : ( F = G) → (dhom-htpy A x y f B X Y F G)
+  :=
+  ind-path
+    ( dhom A x y f B X Y)
+    ( F)
+    ( \ G' p → (dhom-htpy A x y f B X Y F G'))
+    ( id-dcomp-witness A x y f B X Y F)
+    ( G)
+```
+
+```rzk
+#def map-total-dhom2-homotopy
+  ( A : U)
+  ( x y : A)
+  ( f : hom A x y)
+  ( B : A → U)
+  ( X : B x)
+  ( Y : B y)
+  ( F : dhom A x y f B X Y)
+  : ( Σ ( G : dhom A x y f B X Y) , F = G)
+  → ( Σ ( G : dhom A x y f B X Y) , dhom-htpy A x y f B X Y F G)
+  := \ (G , p) → (G , map-dhom2-homotopy A x y f B X Y F G p)
+```
+
+```rzk
+#def is-equiv-map-total-dhom2-homotopy-is-inner-family
+  ( B : U)
+  ( x y : B)
+  ( u : hom B x y)
+  ( P : B → U)
+  ( is-inner-family-P : is-inner-family B P)
+  ( X : P x)
+  ( Y : P y)
+  ( F : dhom B x y u P X Y)
+  : is-equiv
+    ( Σ ( G : dhom B x y u P X Y) , F = G)
+    ( Σ ( G : dhom B x y u P X Y) , dhom-htpy B x y u P X Y F G)
+    ( map-total-dhom2-homotopy B x y u P X Y F)
+  :=
+  is-equiv-are-contr
+  ( Σ ( G : dhom B x y u P X Y) , F = G)
+  ( Σ ( G : dhom B x y u P X Y) , dhom-htpy B x y u P X Y F G)
+  ( is-contr-based-paths (dhom B x y u P X Y) F)
+  ( is-contr-equiv-is-contr'
+    ( Σ ( G : dhom B x y u P X Y) , dhom-htpy B x y u P X Y F G)
+    ( ((t, s) : Δ²) → P (u s) [s ≡ 0₂ ↦ X, t ≡ 1₂ ↦ F s])
+    ( equiv-has-inverse
+      ( Σ ( G : dhom B x y u P X Y) , dhom-htpy B x y u P X Y F G)
+      ( ((t, s) : Δ²) → P (u s) [s ≡ 0₂ ↦ X, t ≡ 1₂ ↦ F s])
+      ( \ (_, τ) ts → τ ts)
+      ( \ τ → (\ t → τ (t, t), \ ts → τ ts))
+      ( \ _ → refl)
+      ( \ _ → refl))
+    ( is-inner-family-P
+      ( \ (_, s) → u s)
+      ( \ (t, s) → recOR(s ≡ 0₂ ↦ X, t ≡ 1₂ ↦ F s))))
+  ( map-total-dhom2-homotopy B x y u P X Y F)
+
+#def equiv-homotopy-dhom2-is-inner-family
+  ( B : U)
+  ( x y : B)
+  ( u : hom B x y)
+  ( P : B → U)
+  ( is-inner-family-P : is-inner-family B P)
+  ( X : P x)
+  ( Y : P y)
+  ( F G : dhom B x y u P X Y)
+  : Equiv
+    ( F = G)
+    ( dhom2 B x x y
+      ( id-hom B x) u u
+      ( \ (_, s) → u s)
+      ( P) X X Y
+      ( id-dhom B x P X) F G)
+  :=
+  ( map-dhom2-homotopy B x y u P X Y F G
+  , is-equiv-fiberwise-is-equiv-total
+    ( dhom B x y u P X Y)
+    ( \ K → F = K)
+    ( dhom2 B x x y
+      ( id-hom B x) u u
+      ( \ (_, s) → u s)
+      ( P) X X Y
+      ( id-dhom B x P X) F)
+    ( map-dhom2-homotopy B x y u P X Y F)
+    ( is-equiv-map-total-dhom2-homotopy-is-inner-family
+      B x y u P is-inner-family-P X Y F)
+    ( G))
+```
+
 ## Isoinner families
 
 ```rzk
@@ -269,4 +399,3 @@ TODO
             ( is-segal-fiber-is-inner-family B P is-inner-family-P b)
             ( e) (e) (refl)))
 ```
-
