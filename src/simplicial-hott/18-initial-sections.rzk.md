@@ -26,6 +26,13 @@ This is a literate `rzk` file:
   := (a : A) → is-initial (B a) (s a)
 ```
 
+```rzk
+#def has-initial
+  ( A : U)
+  : U
+  := Σ (a : A), is-initial A a
+```
+
 ## Dependent initial sections
 
 ```rzk
@@ -304,18 +311,107 @@ This is a literate `rzk` file:
 ```
 
 ```rzk
-#def is-initial-section-comp-is-initial-section
-  ( A : U)
-  ( B : A → U)
-  ( s : (a : A) → B a)
-  ( C : total-type A B → U)
-  ( s' : (x : total-type A B) → C x)
-  ( is-initial-section-s' : is-initial-section (total-type A B) C s')
-  : is-initial-section A (\ a → C (a, (s a))) (\ a → s' (a, (s a)))
-  := \ a → is-initial-section-s' (a, (s a))
+#def is-initial-total-type-base-is-initial-fiber-is-dependent-initial
+  ( B : U)
+  ( P : B → U)
+  ( b : B)
+  ( is-initial-B : is-initial B b)
+  ( p : P b)
+  ( is-dependent-initial-p : is-dependent-initial B P b p)
+  : is-initial (total-type B P) (b, p)
+  :=
+  \ (b', p') →
+  is-contr-equiv-is-contr'
+  ( hom (total-type B P) (b, p) (b', p'))
+  ( hom B b b')
+  ( equiv-comp
+    ( hom (total-type B P) (b, p) (b', p'))
+    ( Σ (h : hom B b b') , dhom B b b' h P p p')
+    ( hom B b b')
+    ( equiv-hom-sigma-dhom B P (b, p) (b', p'))
+    ( equiv-total-type-is-contr-fiber
+      ( hom B b b')
+      ( \ h → dhom B b b' h P p p')
+      ( is-dependent-initial-p b' p')))
+  ( is-initial-B b')
 ```
 
 ```rzk
+#def bad
+  ( A : U)
+  ( a : A)
+  : Δ¹ → U
+  := \ t → (t' : Δ¹) → A [t ≡ 0₂ ↦ a]
+```
+
+```rzk
+#def is-initial-section-comp-is-initial-section-is-dependent-initial-section
+  ( A : U)
+  ( B : A → U)
+  ( s : (a : A) → B a)
+  ( is-initial-section-s : is-initial-section A B s)
+  ( C : total-type A B → U)
+  ( s' : (x : total-type A B) → C x)
+  ( is-dependent-initial-section-s'
+  : is-dependent-initial-section (total-type A B) C s')
+  : is-initial-section A (\ a → Σ (b : B a) , C (a, b))
+    ( \ a → (s a, s' (a, s a)))
+  :=
+  \ a →
+  is-initial-total-type-base-is-initial-fiber-is-dependent-initial
+  ( B a)
+  ( \ b → C (a, b))
+  ( s a)
+  ( is-initial-section-s a)
+  ( s' (a, s a))
+  ( \ b' c' f →
+    is-dependent-initial-section-s' (a, s a) (a, b') c' (\ t → (a, f t)))
+```
+
+```rzk
+#def is-dependent-initial-section-comp-is-dependent-initial-section
+  ( A : U)
+  ( B : A → U)
+  ( s : (a : A) → B a)
+  ( is-dependent-initial-section-s : is-dependent-initial-section A B s)
+  ( C : total-type A B → U)
+  ( s' : (x : total-type A B) → C x)
+  ( is-dependent-initial-section-s'
+  : is-dependent-initial-section (total-type A B) C s')
+  : is-dependent-initial-section A (\ a → Σ (b : B a) , C (a, b))
+    ( \ a → (s a, s' (a, s a)))
+  :=
+  \ x y (b', c') f →
+  is-contr-equiv-is-contr'
+  ( dhom A x y f (\ a → Σ (b : B a), C (a, b)) (s x, s' (x, s x)) (b', c'))
+  ( dhom A x y f B (s x) b')
+  ( equiv-comp
+    ( dhom A x y f (\ a → Σ (b : B a), C (a, b)) (s x, s' (x, s x)) (b', c'))
+    ( Σ (F : dhom A x y f B (s x) b')
+      , dhom (total-type A B) (x, s x) (y, b') (\ t → (f t, F t))
+        ( C) (s' (x, s x)) c')
+    ( dhom A x y f B (s x) b')
+    ( equiv-has-inverse
+      ( dhom A x y f (\ a → Σ (b : B a), C (a, b)) (s x, s' (x, s x)) (b', c'))
+      ( Σ (F : dhom A x y f B (s x) b')
+        , dhom (total-type A B) (x, s x) (y, b') (\ t → (f t, F t))
+          ( C) (s' (x, s x)) c')
+      ( \ ff → (\ t → first (ff t), \ t → second (ff t)))
+      ( \ (F, ff) t → (F t, ff t))
+      ( \ _ → refl)
+      ( \ _ → refl))
+    ( equiv-total-type-is-contr-fiber
+      ( dhom A x y f B (s x) b')
+      ( \ F →
+        dhom (total-type A B) (x, s x) (y, b') (\ t → (f t, F t))
+        ( C) (s' (x, s x)) c')
+      ( \ F →
+        is-dependent-initial-section-s' ( x, s x) (y, b') c'
+        ( \ t → (f t, F t)))))
+  ( is-dependent-initial-section-s x y b' f)
+```
+
+```rzkk
 #def is-dependent-initial-section-comp-is-dependent-initial-section
   ( A : U)
   ( B : A → U)
@@ -324,7 +420,8 @@ This is a literate `rzk` file:
   ( s' : (x : total-type A B) → C x)
   ( is-dependent-initial-section-s'
   : is-dependent-initial-section (total-type A B) C s')
-  : is-dependent-initial-section A (\ a → C (a, (s a))) (\ a → s' (a, (s a)))
+  : is-dependent-initial-section A (\ a → Σ (b : B a) , C (a, b))
+    ( \ a → (s a, s' (a, s a)))
   :=
   \ x y (Y : C (y, (s y))) f →
   is-dependent-initial-section-s' (x, s x) (y, s y) Y (\ t → (f t, s (f t)))

@@ -98,6 +98,18 @@ id-hom (total-type A B) (a, s a)` to `#!rzk id-hom A a`.
 ## Closure properties of LARI adjunctions
 
 
-
-
-
+```rzk
+#def is-inner-family-fiber-family-is-segal
+  ( A : U)
+  ( B : U)
+  ( is-segal-A : is-segal A)
+  ( f : A → B)
+  : is-inner-family B (fib A B f)
+  :=
+  is-right-orthogonal-family-has-contr-relative-extension-types
+  ( 2) Δ² Λ²₁ B (fib A B f)
+  ( \ (σ' : Λ²₁ → total-type B (fib A B f))
+      (τ : (t : Δ²) → B [Λ²₁ t ↦ first (σ' t)]) →
+    x
+  )
+```
