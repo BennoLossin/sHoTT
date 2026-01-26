@@ -728,3 +728,14 @@ to the dependent type evaluated at any given term in the base.
         ( homotopy-contraction (B a) (is-contr-fiber a) b)
       , \ _ → refl))
 ```
+
+```rzk
+#def equiv-total-type-is-contr-fiber
+  ( A : U)
+  ( B : A → U)
+  ( is-contr-fiber : (a : A) → is-contr (B a))
+  : Equiv (total-type A B) A
+  :=
+  ( projection-total-type A B
+  , is-equiv-projection-total-type-is-contr-fiber A B is-contr-fiber)
+```
