@@ -303,6 +303,13 @@ invertible map to prove symmetry:
   ( a : A)
   : π₁ (inv-equiv A B (f , is-equiv-f)) (f a) = a
   := π₂ (π₂ (π₂ (inv-equiv A B (f , is-equiv-f)))) a
+
+#def inv-equiv-cancel'
+  ( A B : U)
+  ( ( f , is-equiv-f) : Equiv A B)
+  ( b : B)
+  : f (π₁ (inv-equiv A B (f , is-equiv-f)) b) = b
+  := π₂ (π₁ (π₂ (inv-equiv A B (f , is-equiv-f)))) b
 ```
 
 ```rzk title="Composition of equivalences in diagrammatic order"
@@ -938,6 +945,24 @@ dependent function types.
         ( B)
         ( \ x ax → first (famequiv x) (ax))
         ( \ x → second (famequiv x))))
+```
+
+```rzkk
+#def equiv-function-equiv-args
+  ( A A' : U)
+  ( (f, is-equiv-f) : Equiv A A')
+  ( B : A' → U)
+  : Equiv ((a' : A') → B a') ((a : A) → B (f a))
+  :=
+  ( \ b a → b (f a)
+  , is-equiv-has-inverse ((a' : A') → B a') ((a : A) → B (f a))
+    ( \ b a → b (f a))
+    ( \ b a' →
+      transport A' B (f (first (inv-equiv A A' (f, is-equiv-f)) a')) a'
+      ( inv-equiv-cancel' A A' (f, is-equiv-f) a')
+      ( b (first (inv-equiv A A' (f, is-equiv-f)) a'))
+    , ( \ x → refl
+      , \ _ → refl)))
 ```
 
 ## Embeddings

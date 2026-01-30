@@ -169,7 +169,7 @@ TODO
     ( Σ (f : Y → E) , (x : X) → E [Y x ↦ f x])
     ( Σ (f : Y → E) , (x : X) → B [Y x ↦ p (f x)])
     ( leibniz-cotensor-codomain I X Y E B p)
-    ( equiv-extension-subshape I X Y E)
+    ( equiv-extension-subshape I X Y (\ _ → E))
     ( total-equiv-family-of-equiv
       ( Y → E)
       ( \ f → (x : X) → E [Y x ↦ f x])
@@ -182,7 +182,7 @@ TODO
       ( \ f → inv-equiv
         ( Σ (g : X → B) , (\ y → p (f y)) =_{Y → B} (\ y → g y))
         ( (x : X) → B [Y x ↦ p (f x)])
-        ( equiv-extension-homotopy-constraint I X Y B (\ y → p (f y))))))
+        ( equiv-extension-homotopy-constraint I X Y (\ _ → B) (\ y → p (f y))))))
 ```
 
 ```rzk
