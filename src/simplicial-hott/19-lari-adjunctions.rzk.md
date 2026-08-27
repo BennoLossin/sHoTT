@@ -100,6 +100,74 @@ id-hom (total-type A B) (a, s a)` to `#!rzk id-hom A a`.
 #variable adj : is-transposing-adj A B f u
 #variable is-LARI-f-u : is-transposing-LARI-adj A B (π₁ is-rezk-A) f u adj
 
+#def equiv-dhom-iso-dhom-hom uses (extext)
+  ( a : A)
+  ( (x₁, x₂) (y₁, y₂) : (Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b)))
+  ( g : hom B x₁ y₁)
+  : Equiv
+    ( dhom B x₁ y₁ g (\ b → Iso A (π₁ is-rezk-A) a (u b)) x₂ y₂)
+    ( dhom B x₁ y₁ g (\ b → hom A a (u b)) (π₁ x₂) (π₁ y₂))
+  :=
+  equiv-has-inverse
+  ( dhom B x₁ y₁ g (\ b → Iso A (π₁ is-rezk-A) a (u b)) x₂ y₂)
+  ( dhom B x₁ y₁ g (\ b → hom A a (u b)) (π₁ x₂) (π₁ y₂))
+  ( \ γ t → π₁ (γ t))
+  ( \ γ t → ( γ t
+  , is-iso-arrow-square-sides-iso-is-rezk A is-rezk-A
+    ( a) (a) (u x₁) (u y₁)
+    ( id-hom A a)
+    ( \ t → u (g t))
+    ( x₂)
+    ( y₂)
+    ( \ t s → γ t s)
+    ( t)))
+  ( \ γ → naiveextext-extext extext 2 Δ¹ ∂Δ¹
+    ( \ t → Iso A (π₁ is-rezk-A) a (u (g t)))
+    ( \ t → recOR(t ≡ 0₂ ↦ x₂, t ≡ 1₂ ↦ y₂))
+    ( \ t → ( π₁ (γ t)
+      , is-iso-arrow-square-sides-iso-is-rezk A is-rezk-A
+        ( a) (a) (u x₁) (u y₁)
+        ( id-hom A a)
+        ( \ t → u (g t))
+        ( x₂)
+        ( y₂)
+        ( \ t s → π₁ (γ t) s)
+        ( t)))
+    ( γ)
+    ( \ t → path-of-pairs-pair-of-paths
+      ( hom A a (u (g t)))
+      ( is-iso-arrow A (π₁ is-rezk-A) a (u (g t)))
+      ( π₁ (γ t))
+      ( π₁ (γ t))
+      ( refl)
+      ( is-iso-arrow-square-sides-iso-is-rezk A is-rezk-A
+        ( a) (a) (u x₁) (u y₁)
+        ( id-hom A a)
+        ( \ t → u (g t))
+        ( x₂)
+        ( y₂)
+        ( \ t s → π₁ (γ t) s)
+        ( t))
+      ( π₂ (γ t))
+      ( eq-dhom-refl-is-locally-contr-extext extext
+        ( \ t → is-iso-arrow A (π₁ is-rezk-A) a (u (g t)) (π₁ (γ t)))
+        ( \ t → is-contr-is-inhabited-is-prop
+          ( is-iso-arrow A (π₁ is-rezk-A) a (u (g t)) (π₁ (γ t)))
+          ( is-prop-is-iso-arrow extext A (π₁ is-rezk-A) a (u (g t)) (π₁ (γ t)))
+          ( π₂ (γ t)))
+        ( π₂ x₂)
+        ( π₂ y₂)
+        ( is-iso-arrow-square-sides-iso-is-rezk A is-rezk-A
+          ( a) (a) (u x₁) (u y₁)
+          ( id-hom A a)
+          ( \ t → u (g t))
+          ( x₂)
+          ( y₂)
+          ( \ t s → π₁ (γ t) s))
+        ( \ t → π₂ (γ t))
+        ( t))))
+  (\ _ → refl)
+
 #def total-hom-iso
   ( a : A)
   ( ( b , g) : Σ (b : B) , Iso A (π₁ is-rezk-A) a (u b))
